@@ -1,0 +1,15 @@
+# фронтенд
+node_modules
+.nuxt
+.nitro
+.output
+.cache
+dist
+
+# бэкенд
+/backend/target
+
+# прочее
+.env
+*.log
+.DS_Store

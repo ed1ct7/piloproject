@@ -3,8 +3,8 @@
 Монорепозиторий: фронтенд **Nuxt 3 (SSG)** + бэкенд **Rust (Axum)**.
 
 Демо-связка: статически сгенерированный сайт Nuxt обращается к API на Rust/Axum.
-Сквозная проверка работоспособности выполняется через эндпоинт `/api/health`: главная
-страница фронтенда запрашивает его и показывает состояние бэкенда — так проверяется, что
+Сквозная проверка работоспособности выполняется через эндпоинт `/api/health`: страница
+«Состояние системы» запрашивает его и показывает состояние бэкенда — так проверяется, что
 обе части собраны и связаны корректно.
 
 ## Стек
@@ -18,8 +18,8 @@ Nuxt 3 включает в себя Vue 3 и Vite; SSG — это `generate` Nux
 
 ## Требования
 
-- **Node ≥ 20** — среда выполнения фронтенда.
-- **pnpm** — менеджер пакетов фронтенда. Проще всего включить через `corepack enable`.
+- **Node.js ≥ 22.12** — среда выполнения фронтенда; рекомендуется актуальный LTS-релиз.
+- **npm** — менеджер пакетов фронтенда (устанавливается вместе с Node.js).
 - **Rust (edition 2021)** — тулчейн для бэкенда, установка через [rustup](https://rustup.rs).
 
 ## Быстрый старт
@@ -37,12 +37,13 @@ cargo run          # http://localhost:8080
 
 ```bash
 cd frontend
-pnpm install
-pnpm dev           # http://localhost:3000
+npm install
+npm run dev        # http://localhost:3000
 ```
 
-Открыть `http://localhost:3000` — главная страница запросит `GET /api/health` у бэкенда и
-покажет его состояние. Если бэкенд не запущен, страница сообщит о недоступности API.
+Открыть `http://localhost:3000/system-status` — страница «Состояние системы» запросит
+`GET /api/health` у бэкенда и покажет его состояние. Если бэкенд не запущен, страница
+сообщит о недоступности API.
 
 ## Переменные окружения
 
@@ -56,7 +57,7 @@ pnpm dev           # http://localhost:3000
 
 ## Скрипты
 
-Фронтенд (`cd frontend`, запуск как `pnpm <скрипт>`):
+Фронтенд (`cd frontend`, запуск как `npm run <скрипт>`):
 
 | Скрипт      | Действие                                             |
 |-------------|------------------------------------------------------|
@@ -66,7 +67,11 @@ pnpm dev           # http://localhost:3000
 | `preview`   | Локальный просмотр собранного сайта                  |
 | `typecheck` | Проверка типов (`vue-tsc`, strict)                   |
 
-`postinstall` (`nuxt prepare`) выполняется автоматически после `pnpm install`.
+`postinstall` (`nuxt prepare`) выполняется автоматически после `npm install`.
+
+Для прямого запуска локального Nuxt CLI без глобальной установки используйте
+`npx`: например, `npx nuxt dev`, `npx nuxt generate` или `npx nuxt typecheck`.
+Перед этим зависимости проекта должны быть установлены командой `npm install`.
 
 Бэкенд (`cd backend`):
 
@@ -95,12 +100,20 @@ CORS открыт для всех источников, методов и заг
 
 ```bash
 cd frontend
-NUXT_PUBLIC_API_BASE=https://api.example.com pnpm generate
+NUXT_PUBLIC_API_BASE=https://api.example.com npm run generate
 ```
 
 Результат в `frontend/.output/public` — заливается на любой статик-хостинг (CDN, S3,
 GitHub Pages и т. п.). Базовый URL API фиксируется на этапе генерации, поэтому
-`NUXT_PUBLIC_API_BASE` нужно задать **перед** `pnpm generate`.
+`NUXT_PUBLIC_API_BASE` нужно задать **перед** `npm run generate`.
+
+В PowerShell та же сборка запускается так:
+
+```powershell
+cd frontend
+$env:NUXT_PUBLIC_API_BASE = "https://api.example.com"
+npm run generate
+```
 
 **Бэкенд** — бинарник:
 
@@ -118,9 +131,12 @@ cargo build --release
 Перед коммитом:
 
 ```bash
-cargo fmt         # форматирование бэкенда
-cargo clippy      # линтер бэкенда
-pnpm typecheck    # проверка типов фронтенда
+cd backend
+cargo fmt          # форматирование бэкенда
+cargo clippy       # линтер бэкенда
+
+cd ../frontend
+npm run typecheck  # проверка типов фронтенда
 ```
 
 Стиль кода и язык комментариев описаны в [docs/code-style.md](docs/code-style.md)
@@ -133,8 +149,11 @@ piloproject/
 ├── frontend/                 # приложение Nuxt 3 (статический сайт)
 │   ├── nuxt.config.ts        # SSG, nitro preset static, runtimeConfig.public.apiBase
 │   ├── app.vue
+│   ├── layouts/
+│   │   └── default.vue       # общий каркас и основная навигация
 │   ├── pages/
-│   │   └── index.vue         # главная: проверка связки через useHealth()
+│   │   ├── index.vue         # главная
+│   │   └── system-status.vue # состояние системы: проверка связки через useHealth()
 │   ├── composables/
 │   │   └── useApi.ts         # useApiBase(), useHealth() → GET /api/health
 │   ├── package.json
@@ -155,7 +174,7 @@ piloproject/
   базовый URL. Проверить, что `cargo run` работает и отвечает на
   `http://localhost:8080/api/health`, а `NUXT_PUBLIC_API_BASE` указывает на него.
 - **Порт 8080 или 3000 занят.** Другой процесс держит порт. Освободить его или сменить
-  порт (для фронтенда — переменной окружения `PORT` у `pnpm dev`).
+  порт (для фронтенда — переменной окружения `PORT` у `npm run dev`).
 - **`cargo` не найден.** Rust не установлен — поставить тулчейн через
   [rustup](https://rustup.rs) (edition 2021).
 

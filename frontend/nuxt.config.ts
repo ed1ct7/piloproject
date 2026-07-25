@@ -9,7 +9,7 @@ export default defineNuxtConfig({
     preset: 'static',
     prerender: {
       crawlLinks: true,
-      routes: ['/'],
+      routes: ['/', '/system-status'],
     },
   },
 

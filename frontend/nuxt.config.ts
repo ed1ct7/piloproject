@@ -2,6 +2,7 @@
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-24',
   devtools: { enabled: true },
+  css: ['~/assets/css/main.css'],
 
   // SSG: `nuxt generate` пререндерит каждый маршрут в статический HTML.
   ssr: true,
@@ -9,7 +10,7 @@ export default defineNuxtConfig({
     preset: 'static',
     prerender: {
       crawlLinks: true,
-      routes: ['/'],
+      routes: ['/', '/pilomaterialy', '/dostavka', '/kontakty', '/otzyvy'],
     },
   },
 

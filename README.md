@@ -145,6 +145,7 @@ piloproject/
 │   └── Cargo.toml
 ├── docs/
 │   ├── code-style.md         # правила комментариев и язык проекта
+│   ├── deployment.md         # инструкция по развертке frontend и backend
 │   └── yandex-seo.md         # требования к вёрстке и разметке под Яндекс
 └── README.md
 ```
@@ -162,4 +163,5 @@ piloproject/
 ## Документация
 
 - [Код-стайл](docs/code-style.md) — правила документирующих комментариев и язык проекта.
+- [Развертка](docs/deployment.md) — сборка, запуск backend-сервиса и публикация frontend.
 - [SEO под Яндекс](docs/yandex-seo.md) — требования к вёрстке и разметке для поиска Яндекса.

@@ -30,9 +30,7 @@ async fn main() {
         .allow_methods(Any)
         .allow_headers(Any);
 
-    let app = Router::new()
-        .route("/api/health", get(health))
-        .layer(cors);
+    let app = Router::new().route("/api/health", get(health)).layer(cors);
 
     let addr = "0.0.0.0:8080";
     let listener = tokio::net::TcpListener::bind(addr).await.unwrap();

@@ -7,7 +7,7 @@
 ## 1. Требования к серверу
 
 - Linux-сервер с доступом по SSH.
-- Node.js 20 или новее и `pnpm` для сборки frontend.
+- Node.js 22.12 или новее и `npm`/`npx` для сборки frontend.
 - Rust toolchain для сборки backend или заранее собранный release-бинарник.
 - Веб-сервер для статики и проксирования API, например Nginx.
 - Домен и HTTPS-сертификат для публичной установки.
@@ -21,7 +21,7 @@
 ## 2. Переменные окружения
 
 Frontend читает базовый URL backend из `NUXT_PUBLIC_API_BASE`. Значение фиксируется во
-время статической генерации, поэтому его нужно задать перед `pnpm generate`.
+время статической генерации, поэтому его нужно задать перед `npm run generate`.
 
 Пример для production:
 
@@ -116,13 +116,13 @@ curl http://127.0.0.1:8080/api/health
 
 ```bash
 cd frontend
-pnpm install --frozen-lockfile
+npm ci
 ```
 
 Затем выполните статическую генерацию с production-адресом API:
 
 ```bash
-NUXT_PUBLIC_API_BASE=https://example.com pnpm generate
+NUXT_PUBLIC_API_BASE=https://example.com npm run generate
 ```
 
 Результат сборки:
@@ -134,7 +134,7 @@ frontend/.output/public
 Перед выкладкой желательно выполнить проверку типов:
 
 ```bash
-pnpm typecheck
+npm run typecheck
 ```
 
 ## 6. Размещение frontend
@@ -214,7 +214,7 @@ curl -I https://example.com/
 3. Остановить backend: `sudo systemctl stop piloproject-backend`.
 4. Заменить `/opt/piloproject/backend` новым бинарником.
 5. Запустить backend: `sudo systemctl start piloproject-backend`.
-6. Выполнить `pnpm install --frozen-lockfile` и `NUXT_PUBLIC_API_BASE=... pnpm generate`.
+6. Выполнить `npm ci` и `NUXT_PUBLIC_API_BASE=... npm run generate`.
 7. Обновить `/var/www/piloproject` содержимым `frontend/.output/public`.
 8. Проверить `/api/health` и главную страницу.
 

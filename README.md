@@ -11,16 +11,19 @@
 
 | Часть     | Технологии                                                   |
 |-----------|--------------------------------------------------------------|
-| Фронтенд  | Vue 3 + Vite + Nuxt 3 (SSG через `nuxt generate`), TypeScript |
-| Бэкенд    | Rust, Axum, Tokio, Serde, tower-http (CORS)                  |
+| Фронтенд  | Vue 3 + Vite + Nuxt 3 (SSG через `nuxt generate`), TypeScript, Nuxt SEO-модули |
+| Бэкенд    | Rust, Axum, Tokio, Serde, tower-http (CORS), SeaORM, PostgreSQL |
 
 Nuxt 3 включает в себя Vue 3 и Vite; SSG — это `generate` Nuxt (полный статический пререндер).
+Карта сайта, `robots.txt`, Schema.org-разметка и оптимизация изображений настроены через
+`@nuxtjs/sitemap`, `@nuxtjs/robots`, `nuxt-schema-org` и `@nuxt/image`.
 
 ## Требования
 
 - **Node.js ≥ 22.12** — среда выполнения фронтенда; рекомендуется актуальный LTS-релиз.
 - **npm** — менеджер пакетов фронтенда (устанавливается вместе с Node.js).
 - **Rust (edition 2021)** — тулчейн для бэкенда, установка через [rustup](https://rustup.rs).
+- **PostgreSQL** — основная БД backend. Доступ к БД задается через `DATABASE_URL`.
 
 ## Быстрый старт
 
@@ -30,6 +33,17 @@ Nuxt 3 включает в себя Vue 3 и Vite; SSG — это `generate` Nux
 
 ```bash
 cd backend
+export DATABASE_URL=postgres://postgres:postgres@localhost:5432/piloproject
+psql "$DATABASE_URL" -f schema.sql
+cargo run          # http://localhost:8080
+```
+
+В PowerShell:
+
+```powershell
+cd backend
+$env:DATABASE_URL = "postgres://postgres:postgres@localhost:5432/piloproject"
+psql $env:DATABASE_URL -f schema.sql
 cargo run          # http://localhost:8080
 ```
 
@@ -50,10 +64,12 @@ npm run dev        # http://localhost:3000
 | Переменная             | Назначение                               | По умолчанию            |
 |------------------------|------------------------------------------|-------------------------|
 | `NUXT_PUBLIC_API_BASE` | Базовый URL backend, читается фронтендом | `http://localhost:8080` |
+| `DATABASE_URL`         | PostgreSQL-подключение для backend       | нет, задается явно      |
 
-Значение попадает в runtime-config `public.apiBase` (см. `frontend/nuxt.config.ts`) и
-используется в `composables/useApi.ts`. Можно задать через переменную окружения или файл
-`.env` (он в `.gitignore` и в репозиторий не коммитится).
+`NUXT_PUBLIC_API_BASE` попадает в runtime-config `public.apiBase` (см.
+`frontend/nuxt.config.ts`) и используется в `composables/useApi.ts`. `DATABASE_URL`
+читает backend при старте для подключения к PostgreSQL. Переменные можно задать через
+окружение или файл `.env` (он в `.gitignore` и в репозиторий не коммитится).
 
 ## Скрипты
 
@@ -63,7 +79,7 @@ npm run dev        # http://localhost:3000
 |-------------|------------------------------------------------------|
 | `dev`       | Dev-сервер с HMR на `http://localhost:3000`          |
 | `build`     | Сборка Nuxt (серверный/Node-режим)                   |
-| `generate`  | Статическая сборка (SSG) → `frontend/.output/public` |
+| `generate`  | Подготовка WebP-исходников, SSG и статические `_ipx`-варианты → `frontend/.output/public` |
 | `preview`   | Локальный просмотр собранного сайта                  |
 | `typecheck` | Проверка типов (`vue-tsc`, strict)                   |
 
@@ -90,6 +106,27 @@ npm run dev        # http://localhost:3000
 | Метод | Путь          | Ответ                                      | Назначение                 |
 |-------|---------------|--------------------------------------------|----------------------------|
 | `GET` | `/api/health` | `{ "status": "ok", "service": "backend" }` | Проверка работоспособности |
+
+Отзывы хранятся в PostgreSQL через SeaORM. Перед запуском backend создайте таблицу из
+`backend/schema.sql`.
+
+| Метод    | Путь               | Назначение            |
+|----------|--------------------|-----------------------|
+| `POST`   | `/api/reviews`     | Создать отзыв         |
+| `GET`    | `/api/reviews`     | Получить список       |
+| `GET`    | `/api/reviews/:id` | Получить один отзыв   |
+| `PUT`    | `/api/reviews/:id` | Изменить отзыв        |
+| `DELETE` | `/api/reviews/:id` | Удалить отзыв         |
+
+Пример создания:
+
+```json
+{
+  "authorName": "Анна",
+  "text": "Хороший брус и быстрая доставка",
+  "rating": 5
+}
+```
 
 CORS открыт для всех источников, методов и заголовков — чтобы статический сайт мог
 обращаться к API с любого хоста.
@@ -120,6 +157,7 @@ npm run generate
 ```bash
 cd backend
 cargo build --release
+export DATABASE_URL=postgres://postgres:postgres@localhost:5432/piloproject
 ./target/release/backend
 ```
 
@@ -147,20 +185,36 @@ npm run typecheck  # проверка типов фронтенда
 ```
 piloproject/
 ├── frontend/                 # приложение Nuxt 3 (статический сайт)
-│   ├── nuxt.config.ts        # SSG, nitro preset static, runtimeConfig.public.apiBase
+│   ├── nuxt.config.ts        # SSG, SEO-модули, изображения, runtimeConfig.public.apiBase
 │   ├── app.vue
 │   ├── layouts/
 │   │   └── default.vue       # общий каркас и основная навигация
 │   ├── pages/
+│   │   ├── contacts.vue      # контакты, публичный маршрут /kontakty
+│   │   ├── delivery.vue      # доставка, публичный маршрут /dostavka
 │   │   ├── index.vue         # главная
+│   │   ├── lumber.vue        # пиломатериалы, публичный маршрут /pilomaterialy
+│   │   ├── reviews.vue       # отзывы, публичный маршрут /otzyvy
 │   │   └── system-status.vue # состояние системы: проверка связки через useHealth()
+│   ├── modules/
+│   │   └── static-sitemap.ts # пререндер sitemap.xml
+│   ├── server/
+│   │   └── plugins/
+│   │       └── sitemap-sources.ts # источники URL для @nuxtjs/sitemap
+│   ├── scripts/
+│   │   ├── generate-static-images.mjs # WebP-варианты для статических Nuxt Image URL
+│   │   └── prepare-static-images.mjs  # подготовка WebP-исходников перед generate
+│   ├── utils/
+│   │   └── seo-routes.ts     # единый список индексируемых маршрутов
 │   ├── composables/
-│   │   └── useApi.ts         # useApiBase(), useHealth() → GET /api/health
+│   │   └── useApi.ts         # useApiBase(), useHealth(), CRUD отзывов
 │   ├── package.json
 │   └── tsconfig.json
 ├── backend/                  # API на Rust Axum
+│   ├── schema.sql            # первая схема PostgreSQL для отзывов
 │   ├── src/
-│   │   └── main.rs           # сервер 0.0.0.0:8080, CORS, GET /api/health
+│   │   ├── main.rs           # сервер 0.0.0.0:8080, CORS, GET /api/health
+│   │   └── reviews.rs        # CRUD отзывов через SeaORM
 │   └── Cargo.toml
 ├── docs/
 │   ├── code-style.md         # правила комментариев и язык проекта
@@ -174,6 +228,8 @@ piloproject/
 - **«Backend unreachable» / API недоступен.** Бэкенд не запущен или указан неверный
   базовый URL. Проверить, что `cargo run` работает и отвечает на
   `http://localhost:8080/api/health`, а `NUXT_PUBLIC_API_BASE` указывает на него.
+- **Backend не стартует из-за `DATABASE_URL`.** Нужно поднять PostgreSQL, создать БД,
+  задать `DATABASE_URL` и применить `backend/schema.sql`.
 - **Порт 8080 или 3000 занят.** Другой процесс держит порт. Освободить его или сменить
   порт (для фронтенда — переменной окружения `PORT` у `npm run dev`).
 - **`cargo` не найден.** Rust не установлен — поставить тулчейн через
@@ -182,5 +238,6 @@ piloproject/
 ## Документация
 
 - [Код-стайл](docs/code-style.md) — правила документирующих комментариев и язык проекта.
+- [Backend API](docs/backend-api.md) — контракт API, SeaORM и схема отзывов.
 - [Развертка](docs/deployment.md) — сборка, запуск backend-сервиса и публикация frontend.
 - [SEO под Яндекс](docs/yandex-seo.md) — требования к вёрстке и разметке для поиска Яндекса.

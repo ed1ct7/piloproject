@@ -9,6 +9,7 @@
 - Linux-сервер с доступом по SSH.
 - Node.js 22.12 или новее и `npm`/`npx` для сборки frontend.
 - Rust toolchain для сборки backend или заранее собранный release-бинарник.
+- PostgreSQL для данных backend. ORM проекта — SeaORM.
 - Веб-сервер для статики и проксирования API, например Nginx.
 - Домен и HTTPS-сертификат для публичной установки.
 
@@ -38,6 +39,19 @@ export NUXT_PUBLIC_API_BASE=https://api.example.com
 Backend по текущей реализации слушает `0.0.0.0:8080`. При публичной установке обычно
 оставляют backend на внутреннем порту, а наружу открывают только Nginx с HTTPS.
 
+Backend подключается к PostgreSQL через SeaORM. Подключение задается переменной
+`DATABASE_URL`:
+
+```bash
+export DATABASE_URL=postgres://piloproject:password@127.0.0.1:5432/piloproject
+```
+
+Перед первым запуском примените схему:
+
+```bash
+psql "$DATABASE_URL" -f backend/schema.sql
+```
+
 ## 3. Сборка backend
 
 ```bash
@@ -66,7 +80,28 @@ cargo test
 ```bash
 sudo mkdir -p /opt/piloproject
 sudo cp backend/target/release/backend /opt/piloproject/backend
+sudo cp backend/schema.sql /opt/piloproject/schema.sql
 sudo chmod +x /opt/piloproject/backend
+```
+
+Создайте файл окружения `/etc/piloproject/backend.env`:
+
+```bash
+sudo mkdir -p /etc/piloproject
+sudo nano /etc/piloproject/backend.env
+```
+
+```env
+DATABASE_URL=postgres://piloproject:password@127.0.0.1:5432/piloproject
+```
+
+На сервере схему можно применить из скопированного файла:
+
+```bash
+set -a
+. /etc/piloproject/backend.env
+set +a
+psql "$DATABASE_URL" -f /opt/piloproject/schema.sql
 ```
 
 Пример unit-файла `/etc/systemd/system/piloproject-backend.service`:
@@ -74,11 +109,12 @@ sudo chmod +x /opt/piloproject/backend
 ```ini
 [Unit]
 Description=piloproject backend
-After=network.target
+After=network.target postgresql.service
 
 [Service]
 Type=simple
 WorkingDirectory=/opt/piloproject
+EnvironmentFile=/etc/piloproject/backend.env
 ExecStart=/opt/piloproject/backend
 Restart=always
 RestartSec=5
@@ -102,6 +138,7 @@ sudo systemctl status piloproject-backend
 
 ```bash
 curl http://127.0.0.1:8080/api/health
+curl http://127.0.0.1:8080/api/reviews
 ```
 
 Ожидаемый ответ:
@@ -130,6 +167,11 @@ NUXT_PUBLIC_API_BASE=https://example.com npm run generate
 ```bash
 frontend/.output/public
 ```
+
+Внутри `npm run generate` также готовятся WebP-исходники и создаются статические
+`_ipx`-варианты для ключевых `NuxtImg`-изображений. После сборки в
+`frontend/.output/public/_ipx` должны быть WebP-файлы для главной страницы и страницы
+отзывов.
 
 Перед выкладкой желательно выполнить проверку типов:
 
@@ -202,8 +244,9 @@ curl https://example.com/api/health
 curl -I https://example.com/
 ```
 
-В браузере откройте `https://example.com/`: страница должна загрузиться, запросить
-`/api/health` и показать состояние backend-сервиса.
+В браузере откройте `https://example.com/`: главная страница должна загрузиться без
+ошибок изображений. Затем откройте `https://example.com/system-status`: страница должна
+запросить `/api/health` и показать состояние backend-сервиса.
 
 ## 9. Обновление версии
 
@@ -211,12 +254,13 @@ curl -I https://example.com/
 
 1. Получить свежий код на сервере или в CI.
 2. Выполнить `cargo build --release`.
-3. Остановить backend: `sudo systemctl stop piloproject-backend`.
-4. Заменить `/opt/piloproject/backend` новым бинарником.
-5. Запустить backend: `sudo systemctl start piloproject-backend`.
-6. Выполнить `npm ci` и `NUXT_PUBLIC_API_BASE=... npm run generate`.
-7. Обновить `/var/www/piloproject` содержимым `frontend/.output/public`.
-8. Проверить `/api/health` и главную страницу.
+3. Применить изменения схемы PostgreSQL, если они есть.
+4. Остановить backend: `sudo systemctl stop piloproject-backend`.
+5. Заменить `/opt/piloproject/backend` новым бинарником.
+6. Запустить backend: `sudo systemctl start piloproject-backend`.
+7. Выполнить `npm ci` и `NUXT_PUBLIC_API_BASE=... npm run generate`.
+8. Обновить `/var/www/piloproject` содержимым `frontend/.output/public`.
+9. Проверить `/api/health`, `/api/reviews` и главную страницу.
 
 ## 10. Частые проблемы
 
@@ -224,6 +268,8 @@ curl -I https://example.com/
   `/api/` или frontend был сгенерирован с неверным `NUXT_PUBLIC_API_BASE`.
 - `curl http://127.0.0.1:8080/api/health` не отвечает: проверьте статус
   `piloproject-backend` и логи `journalctl -u piloproject-backend -e`.
+- Backend падает при старте: проверьте `DATABASE_URL`, доступность PostgreSQL и наличие
+  таблицы `reviews`.
 - После обновления сайт выглядит старым: проверьте, что в `/var/www/piloproject`
   скопирована свежая директория `frontend/.output/public`.
 - HTTPS не работает: проверьте DNS-записи домена, выпуск сертификата и Nginx-конфигурацию.

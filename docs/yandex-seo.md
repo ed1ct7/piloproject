@@ -38,32 +38,33 @@ useHead({
 Яндекс активно использует структурированные данные. Для организации — тип `LocalBusiness`:
 
 ```ts
-useHead({
-  script: [{
-    type: 'application/ld+json',
-    innerHTML: JSON.stringify({
-      '@context': 'https://schema.org',
-      '@type': 'LocalBusiness',
-      name: 'Пилорама Разбегаево',
-      telephone: '+7...',
-      address: {
-        '@type': 'PostalAddress',
-        addressLocality: 'Разбегаево',
-        addressRegion: 'Ленинградская область',
-      },
-      aggregateRating: {
-        '@type': 'AggregateRating',
-        ratingValue: '4.6',
-        reviewCount: '11',
-      },
-    }),
-  }],
+useSchemaOrg([
+  defineLocalBusiness({
+    '@id': 'https://pilorama-razbegaevo.clients.site/#localbusiness',
+    '@type': 'HomeAndConstructionBusiness',
+    name: 'Пилорама Разбегаево',
+    url: 'https://pilorama-razbegaevo.clients.site/',
+    telephone: '+7...',
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: 'Разбегаево',
+      addressRegion: 'Ленинградская область',
+      addressCountry: 'RU',
+    },
+    aggregateRating: {
+      '@type': 'AggregateRating',
+      ratingValue: '4.6',
+      reviewCount: '11',
+    },
+  }),
 })
 ```
 
 Другие полезные типы:
 - `Product` + `Offer` — карточки товаров.
 - `BreadcrumbList` — хлебные крошки.
+
+В проекте разметка ведется через `nuxt-schema-org`, а не ручной JSON-LD в `useHead`.
 
 ## 4. Региональность и геозависимое ранжирование
 
@@ -103,10 +104,22 @@ Clean-param: utm_source&utm_medium&sort /
 
 - **`Clean-param`** — уникальная директива Яндекса, убирает дубли по GET-параметрам. Google её игнорирует.
 - **`Host`** — устарела, Яндекс перестал её учитывать (~2018). Вместо неё — 301-редирект + `canonical` на главное зеркало.
+- В проекте `robots.txt` генерируется модулем `@nuxtjs/robots` из `frontend/nuxt.config.ts`; ручной файл в `frontend/public` не нужен.
 
 ## 6. sitemap.xml
 
-Карта сайта со всеми индексируемыми URL. В Nuxt генерируется модулем `@nuxtjs/sitemap`. Файл указывается в `robots.txt` и загружается в Яндекс.Вебмастер.
+Карта сайта со всеми индексируемыми URL. В текущей конфигурации проекта она генерируется
+модулем `@nuxtjs/sitemap` из списка `indexableRoutes` в `frontend/utils/seo-routes.ts`.
+Этот же список используется для SSG-пререндеринга в `frontend/nuxt.config.ts`, чтобы
+публичные страницы и sitemap не расходились между собой.
+
+Для статической сборки Nuxt дополнительно есть:
+
+- `frontend/server/plugins/sitemap-sources.ts` — передает `indexableRoutes` в `@nuxtjs/sitemap`;
+- `frontend/modules/static-sitemap.ts` — явно добавляет `sitemap.xml` в пререндер.
+
+После добавления новой индексируемой страницы ее URL нужно добавить в `indexableRoutes`,
+проверить `npm run generate` и загрузить обновленную карту в Яндекс.Вебмастер.
 
 ## 7. Подтверждение в Яндекс.Вебмастере
 
@@ -123,15 +136,18 @@ Clean-param: utm_source&utm_medium&sort /
 Яндекс учитывает скорость и стабильность страницы не меньше Google.
 
 - **Core Web Vitals**: LCP, CLS, INP.
-- Ленивая загрузка изображений: `loading="lazy"`; современные форматы WebP/AVIF (в Nuxt — модуль `@nuxt/image`).
+- Ленивая загрузка изображений: `loading="lazy"`; современные форматы WebP/AVIF генерируются через `@nuxt/image`.
+- Для SSG критичные изображения главной и страницы отзывов готовятся в два шага внутри `npm run generate`:
+  `frontend/scripts/prepare-static-images.mjs` создает WebP-исходники, а
+  `frontend/scripts/generate-static-images.mjs` создает статические `_ipx`-варианты из HTML.
 - SSG уже даёт быстрый первый рендер — плюс к оценке.
 - Обязательны HTTPS и ЧПУ-URL (`/tovary/doska`, а не `?id=123`).
 
-## Полезные модули Nuxt
+## Текущие SEO-модули Nuxt
 
-| Задача                     | Модуль            |
+| Задача                     | Модуль / настройка |
 |----------------------------|-------------------|
-| Карта сайта                | `@nuxtjs/sitemap` |
-| robots.txt                 | `@nuxtjs/robots`  |
-| Микроразметка Schema.org   | `nuxt-schema-org` |
-| Оптимизация изображений    | `@nuxt/image`     |
+| Карта сайта                | `@nuxtjs/sitemap` + `frontend/utils/seo-routes.ts` |
+| robots.txt                 | `@nuxtjs/robots` в `frontend/nuxt.config.ts` |
+| Микроразметка Schema.org   | `nuxt-schema-org` + `useSchemaOrg` на страницах |
+| Оптимизация изображений    | `@nuxt/image` + `NuxtImg` для ключевых изображений |

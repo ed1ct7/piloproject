@@ -26,7 +26,7 @@
       </div>
       <div class="site-footer__links">
         <NuxtLink class="text-link" to="/kontakty">Связаться и рассчитать заказ</NuxtLink>
-        <NuxtLink class="text-link" to="/system-status">Состояние системы</NuxtLink>
+        <NuxtLink class="text-link" to="/system-status" rel="nofollow">Состояние системы</NuxtLink>
       </div>
     </footer>
   </div>

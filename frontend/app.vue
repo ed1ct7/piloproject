@@ -3,7 +3,13 @@ useHead({
   htmlAttrs: {
     lang: 'ru',
   },
-  titleTemplate: title => title ? `${title} · PiloProject` : 'PiloProject',
+  titleTemplate: (title) => {
+    if (!title) {
+      return 'Пилорама Разбегаево'
+    }
+
+    return title.includes('Пилорама Разбегаево') ? title : `${title} · Пилорама Разбегаево`
+  },
 })
 </script>
 

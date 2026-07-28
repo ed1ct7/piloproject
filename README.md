@@ -11,10 +11,12 @@
 
 | Часть     | Технологии                                                   |
 |-----------|--------------------------------------------------------------|
-| Фронтенд  | Vue 3 + Vite + Nuxt 3 (SSG через `nuxt generate`), TypeScript |
+| Фронтенд  | Vue 3 + Vite + Nuxt 3 (SSG через `nuxt generate`), TypeScript, Nuxt SEO-модули |
 | Бэкенд    | Rust, Axum, Tokio, Serde, tower-http (CORS), SeaORM, PostgreSQL |
 
 Nuxt 3 включает в себя Vue 3 и Vite; SSG — это `generate` Nuxt (полный статический пререндер).
+Карта сайта, `robots.txt`, Schema.org-разметка и оптимизация изображений настроены через
+`@nuxtjs/sitemap`, `@nuxtjs/robots`, `nuxt-schema-org` и `@nuxt/image`.
 
 ## Требования
 
@@ -77,7 +79,7 @@ npm run dev        # http://localhost:3000
 |-------------|------------------------------------------------------|
 | `dev`       | Dev-сервер с HMR на `http://localhost:3000`          |
 | `build`     | Сборка Nuxt (серверный/Node-режим)                   |
-| `generate`  | Статическая сборка (SSG) → `frontend/.output/public` |
+| `generate`  | Подготовка WebP-исходников, SSG и статические `_ipx`-варианты → `frontend/.output/public` |
 | `preview`   | Локальный просмотр собранного сайта                  |
 | `typecheck` | Проверка типов (`vue-tsc`, strict)                   |
 
@@ -183,15 +185,29 @@ npm run typecheck  # проверка типов фронтенда
 ```
 piloproject/
 ├── frontend/                 # приложение Nuxt 3 (статический сайт)
-│   ├── nuxt.config.ts        # SSG, nitro preset static, runtimeConfig.public.apiBase
+│   ├── nuxt.config.ts        # SSG, SEO-модули, изображения, runtimeConfig.public.apiBase
 │   ├── app.vue
 │   ├── layouts/
 │   │   └── default.vue       # общий каркас и основная навигация
 │   ├── pages/
+│   │   ├── contacts.vue      # контакты, публичный маршрут /kontakty
+│   │   ├── delivery.vue      # доставка, публичный маршрут /dostavka
 │   │   ├── index.vue         # главная
+│   │   ├── lumber.vue        # пиломатериалы, публичный маршрут /pilomaterialy
+│   │   ├── reviews.vue       # отзывы, публичный маршрут /otzyvy
 │   │   └── system-status.vue # состояние системы: проверка связки через useHealth()
+│   ├── modules/
+│   │   └── static-sitemap.ts # пререндер sitemap.xml
+│   ├── server/
+│   │   └── plugins/
+│   │       └── sitemap-sources.ts # источники URL для @nuxtjs/sitemap
+│   ├── scripts/
+│   │   ├── generate-static-images.mjs # WebP-варианты для статических Nuxt Image URL
+│   │   └── prepare-static-images.mjs  # подготовка WebP-исходников перед generate
+│   ├── utils/
+│   │   └── seo-routes.ts     # единый список индексируемых маршрутов
 │   ├── composables/
-│   │   └── useApi.ts         # useApiBase(), useHealth() → GET /api/health
+│   │   └── useApi.ts         # useApiBase(), useHealth(), CRUD отзывов
 │   ├── package.json
 │   └── tsconfig.json
 ├── backend/                  # API на Rust Axum

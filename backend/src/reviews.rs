@@ -412,6 +412,7 @@ mod tests {
         body::{to_bytes, Body},
         http::Request,
     };
+    use sea_orm::{DbBackend, MockDatabase, MockExecResult};
     use std::{
         collections::BTreeMap,
         sync::{
@@ -527,6 +528,26 @@ mod tests {
         response_json(response).await
     }
 
+    fn review_model(id: i32, author_name: &str, text: &str, rating: i32) -> entity::Model {
+        let now = Utc::now();
+
+        entity::Model {
+            id,
+            author_name: author_name.to_owned(),
+            text: text.to_owned(),
+            rating,
+            created_at: now,
+            updated_at: now,
+        }
+    }
+
+    fn assert_single_statement_contains(repo: SeaOrmReviewRepository, expected: &str) {
+        let log = repo.db.into_transaction_log();
+
+        assert_eq!(log.len(), 1);
+        assert!(log[0].statements()[0].sql.contains(expected));
+    }
+
     #[tokio::test]
     async fn create_review_returns_created_review() {
         let app = test_app(MemoryReviewRepository::default());
@@ -564,6 +585,52 @@ mod tests {
                     .header("content-type", "application/json")
                     .body(Body::from(
                         r#"{"authorName":"Анна","text":"Текст","rating":6}"#,
+                    ))
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        assert_eq!(response.status(), StatusCode::UNPROCESSABLE_ENTITY);
+
+        let body = response_json(response).await;
+        assert_eq!(body["error"], "validation_error");
+    }
+
+    #[tokio::test]
+    async fn create_review_rejects_empty_author_name() {
+        let app = test_app(MemoryReviewRepository::default());
+        let response = app
+            .oneshot(
+                Request::builder()
+                    .method("POST")
+                    .uri("/api/reviews")
+                    .header("content-type", "application/json")
+                    .body(Body::from(
+                        r#"{"authorName":"   ","text":"Текст","rating":5}"#,
+                    ))
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        assert_eq!(response.status(), StatusCode::UNPROCESSABLE_ENTITY);
+
+        let body = response_json(response).await;
+        assert_eq!(body["error"], "validation_error");
+    }
+
+    #[tokio::test]
+    async fn create_review_rejects_empty_text() {
+        let app = test_app(MemoryReviewRepository::default());
+        let response = app
+            .oneshot(
+                Request::builder()
+                    .method("POST")
+                    .uri("/api/reviews")
+                    .header("content-type", "application/json")
+                    .body(Body::from(
+                        r#"{"authorName":"Анна","text":"   ","rating":5}"#,
                     ))
                     .unwrap(),
             )
@@ -682,6 +749,45 @@ mod tests {
     }
 
     #[tokio::test]
+    async fn update_review_rejects_invalid_rating() {
+        let app = test_app(MemoryReviewRepository::default());
+        let response = app
+            .oneshot(
+                Request::builder()
+                    .method("PUT")
+                    .uri("/api/reviews/1")
+                    .header("content-type", "application/json")
+                    .body(Body::from(r#"{"rating":0}"#))
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        assert_eq!(response.status(), StatusCode::UNPROCESSABLE_ENTITY);
+
+        let body = response_json(response).await;
+        assert_eq!(body["error"], "validation_error");
+    }
+
+    #[tokio::test]
+    async fn update_review_returns_not_found() {
+        let app = test_app(MemoryReviewRepository::default());
+        let response = app
+            .oneshot(
+                Request::builder()
+                    .method("PUT")
+                    .uri("/api/reviews/404")
+                    .header("content-type", "application/json")
+                    .body(Body::from(r#"{"text":"Новый текст"}"#))
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        assert_eq!(response.status(), StatusCode::NOT_FOUND);
+    }
+
+    #[tokio::test]
     async fn delete_review_returns_no_content() {
         let store = MemoryReviewRepository::default();
         let app = test_app(store);
@@ -716,5 +822,176 @@ mod tests {
             .unwrap();
 
         assert_eq!(response.status(), StatusCode::NOT_FOUND);
+    }
+
+    #[tokio::test]
+    async fn sea_orm_repository_creates_review() {
+        let created_model = review_model(7, "Анна", "Отличная доска", 5);
+        let db = MockDatabase::new(DbBackend::Postgres)
+            .append_query_results([[created_model]])
+            .into_connection();
+        let repo = SeaOrmReviewRepository::new(db);
+
+        let review = repo
+            .create(NewReview {
+                author_name: "Анна".to_owned(),
+                text: "Отличная доска".to_owned(),
+                rating: 5,
+            })
+            .await
+            .unwrap();
+
+        assert_eq!(review.id, 7);
+        assert_eq!(review.author_name, "Анна");
+        assert_eq!(review.text, "Отличная доска");
+        assert_eq!(review.rating, 5);
+        assert_single_statement_contains(repo, r#"INSERT INTO "reviews""#);
+    }
+
+    #[tokio::test]
+    async fn sea_orm_repository_lists_reviews() {
+        let first_model = review_model(1, "Анна", "Отличная доска", 5);
+        let second_model = review_model(2, "Игорь", "Быстро привезли", 4);
+        let db = MockDatabase::new(DbBackend::Postgres)
+            .append_query_results([vec![first_model, second_model]])
+            .into_connection();
+        let repo = SeaOrmReviewRepository::new(db);
+
+        let reviews = repo.list().await.unwrap();
+
+        assert_eq!(reviews.len(), 2);
+        assert_eq!(reviews[0].author_name, "Анна");
+        assert_eq!(reviews[1].author_name, "Игорь");
+
+        let log = repo.db.into_transaction_log();
+        assert_eq!(log.len(), 1);
+        assert!(log[0].statements()[0]
+            .sql
+            .contains(r#"SELECT "reviews"."id""#));
+        assert!(log[0].statements()[0]
+            .sql
+            .contains(r#"ORDER BY "reviews"."created_at" DESC"#));
+    }
+
+    #[tokio::test]
+    async fn sea_orm_repository_gets_review() {
+        let db = MockDatabase::new(DbBackend::Postgres)
+            .append_query_results([[review_model(3, "Анна", "Хороший брус", 5)]])
+            .into_connection();
+        let repo = SeaOrmReviewRepository::new(db);
+
+        let review = repo.get(3).await.unwrap();
+
+        assert_eq!(review.id, 3);
+        assert_eq!(review.author_name, "Анна");
+        assert_eq!(review.rating, 5);
+
+        let log = repo.db.into_transaction_log();
+        assert_eq!(log.len(), 1);
+        assert!(log[0].statements()[0]
+            .sql
+            .contains(r#"WHERE "reviews"."id" = $1"#));
+    }
+
+    #[tokio::test]
+    async fn sea_orm_repository_get_returns_not_found() {
+        let db = MockDatabase::new(DbBackend::Postgres)
+            .append_query_results([Vec::<entity::Model>::new()])
+            .into_connection();
+        let repo = SeaOrmReviewRepository::new(db);
+
+        let result = repo.get(404).await;
+
+        assert!(matches!(result, Err(ReviewStoreError::NotFound)));
+        assert_single_statement_contains(repo, r#"WHERE "reviews"."id" = $1"#);
+    }
+
+    #[tokio::test]
+    async fn sea_orm_repository_updates_review() {
+        let existing_model = review_model(4, "Анна", "Хороший брус", 5);
+        let updated_model = review_model(4, "Анна", "Обновленный отзыв", 4);
+        let db = MockDatabase::new(DbBackend::Postgres)
+            .append_query_results([vec![existing_model], vec![updated_model]])
+            .into_connection();
+        let repo = SeaOrmReviewRepository::new(db);
+
+        let review = repo
+            .update(
+                4,
+                ReviewPatch {
+                    author_name: None,
+                    text: Some("Обновленный отзыв".to_owned()),
+                    rating: Some(4),
+                },
+            )
+            .await
+            .unwrap();
+
+        assert_eq!(review.id, 4);
+        assert_eq!(review.author_name, "Анна");
+        assert_eq!(review.text, "Обновленный отзыв");
+        assert_eq!(review.rating, 4);
+
+        let log = repo.db.into_transaction_log();
+        assert_eq!(log.len(), 2);
+        assert!(log[0].statements()[0]
+            .sql
+            .contains(r#"SELECT "reviews"."id""#));
+        assert!(log[1].statements()[0]
+            .sql
+            .contains(r#"UPDATE "reviews" SET"#));
+    }
+
+    #[tokio::test]
+    async fn sea_orm_repository_update_returns_not_found() {
+        let db = MockDatabase::new(DbBackend::Postgres)
+            .append_query_results([Vec::<entity::Model>::new()])
+            .into_connection();
+        let repo = SeaOrmReviewRepository::new(db);
+
+        let result = repo
+            .update(
+                404,
+                ReviewPatch {
+                    author_name: Some("Анна".to_owned()),
+                    text: None,
+                    rating: None,
+                },
+            )
+            .await;
+
+        assert!(matches!(result, Err(ReviewStoreError::NotFound)));
+        assert_single_statement_contains(repo, r#"WHERE "reviews"."id" = $1"#);
+    }
+
+    #[tokio::test]
+    async fn sea_orm_repository_deletes_review() {
+        let db = MockDatabase::new(DbBackend::Postgres)
+            .append_exec_results([MockExecResult {
+                last_insert_id: 0,
+                rows_affected: 1,
+            }])
+            .into_connection();
+        let repo = SeaOrmReviewRepository::new(db);
+
+        repo.delete(5).await.unwrap();
+
+        assert_single_statement_contains(repo, r#"DELETE FROM "reviews""#);
+    }
+
+    #[tokio::test]
+    async fn sea_orm_repository_delete_returns_not_found() {
+        let db = MockDatabase::new(DbBackend::Postgres)
+            .append_exec_results([MockExecResult {
+                last_insert_id: 0,
+                rows_affected: 0,
+            }])
+            .into_connection();
+        let repo = SeaOrmReviewRepository::new(db);
+
+        let result = repo.delete(404).await;
+
+        assert!(matches!(result, Err(ReviewStoreError::NotFound)));
+        assert_single_statement_contains(repo, r#"DELETE FROM "reviews""#);
     }
 }

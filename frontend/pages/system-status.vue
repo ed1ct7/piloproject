@@ -2,6 +2,7 @@
 useSeoMeta({
   title: 'Состояние системы',
   description: 'Проверка доступности backend-сервиса PiloProject.',
+  robots: 'noindex, nofollow',
 })
 
 const apiBase = useApiBase()

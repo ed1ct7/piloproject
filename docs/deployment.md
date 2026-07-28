@@ -168,6 +168,11 @@ NUXT_PUBLIC_API_BASE=https://example.com npm run generate
 frontend/.output/public
 ```
 
+Внутри `npm run generate` также готовятся WebP-исходники и создаются статические
+`_ipx`-варианты для ключевых `NuxtImg`-изображений. После сборки в
+`frontend/.output/public/_ipx` должны быть WebP-файлы для главной страницы и страницы
+отзывов.
+
 Перед выкладкой желательно выполнить проверку типов:
 
 ```bash
@@ -239,8 +244,9 @@ curl https://example.com/api/health
 curl -I https://example.com/
 ```
 
-В браузере откройте `https://example.com/`: страница должна загрузиться, запросить
-`/api/health` и показать состояние backend-сервиса.
+В браузере откройте `https://example.com/`: главная страница должна загрузиться без
+ошибок изображений. Затем откройте `https://example.com/system-status`: страница должна
+запросить `/api/health` и показать состояние backend-сервиса.
 
 ## 9. Обновление версии
 

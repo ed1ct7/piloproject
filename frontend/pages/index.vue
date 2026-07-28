@@ -68,51 +68,54 @@ useSeoMeta({
 useHead({
   htmlAttrs: { lang: 'ru' },
   link: [{ rel: 'canonical', href: 'https://pilorama-razbegaevo.clients.site/' }],
-  script: [
-    {
-      type: 'application/ld+json',
-      innerHTML: JSON.stringify({
-        '@context': 'https://schema.org',
-        '@type': 'LocalBusiness',
-        name: 'Пилорама Разбегаево',
-        url: 'https://pilorama-razbegaevo.clients.site/',
-        image: 'https://pilorama-razbegaevo.clients.site/images/sawmill-hero.png',
-        address: {
-          '@type': 'PostalAddress',
-          addressLocality: 'Разбегаево',
-          addressRegion: 'Ленинградская область',
-          addressCountry: 'RU',
-        },
-        aggregateRating: {
-          '@type': 'AggregateRating',
-          ratingValue: '5.0',
-          reviewCount: '11',
-        },
-        makesOffer: products.map((product) => ({
-          '@type': 'Offer',
-          itemOffered: {
-            '@type': 'Product',
-            name: product.title,
-            description: product.text,
-          },
-        })),
-      }),
-    },
-  ],
 })
+
+useSchemaOrg([
+  defineLocalBusiness({
+    '@id': 'https://pilorama-razbegaevo.clients.site/#localbusiness',
+    '@type': 'HomeAndConstructionBusiness',
+    name: 'Пилорама Разбегаево',
+    url: 'https://pilorama-razbegaevo.clients.site/',
+    image: 'https://pilorama-razbegaevo.clients.site/images/sawmill-hero.webp',
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: 'Разбегаево',
+      addressRegion: 'Ленинградская область',
+      addressCountry: 'RU',
+    },
+    aggregateRating: {
+      '@type': 'AggregateRating',
+      ratingValue: '5.0',
+      reviewCount: '11',
+    },
+    makesOffer: products.map((product) =>
+      defineOffer({
+        itemOffered: defineProduct({
+          name: product.title,
+          description: product.text,
+        }),
+      }),
+    ),
+  }),
+])
 </script>
 
 <template>
   <main>
     <section class="hero">
-      <img
+      <NuxtImg
         class="hero__image"
-        src="/images/sawmill-hero.png"
+        src="/images/sawmill-hero.webp"
         alt="Штабели доски и бруса на территории пилорамы"
-        width="1536"
-        height="1024"
+        width="1755"
+        height="896"
+        sizes="xs:100vw sm:100vw md:100vw lg:100vw xl:100vw xxl:100vw"
+        densities="1"
+        format="webp"
+        loading="eager"
+        preload
         fetchpriority="high"
-      >
+      />
       <div class="hero__shade" aria-hidden="true" />
 
       <div class="hero__content">

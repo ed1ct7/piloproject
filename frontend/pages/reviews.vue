@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { CreateReviewPayload, Review, UpdateReviewPayload } from '~/composables/useApi'
+import type { CreateReviewPayload, Review } from '~/composables/useApi'
 
 definePageMeta({
   path: '/otzyvy',
@@ -56,13 +56,12 @@ const trustPoints = [
 
 const ratingOptions = [5, 4, 3, 2, 1]
 const starOptions = [1, 2, 3, 4, 5]
-const { listReviews, createReview, updateReview, deleteReview } = useReviewsApi()
+const { listReviews, createReview } = useReviewsApi()
 
 const reviews = ref<Review[]>([])
 const hasLoadedFromApi = ref(false)
 const isLoading = ref(false)
 const isSubmitting = ref(false)
-const editingId = ref<number | null>(null)
 const feedback = reactive<{
   type: 'success' | 'error' | ''
   message: string
@@ -71,11 +70,6 @@ const feedback = reactive<{
   message: '',
 })
 const form = reactive<CreateReviewPayload>({
-  authorName: '',
-  text: '',
-  rating: 5,
-})
-const editForm = reactive<CreateReviewPayload>({
   authorName: '',
   text: '',
   rating: 5,
@@ -129,10 +123,6 @@ const ratingBars = computed(() =>
 
 const canSubmitReview = computed(
   () => Boolean(form.authorName.trim()) && Boolean(form.text.trim()) && isValidRating(form.rating),
-)
-
-const canSubmitEdit = computed(
-  () => Boolean(editForm.authorName.trim()) && Boolean(editForm.text.trim()) && isValidRating(editForm.rating),
 )
 
 useSeoMeta({
@@ -223,53 +213,6 @@ async function submitReview() {
   }
 }
 
-function startEditing(review: ReviewItem) {
-  editingId.value = review.id
-  editForm.authorName = review.authorName
-  editForm.text = review.text
-  editForm.rating = review.rating
-  clearFeedback()
-}
-
-function cancelEditing() {
-  editingId.value = null
-  resetEditForm()
-}
-
-async function submitEdit(review: ReviewItem) {
-  const payload = normalizeUpdatePayload(editForm)
-
-  if (!payload) {
-    setFeedback('error', 'Для изменения нужны имя, текст и оценка от 1 до 5.')
-    return
-  }
-
-  try {
-    const updatedReview = await updateReview(review.id, payload)
-    reviews.value = reviews.value.map((item: Review) => (item.id === updatedReview.id ? updatedReview : item))
-    cancelEditing()
-    setFeedback('success', 'Отзыв обновлен.')
-  }
-  catch {
-    setFeedback('error', 'Не удалось обновить отзыв.')
-  }
-}
-
-async function removeReview(review: ReviewItem) {
-  if (import.meta.client && !window.confirm(`Удалить отзыв от ${review.authorName}?`)) {
-    return
-  }
-
-  try {
-    await deleteReview(review.id)
-    reviews.value = reviews.value.filter((item: Review) => item.id !== review.id)
-    setFeedback('success', 'Отзыв удален.')
-  }
-  catch {
-    setFeedback('error', 'Не удалось удалить отзыв.')
-  }
-}
-
 function normalizeCreatePayload(payload: CreateReviewPayload): CreateReviewPayload | null {
   const authorName = payload.authorName.trim()
   const text = payload.text.trim()
@@ -285,24 +228,10 @@ function normalizeCreatePayload(payload: CreateReviewPayload): CreateReviewPaylo
   }
 }
 
-function normalizeUpdatePayload(payload: CreateReviewPayload): UpdateReviewPayload | null {
-  return normalizeCreatePayload(payload)
-}
-
-function canManageReview(review: ReviewItem) {
-  return hasLoadedFromApi.value && !review.isFallback
-}
-
 function resetForm() {
   form.authorName = ''
   form.text = ''
   form.rating = 5
-}
-
-function resetEditForm() {
-  editForm.authorName = ''
-  editForm.text = ''
-  editForm.rating = 5
 }
 
 function setFeedback(type: 'success' | 'error', message: string) {
@@ -444,88 +373,7 @@ function ratingLabel(value: number) {
                 <time :datetime="review.createdAt">{{ formatDate(review.createdAt) }}</time>
               </header>
 
-              <form
-                v-if="editingId === review.id && canManageReview(review)"
-                class="review-edit"
-                @submit.prevent="submitEdit(review)"
-              >
-                <label>
-                  <span>Имя</span>
-                  <input
-                    v-model="editForm.authorName"
-                    name="editAuthorName"
-                    maxlength="80"
-                    autocomplete="name"
-                  >
-                </label>
-
-                <label>
-                  <span>Отзыв</span>
-                  <textarea
-                    v-model="editForm.text"
-                    name="editText"
-                    rows="4"
-                    maxlength="1000"
-                  />
-                </label>
-
-                <div class="rating-input" aria-label="Оценка">
-                  <label
-                    v-for="rating in ratingOptions"
-                    :key="rating"
-                    :class="{ 'is-active': editForm.rating === rating }"
-                  >
-                    <input
-                      v-model.number="editForm.rating"
-                      type="radio"
-                      name="editRating"
-                      :value="rating"
-                    >
-                    <span>{{ rating }}</span>
-                  </label>
-                </div>
-
-                <div class="public-review__actions">
-                  <button
-                    class="button button--dark"
-                    type="submit"
-                    :disabled="!canSubmitEdit"
-                  >
-                    Сохранить
-                  </button>
-                  <button
-                    class="text-button"
-                    type="button"
-                    @click="cancelEditing"
-                  >
-                    Отмена
-                  </button>
-                </div>
-              </form>
-
-              <template v-else>
-                <p>{{ review.text }}</p>
-
-                <div
-                  v-if="canManageReview(review)"
-                  class="public-review__actions"
-                >
-                  <button
-                    class="text-button"
-                    type="button"
-                    @click="startEditing(review)"
-                  >
-                    Изменить
-                  </button>
-                  <button
-                    class="text-button text-button--danger"
-                    type="button"
-                    @click="removeReview(review)"
-                  >
-                    Удалить
-                  </button>
-                </div>
-              </template>
+              <p>{{ review.text }}</p>
             </article>
           </div>
         </section>

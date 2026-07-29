@@ -34,6 +34,9 @@ Nuxt 3 включает в себя Vue 3 и Vite; SSG — это `generate` Nux
 ```bash
 cd backend
 export DATABASE_URL=postgres://postgres:postgres@localhost:5432/piloproject
+export ADMIN_USERNAME=admin
+export ADMIN_PASSWORD=change-me
+export ALLOWED_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
 psql "$DATABASE_URL" -f schema.sql
 cargo run          # http://localhost:8080
 ```
@@ -43,6 +46,9 @@ cargo run          # http://localhost:8080
 ```powershell
 cd backend
 $env:DATABASE_URL = "postgres://postgres:postgres@localhost:5432/piloproject"
+$env:ADMIN_USERNAME = "admin"
+$env:ADMIN_PASSWORD = "change-me"
+$env:ALLOWED_ORIGINS = "http://localhost:3000,http://127.0.0.1:3000"
 psql $env:DATABASE_URL -f schema.sql
 cargo run          # http://localhost:8080
 ```
@@ -65,11 +71,17 @@ npm run dev        # http://localhost:3000
 |------------------------|------------------------------------------|-------------------------|
 | `NUXT_PUBLIC_API_BASE` | Базовый URL backend, читается фронтендом | `http://localhost:8080` |
 | `DATABASE_URL`         | PostgreSQL-подключение для backend       | нет, задается явно      |
+| `ADMIN_USERNAME`       | Логин для админки и модерации отзывов    | нет, задается явно      |
+| `ADMIN_PASSWORD`       | Пароль для админки и модерации отзывов   | нет, задается явно      |
+| `ALLOWED_ORIGINS`      | Разрешенные CORS origins для backend через запятую | `localhost`, `127.0.0.1`, production-домен |
 
 `NUXT_PUBLIC_API_BASE` попадает в runtime-config `public.apiBase` (см.
 `frontend/nuxt.config.ts`) и используется в `composables/useApi.ts`. `DATABASE_URL`
-читает backend при старте для подключения к PostgreSQL. Переменные можно задать через
-окружение или файл `.env` (он в `.gitignore` и в репозиторий не коммитится).
+читает backend при старте для подключения к PostgreSQL. `ADMIN_USERNAME` и
+`ADMIN_PASSWORD` нужны backend для проверки Basic Auth на защищенных операциях админки. `ALLOWED_ORIGINS`
+ограничивает браузерные запросы к API; wildcard `*` намеренно не используется.
+Переменные можно задать через окружение или файл `.env` (он в `.gitignore` и в
+репозиторий не коммитится).
 
 ## Скрипты
 
@@ -112,11 +124,12 @@ npm run dev        # http://localhost:3000
 
 | Метод    | Путь               | Назначение            |
 |----------|--------------------|-----------------------|
+| `GET`    | `/api/admin/session` | Проверить логин администратора |
 | `POST`   | `/api/reviews`     | Создать отзыв         |
 | `GET`    | `/api/reviews`     | Получить список       |
 | `GET`    | `/api/reviews/:id` | Получить один отзыв   |
-| `PUT`    | `/api/reviews/:id` | Изменить отзыв        |
-| `DELETE` | `/api/reviews/:id` | Удалить отзыв         |
+| `PUT`    | `/api/reviews/:id` | Изменить отзыв, нужен Basic Auth администратора |
+| `DELETE` | `/api/reviews/:id` | Удалить отзыв, нужен Basic Auth администратора |
 
 Пример создания:
 
@@ -128,8 +141,13 @@ npm run dev        # http://localhost:3000
 }
 ```
 
-CORS открыт для всех источников, методов и заголовков — чтобы статический сайт мог
-обращаться к API с любого хоста.
+CORS ограничен списком `ALLOWED_ORIGINS`; по умолчанию разрешены локальные dev-адреса и
+`https://pilorama-razbegaevo.clients.site`. Backend добавляет security headers и ограничивает JSON-тело
+запроса 16 КБ. Поля отзывов ограничены: `authorName` до 80 символов, `text` до 1000 символов.
+
+Админская страница доступна по `/admin`. Она не добавлена в sitemap, закрыта от
+индексации и использует `ADMIN_USERNAME` / `ADMIN_PASSWORD` через backend API. Basic Auth хранится
+только в памяти вкладки и сбрасывается при обновлении страницы.
 
 ## Сборка и деплой
 
@@ -158,6 +176,9 @@ npm run generate
 cd backend
 cargo build --release
 export DATABASE_URL=postgres://postgres:postgres@localhost:5432/piloproject
+export ADMIN_USERNAME=admin
+export ADMIN_PASSWORD=change-me
+export ALLOWED_ORIGINS=https://pilorama-razbegaevo.clients.site
 ./target/release/backend
 ```
 
@@ -165,6 +186,8 @@ export DATABASE_URL=postgres://postgres:postgres@localhost:5432/piloproject
 под systemd или в Docker-контейнере.
 
 ## Разработка
+
+Сводка по hardening и проверкам безопасности: `docs/security.md`.
 
 Перед коммитом:
 
@@ -191,6 +214,7 @@ piloproject/
 │   │   └── default.vue       # общий каркас и основная навигация
 │   ├── pages/
 │   │   ├── contacts.vue      # контакты, публичный маршрут /kontakty
+│   │   ├── admin.vue         # админка отзывов, публичный маршрут /admin, noindex
 │   │   ├── delivery.vue      # доставка, публичный маршрут /dostavka
 │   │   ├── index.vue         # главная
 │   │   ├── lumber.vue        # пиломатериалы, публичный маршрут /pilomaterialy
@@ -230,6 +254,8 @@ piloproject/
   `http://localhost:8080/api/health`, а `NUXT_PUBLIC_API_BASE` указывает на него.
 - **Backend не стартует из-за `DATABASE_URL`.** Нужно поднять PostgreSQL, создать БД,
   задать `DATABASE_URL` и применить `backend/schema.sql`.
+- **Backend не стартует из-за админки.** Задайте `ADMIN_USERNAME` и `ADMIN_PASSWORD`;
+  они нужны для `/admin` и защищенных операций модерации.
 - **Порт 8080 или 3000 занят.** Другой процесс держит порт. Освободить его или сменить
   порт (для фронтенда — переменной окружения `PORT` у `npm run dev`).
 - **`cargo` не найден.** Rust не установлен — поставить тулчейн через

@@ -105,6 +105,7 @@ Clean-param: utm_source&utm_medium&sort /
 - **`Clean-param`** — уникальная директива Яндекса, убирает дубли по GET-параметрам. Google её игнорирует.
 - **`Host`** — устарела, Яндекс перестал её учитывать (~2018). Вместо неё — 301-редирект + `canonical` на главное зеркало.
 - В проекте `robots.txt` генерируется модулем `@nuxtjs/robots` из `frontend/nuxt.config.ts`; ручной файл в `frontend/public` не нужен.
+- Служебные страницы `/admin` и `/system-status` закрыты от индексации и не должны попадать в sitemap.
 
 ## 6. sitemap.xml
 

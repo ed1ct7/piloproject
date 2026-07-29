@@ -1,6 +1,26 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import { indexableRoutes, siteUrl } from './utils/seo-routes'
 
+const securityHeaders = {
+  'Content-Security-Policy': [
+    "default-src 'self'",
+    "base-uri 'self'",
+    "connect-src 'self' http://localhost:8080 http://127.0.0.1:8080 https://pilorama-razbegaevo.clients.site",
+    "font-src 'self' data:",
+    "form-action 'self'",
+    "frame-ancestors 'none'",
+    "img-src 'self' data: https:",
+    "media-src 'self'",
+    "object-src 'none'",
+    "script-src 'self' 'unsafe-inline'",
+    "style-src 'self' 'unsafe-inline'",
+  ].join('; '),
+  'Permissions-Policy': 'camera=(), microphone=(), geolocation=(), payment=()',
+  'Referrer-Policy': 'strict-origin-when-cross-origin',
+  'X-Content-Type-Options': 'nosniff',
+  'X-Frame-Options': 'DENY',
+}
+
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-24',
   devtools: { enabled: true },
@@ -25,22 +45,28 @@ export default defineNuxtConfig({
       crawlLinks: true,
       routes: [
         ...indexableRoutes.map((route) => route.loc),
+        '/admin',
         '/system-status',
         '/robots.txt',
         '/sitemap.xml',
       ],
     },
   },
+  routeRules: {
+    '/**': {
+      headers: securityHeaders,
+    },
+  },
 
   robots: {
     sitemap: `${siteUrl}/sitemap.xml`,
     allow: '/',
-    disallow: ['/system-status'],
+    disallow: ['/admin', '/system-status'],
     groups: [
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/system-status'],
+        disallow: ['/admin', '/system-status'],
         cleanParam: ['utm_source&utm_medium&utm_campaign&utm_content&utm_term&yclid&gclid&fbclid /'],
       },
     ],
@@ -49,7 +75,7 @@ export default defineNuxtConfig({
   },
 
   sitemap: {
-    exclude: ['/system-status'],
+    exclude: ['/admin', '/system-status'],
     autoLastmod: true,
     credits: false,
   },

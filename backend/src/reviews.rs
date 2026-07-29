@@ -1,17 +1,21 @@
 use async_trait::async_trait;
 use axum::{
     extract::{Path, State},
-    http::StatusCode,
+    http::{header, HeaderMap, StatusCode},
     response::{IntoResponse, Response},
     routing::get,
     Json, Router,
 };
+use base64::{engine::general_purpose::STANDARD as BASE64_STANDARD, Engine as _};
 use chrono::{DateTime, Utc};
 use sea_orm::{
     entity::prelude::*, ActiveModelTrait, DatabaseConnection, DbErr, EntityTrait, QueryOrder, Set,
 };
 use serde::{Deserialize, Serialize};
-use std::sync::Arc;
+use std::{env, sync::Arc};
+
+const MAX_AUTHOR_NAME_CHARS: usize = 80;
+const MAX_REVIEW_TEXT_CHARS: usize = 1000;
 
 pub(crate) mod entity {
     use sea_orm::entity::prelude::*;
@@ -39,6 +43,55 @@ pub(crate) mod entity {
 #[derive(Clone)]
 struct ReviewState {
     store: Arc<dyn ReviewRepository>,
+    admin_credentials: AdminCredentials,
+}
+
+/// Учетные данные администратора для защищенных операций модерации.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub(crate) struct AdminCredentials {
+    username: String,
+    password: String,
+}
+
+impl AdminCredentials {
+    /// Создает учетные данные администратора.
+    ///
+    /// # Параметры
+    ///
+    /// - `username` - имя администратора
+    /// - `password` - пароль администратора
+    ///
+    /// # Возвращаемое значение
+    ///
+    /// Учетные данные для проверки Basic Auth
+    pub(crate) fn new(username: impl Into<String>, password: impl Into<String>) -> Self {
+        Self {
+            username: username.into(),
+            password: password.into(),
+        }
+    }
+
+    /// Создает учетные данные администратора из переменных окружения.
+    ///
+    /// # Возвращаемое значение
+    ///
+    /// Учетные данные из `ADMIN_USERNAME` и `ADMIN_PASSWORD`
+    pub(crate) fn from_env() -> Result<Self, String> {
+        let username = env::var("ADMIN_USERNAME")
+            .map_err(|_| "ADMIN_USERNAME должен быть задан для админки".to_owned())?;
+        let password = env::var("ADMIN_PASSWORD")
+            .map_err(|_| "ADMIN_PASSWORD должен быть задан для админки".to_owned())?;
+
+        if username.trim().is_empty() || password.is_empty() {
+            return Err("ADMIN_USERNAME и ADMIN_PASSWORD не должны быть пустыми".to_owned());
+        }
+
+        Ok(Self::new(username, password))
+    }
+
+    fn matches(&self, username: &str, password: &str) -> bool {
+        secure_eq(&self.username, username) & secure_eq(&self.password, password)
+    }
 }
 
 /// Отзыв, возвращаемый API и хранилищем.
@@ -222,6 +275,12 @@ struct ReviewResponse {
     updated_at: DateTime<Utc>,
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+struct AdminSessionResponse {
+    authenticated: bool,
+}
+
 impl From<Review> for ReviewResponse {
     fn from(review: Review) -> Self {
         Self {
@@ -245,6 +304,7 @@ struct ErrorResponse {
 enum ApiError {
     Database(String),
     NotFound,
+    Unauthorized,
     Validation(String),
 }
 
@@ -259,9 +319,29 @@ impl From<ReviewStoreError> for ApiError {
 
 impl IntoResponse for ApiError {
     fn into_response(self) -> Response {
+        if matches!(self, Self::Unauthorized) {
+            return (
+                StatusCode::UNAUTHORIZED,
+                [(
+                    header::WWW_AUTHENTICATE,
+                    r#"Basic realm="piloproject-admin", charset="UTF-8""#,
+                )],
+                Json(ErrorResponse {
+                    error: "unauthorized",
+                    message: "Неверный логин или пароль администратора".to_owned(),
+                }),
+            )
+                .into_response();
+        }
+
         let (status, error, message) = match self {
             Self::Database(message) => {
-                (StatusCode::INTERNAL_SERVER_ERROR, "database_error", message)
+                eprintln!("database error while handling reviews API: {message}");
+                (
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                    "database_error",
+                    "Не удалось обработать запрос".to_owned(),
+                )
             }
             Self::NotFound => (
                 StatusCode::NOT_FOUND,
@@ -273,6 +353,7 @@ impl IntoResponse for ApiError {
                 "validation_error",
                 message,
             ),
+            Self::Unauthorized => unreachable!("unauthorized обрабатывается выше"),
         };
 
         (status, Json(ErrorResponse { error, message })).into_response()
@@ -288,14 +369,32 @@ impl IntoResponse for ApiError {
 /// # Возвращаемое значение
 ///
 /// Маршрутизатор Axum с CRUD-эндпоинтами отзывов
-pub(crate) fn routes(store: Arc<dyn ReviewRepository>) -> Router {
+pub(crate) fn routes(
+    store: Arc<dyn ReviewRepository>,
+    admin_credentials: AdminCredentials,
+) -> Router {
     Router::new()
+        .route("/api/admin/session", get(admin_session))
         .route("/api/reviews", get(list_reviews).post(create_review))
         .route(
             "/api/reviews/:id",
             get(get_review).put(update_review).delete(delete_review),
         )
-        .with_state(ReviewState { store })
+        .with_state(ReviewState {
+            store,
+            admin_credentials,
+        })
+}
+
+async fn admin_session(
+    State(state): State<ReviewState>,
+    headers: HeaderMap,
+) -> Result<Json<AdminSessionResponse>, ApiError> {
+    require_admin(&headers, &state.admin_credentials)?;
+
+    Ok(Json(AdminSessionResponse {
+        authenticated: true,
+    }))
 }
 
 async fn create_review(
@@ -333,9 +432,12 @@ async fn get_review(
 
 async fn update_review(
     State(state): State<ReviewState>,
+    headers: HeaderMap,
     Path(id): Path<i32>,
     Json(payload): Json<UpdateReviewRequest>,
 ) -> Result<Json<ReviewResponse>, ApiError> {
+    require_admin(&headers, &state.admin_credentials)?;
+
     let patch = payload.into_patch()?;
     let review = state.store.update(id, patch).await?;
 
@@ -344,8 +446,11 @@ async fn update_review(
 
 async fn delete_review(
     State(state): State<ReviewState>,
+    headers: HeaderMap,
     Path(id): Path<i32>,
 ) -> Result<StatusCode, ApiError> {
+    require_admin(&headers, &state.admin_credentials)?;
+
     state.store.delete(id).await?;
 
     Ok(StatusCode::NO_CONTENT)
@@ -354,8 +459,8 @@ async fn delete_review(
 impl CreateReviewRequest {
     fn into_new_review(self) -> Result<NewReview, ApiError> {
         Ok(NewReview {
-            author_name: validate_non_empty(self.author_name, "authorName")?,
-            text: validate_non_empty(self.text, "text")?,
+            author_name: validate_text(self.author_name, "authorName", MAX_AUTHOR_NAME_CHARS)?,
+            text: validate_text(self.text, "text", MAX_REVIEW_TEXT_CHARS)?,
             rating: validate_rating(self.rating)?,
         })
     }
@@ -372,23 +477,29 @@ impl UpdateReviewRequest {
         Ok(ReviewPatch {
             author_name: self
                 .author_name
-                .map(|value| validate_non_empty(value, "authorName"))
+                .map(|value| validate_text(value, "authorName", MAX_AUTHOR_NAME_CHARS))
                 .transpose()?,
             text: self
                 .text
-                .map(|value| validate_non_empty(value, "text"))
+                .map(|value| validate_text(value, "text", MAX_REVIEW_TEXT_CHARS))
                 .transpose()?,
             rating: self.rating.map(validate_rating).transpose()?,
         })
     }
 }
 
-fn validate_non_empty(value: String, field: &'static str) -> Result<String, ApiError> {
+fn validate_text(value: String, field: &'static str, max_chars: usize) -> Result<String, ApiError> {
     let value = value.trim().to_owned();
 
     if value.is_empty() {
         return Err(ApiError::Validation(format!(
             "Поле `{field}` не должно быть пустым"
+        )));
+    }
+
+    if value.chars().count() > max_chars {
+        return Err(ApiError::Validation(format!(
+            "Поле `{field}` не должно быть длиннее {max_chars} символов"
         )));
     }
 
@@ -403,6 +514,42 @@ fn validate_rating(value: i32) -> Result<i32, ApiError> {
     }
 
     Ok(value)
+}
+
+fn require_admin(headers: &HeaderMap, credentials: &AdminCredentials) -> Result<(), ApiError> {
+    let authorization = headers
+        .get(header::AUTHORIZATION)
+        .and_then(|value| value.to_str().ok())
+        .ok_or(ApiError::Unauthorized)?;
+    let encoded = authorization
+        .strip_prefix("Basic ")
+        .or_else(|| authorization.strip_prefix("basic "))
+        .ok_or(ApiError::Unauthorized)?;
+    let decoded = BASE64_STANDARD
+        .decode(encoded)
+        .map_err(|_| ApiError::Unauthorized)?;
+    let decoded = String::from_utf8(decoded).map_err(|_| ApiError::Unauthorized)?;
+    let (username, password) = decoded.split_once(':').ok_or(ApiError::Unauthorized)?;
+
+    if !credentials.matches(username, password) {
+        return Err(ApiError::Unauthorized);
+    }
+
+    Ok(())
+}
+
+fn secure_eq(left: &str, right: &str) -> bool {
+    let left = left.as_bytes();
+    let right = right.as_bytes();
+    let max_len = left.len().max(right.len());
+    let mut diff = left.len() ^ right.len();
+
+    for index in 0..max_len {
+        diff |= (left.get(index).copied().unwrap_or(0) as usize)
+            ^ (right.get(index).copied().unwrap_or(0) as usize);
+    }
+
+    diff == 0
 }
 
 #[cfg(test)]
@@ -501,8 +648,108 @@ mod tests {
         }
     }
 
-    fn test_app(store: MemoryReviewRepository) -> Router {
-        routes(Arc::new(store))
+    struct FailingReviewRepository;
+
+    #[async_trait]
+    impl ReviewRepository for FailingReviewRepository {
+        async fn create(&self, _new_review: NewReview) -> Result<Review, ReviewStoreError> {
+            Err(secret_database_error())
+        }
+
+        async fn list(&self) -> Result<Vec<Review>, ReviewStoreError> {
+            Err(secret_database_error())
+        }
+
+        async fn get(&self, _id: i32) -> Result<Review, ReviewStoreError> {
+            Err(secret_database_error())
+        }
+
+        async fn update(&self, _id: i32, _patch: ReviewPatch) -> Result<Review, ReviewStoreError> {
+            Err(secret_database_error())
+        }
+
+        async fn delete(&self, _id: i32) -> Result<(), ReviewStoreError> {
+            Err(secret_database_error())
+        }
+    }
+
+    fn secret_database_error() -> ReviewStoreError {
+        ReviewStoreError::Database(DbErr::Custom(
+            "postgres://admin:super-secret@example.invalid/piloproject".to_owned(),
+        ))
+    }
+
+    fn test_app(store: impl ReviewRepository + 'static) -> Router {
+        routes(Arc::new(store), AdminCredentials::new("admin", "secret"))
+    }
+
+    fn admin_authorization() -> &'static str {
+        "Basic YWRtaW46c2VjcmV0"
+    }
+
+    #[tokio::test]
+    async fn admin_session_returns_authenticated() {
+        let app = test_app(MemoryReviewRepository::default());
+        let response = app
+            .oneshot(
+                Request::builder()
+                    .uri("/api/admin/session")
+                    .header("authorization", admin_authorization())
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        assert_eq!(response.status(), StatusCode::OK);
+
+        let body = response_json(response).await;
+        assert_eq!(body["authenticated"], true);
+    }
+
+    #[tokio::test]
+    async fn admin_session_rejects_missing_credentials() {
+        let app = test_app(MemoryReviewRepository::default());
+        let response = app
+            .oneshot(
+                Request::builder()
+                    .uri("/api/admin/session")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        assert_eq!(response.status(), StatusCode::UNAUTHORIZED);
+        assert_eq!(
+            response
+                .headers()
+                .get(header::WWW_AUTHENTICATE)
+                .unwrap()
+                .to_str()
+                .unwrap(),
+            r#"Basic realm="piloproject-admin", charset="UTF-8""#,
+        );
+
+        let body = response_json(response).await;
+        assert_eq!(body["error"], "unauthorized");
+    }
+
+    #[tokio::test]
+    async fn admin_session_rejects_wrong_credentials() {
+        let app = test_app(MemoryReviewRepository::default());
+        let response = app
+            .oneshot(
+                Request::builder()
+                    .uri("/api/admin/session")
+                    .header("authorization", "Basic YWRtaW46YmFk")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        assert_eq!(response.status(), StatusCode::UNAUTHORIZED);
     }
 
     async fn response_json(response: Response) -> serde_json::Value {
@@ -644,6 +891,58 @@ mod tests {
     }
 
     #[tokio::test]
+    async fn create_review_rejects_too_long_author_name() {
+        let app = test_app(MemoryReviewRepository::default());
+        let body = serde_json::json!({
+            "authorName": "a".repeat(MAX_AUTHOR_NAME_CHARS + 1),
+            "text": "Текст",
+            "rating": 5,
+        });
+        let response = app
+            .oneshot(
+                Request::builder()
+                    .method("POST")
+                    .uri("/api/reviews")
+                    .header("content-type", "application/json")
+                    .body(Body::from(body.to_string()))
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        assert_eq!(response.status(), StatusCode::UNPROCESSABLE_ENTITY);
+
+        let body = response_json(response).await;
+        assert_eq!(body["error"], "validation_error");
+    }
+
+    #[tokio::test]
+    async fn create_review_rejects_too_long_text() {
+        let app = test_app(MemoryReviewRepository::default());
+        let body = serde_json::json!({
+            "authorName": "Анна",
+            "text": "a".repeat(MAX_REVIEW_TEXT_CHARS + 1),
+            "rating": 5,
+        });
+        let response = app
+            .oneshot(
+                Request::builder()
+                    .method("POST")
+                    .uri("/api/reviews")
+                    .header("content-type", "application/json")
+                    .body(Body::from(body.to_string()))
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        assert_eq!(response.status(), StatusCode::UNPROCESSABLE_ENTITY);
+
+        let body = response_json(response).await;
+        assert_eq!(body["error"], "validation_error");
+    }
+
+    #[tokio::test]
     async fn list_reviews_returns_reviews() {
         let store = MemoryReviewRepository::default();
         let app = test_app(store);
@@ -663,6 +962,26 @@ mod tests {
         let body = response_json(response).await;
         assert_eq!(body.as_array().unwrap().len(), 1);
         assert_eq!(body[0]["authorName"], "Анна");
+    }
+
+    #[tokio::test]
+    async fn database_errors_do_not_expose_internal_details() {
+        let app = test_app(FailingReviewRepository);
+        let response = app
+            .oneshot(
+                Request::builder()
+                    .uri("/api/reviews")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        assert_eq!(response.status(), StatusCode::INTERNAL_SERVER_ERROR);
+
+        let body = response_json(response).await;
+        assert_eq!(body["error"], "database_error");
+        assert_eq!(body["message"], "Не удалось обработать запрос");
     }
 
     #[tokio::test]
@@ -705,6 +1024,27 @@ mod tests {
     }
 
     #[tokio::test]
+    async fn update_review_rejects_missing_admin_credentials() {
+        let store = MemoryReviewRepository::default();
+        let app = test_app(store);
+        let created = create_review_for_test(app.clone()).await;
+        let id = created["id"].as_i64().unwrap();
+        let response = app
+            .oneshot(
+                Request::builder()
+                    .method("PUT")
+                    .uri(format!("/api/reviews/{id}"))
+                    .header("content-type", "application/json")
+                    .body(Body::from(r#"{"text":"Попытка без доступа"}"#))
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        assert_eq!(response.status(), StatusCode::UNAUTHORIZED);
+    }
+
+    #[tokio::test]
     async fn update_review_updates_review() {
         let store = MemoryReviewRepository::default();
         let app = test_app(store);
@@ -715,6 +1055,7 @@ mod tests {
                 Request::builder()
                     .method("PUT")
                     .uri(format!("/api/reviews/{id}"))
+                    .header("authorization", admin_authorization())
                     .header("content-type", "application/json")
                     .body(Body::from(r#"{"text":"Обновленный отзыв","rating":4}"#))
                     .unwrap(),
@@ -738,6 +1079,7 @@ mod tests {
                 Request::builder()
                     .method("PUT")
                     .uri("/api/reviews/1")
+                    .header("authorization", admin_authorization())
                     .header("content-type", "application/json")
                     .body(Body::from("{}"))
                     .unwrap(),
@@ -756,8 +1098,59 @@ mod tests {
                 Request::builder()
                     .method("PUT")
                     .uri("/api/reviews/1")
+                    .header("authorization", admin_authorization())
                     .header("content-type", "application/json")
                     .body(Body::from(r#"{"rating":0}"#))
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        assert_eq!(response.status(), StatusCode::UNPROCESSABLE_ENTITY);
+
+        let body = response_json(response).await;
+        assert_eq!(body["error"], "validation_error");
+    }
+
+    #[tokio::test]
+    async fn update_review_rejects_too_long_author_name() {
+        let app = test_app(MemoryReviewRepository::default());
+        let body = serde_json::json!({
+            "authorName": "a".repeat(MAX_AUTHOR_NAME_CHARS + 1),
+        });
+        let response = app
+            .oneshot(
+                Request::builder()
+                    .method("PUT")
+                    .uri("/api/reviews/1")
+                    .header("authorization", admin_authorization())
+                    .header("content-type", "application/json")
+                    .body(Body::from(body.to_string()))
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        assert_eq!(response.status(), StatusCode::UNPROCESSABLE_ENTITY);
+
+        let body = response_json(response).await;
+        assert_eq!(body["error"], "validation_error");
+    }
+
+    #[tokio::test]
+    async fn update_review_rejects_too_long_text() {
+        let app = test_app(MemoryReviewRepository::default());
+        let body = serde_json::json!({
+            "text": "a".repeat(MAX_REVIEW_TEXT_CHARS + 1),
+        });
+        let response = app
+            .oneshot(
+                Request::builder()
+                    .method("PUT")
+                    .uri("/api/reviews/1")
+                    .header("authorization", admin_authorization())
+                    .header("content-type", "application/json")
+                    .body(Body::from(body.to_string()))
                     .unwrap(),
             )
             .await
@@ -777,6 +1170,7 @@ mod tests {
                 Request::builder()
                     .method("PUT")
                     .uri("/api/reviews/404")
+                    .header("authorization", admin_authorization())
                     .header("content-type", "application/json")
                     .body(Body::from(r#"{"text":"Новый текст"}"#))
                     .unwrap(),
@@ -785,6 +1179,27 @@ mod tests {
             .unwrap();
 
         assert_eq!(response.status(), StatusCode::NOT_FOUND);
+    }
+
+    #[tokio::test]
+    async fn delete_review_rejects_wrong_admin_credentials() {
+        let store = MemoryReviewRepository::default();
+        let app = test_app(store);
+        let created = create_review_for_test(app.clone()).await;
+        let id = created["id"].as_i64().unwrap();
+        let response = app
+            .oneshot(
+                Request::builder()
+                    .method("DELETE")
+                    .uri(format!("/api/reviews/{id}"))
+                    .header("authorization", "Basic YWRtaW46YmFk")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        assert_eq!(response.status(), StatusCode::UNAUTHORIZED);
     }
 
     #[tokio::test]
@@ -798,6 +1213,7 @@ mod tests {
                 Request::builder()
                     .method("DELETE")
                     .uri(format!("/api/reviews/{id}"))
+                    .header("authorization", admin_authorization())
                     .body(Body::empty())
                     .unwrap(),
             )
@@ -815,6 +1231,7 @@ mod tests {
                 Request::builder()
                     .method("DELETE")
                     .uri("/api/reviews/404")
+                    .header("authorization", admin_authorization())
                     .body(Body::empty())
                     .unwrap(),
             )

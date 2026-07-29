@@ -99,7 +99,7 @@ export default defineNuxtConfig({
       '@type': 'HomeAndConstructionBusiness',
       name: 'Пилорама Разбегаево',
       url: siteUrl,
-      image: `${siteUrl}/images/sawmill-hero.webp`,
+      image: `${siteUrl}/images/paint-shop-4.jpg`,
       address: {
         '@type': 'PostalAddress',
         addressLocality: 'Разбегаево',

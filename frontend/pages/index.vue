@@ -1,66 +1,71 @@
 <script setup lang="ts">
 const products = [
   {
+    code: '01 / ДСК',
     title: 'Обрезная доска',
-    tags: ['25-50 мм', '6 метров', 'хвоя'],
-    text: 'Для каркасов, перекрытий, черновых полов, кровли, заборов и хозяйственных построек.',
+    size: '25–50 мм / длина 6 м',
+    variants: 'Хвойные породы, наличие уточняется',
+    use: 'Каркасы, перекрытия, черновые полы, кровля и хозяйственные постройки.',
+    image: '/images/brushing-1.jpg',
+    alt: 'Крупный план обработанной хвойной доски на производственной линии',
   },
   {
+    code: '02 / БРС',
     title: 'Брус',
-    tags: ['100x100', '150x150', 'под заказ'],
-    text: 'Для бань, навесов, опорных элементов, лаг и других задач, где важна геометрия.',
+    size: '100×100 и 150×150 мм',
+    variants: 'Доступность размеров уточняется по заказу',
+    use: 'Опорные элементы, лаги, навесы, бани и другие несущие конструкции.',
+    image: '/images/paint-shop-2.jpg',
+    alt: 'Производственное оборудование в цехе обработки пиломатериалов',
   },
   {
+    code: '03 / ЗБР',
     title: 'Заборная доска',
-    tags: ['в наличии', 'быстрый распил'],
-    text: 'Практичный материал для ограждений, временных конструкций и дачных работ.',
+    size: 'Размер партии согласуется',
+    variants: 'Распил и обработка обсуждаются отдельно',
+    use: 'Ограждения, временные конструкции и практические работы на участке.',
+    image: '/images/lumber-yard-2025-05-21.jpg',
+    alt: 'Окрашенные доски серого цвета после обработки',
   },
   {
+    code: '04 / РЕЙ',
     title: 'Брусок и рейка',
-    tags: ['обрешетка', 'отделка'],
-    text: 'Подходит для кровельных работ, подсистем, упаковки, отделки и небольших строек.',
+    size: 'Сечение уточняется по наличию',
+    variants: 'Подбор под назначение покупателя',
+    use: 'Обрешётка, подсистемы, упаковка, отделка и небольшие строительные работы.',
+    image: '/images/timber-order-2025-05-16.jpg',
+    alt: 'Образцы окрашенной древесины с различными вариантами покрытия',
   },
 ]
 
-const steps = [
-  ['Заявка', 'Уточняем размеры, объем, сортность и адрес доставки.'],
-  ['Подбор', 'Собираем материал из наличия или ставим распил в производство.'],
-  ['Проверка', 'Сверяем геометрию, объем и комплектацию перед отгрузкой.'],
-  ['Доставка', 'Отгружаем самовывозом или помогаем с машиной под ваш объем.'],
-]
-
-const serviceAreas = [
-  'Разбегаево',
-  'Ломоносовский район',
-  'Красное Село',
-  'Ропша',
-  'Горелово',
-  'Петергоф',
-  'Стрельна',
-  'Гатчина',
-  'Санкт-Петербург',
-]
-
-const reviewSignals = [
+const orderSteps = [
   {
-    title: 'Качество материала',
-    text: 'Покупатели чаще всего отмечают ровную доску, хороший распил и стабильное качество.',
+    number: '01',
+    title: 'Параметры',
+    text: 'Покупатель сообщает материал, размеры, количество и назначение будущей конструкции.',
   },
   {
-    title: 'Адекватные цены',
-    text: 'В отзывах отдельно выделяют понятную стоимость и возможность выбрать материал на месте.',
+    number: '02',
+    title: 'Наличие',
+    text: 'Сотрудник сверяет доступные позиции и уточняет возможность распила для заказа.',
   },
   {
-    title: 'Быстрая отгрузка',
-    text: 'Клиенты пишут, что заказы готовят быстро, а с доставкой помогают без лишней волокиты.',
+    number: '03',
+    title: 'Расчёт',
+    text: 'Стоимость определяется после согласования объёма, обработки и способа получения.',
+  },
+  {
+    number: '04',
+    title: 'Отгрузка',
+    text: 'Готовую партию забирают самостоятельно или согласуют подходящий вариант доставки.',
   },
 ]
 
 useSeoMeta({
-  title: 'Пилорама Разбегаево — доска, брус и пиломатериалы с доставкой',
-  description: 'Пиломатериалы от местной пилорамы в Разбегаево: обрезная доска, брус, заборная доска, распил под размер, самовывоз и доставка по Ломоносовскому району и СПб.',
+  title: 'Пилорама Разбегаево – доска, брус и пиломатериалы с доставкой',
+  description: 'Пиломатериалы от производителя в Разбегаево: обрезная доска, брус, заборная доска, брусок и рейка. Самовывоз и согласование доставки по Ленинградской области и Санкт-Петербургу.',
   ogTitle: 'Пилорама Разбегаево',
-  ogDescription: 'Доска, брус и распил под задачи стройки. Быстрая отгрузка, понятные цены, доставка.',
+  ogDescription: 'Обрезная доска, брус и другие пиломатериалы с производственной площадки в Разбегаево.',
   ogType: 'website',
   robots: 'index, follow',
 })
@@ -76,23 +81,18 @@ useSchemaOrg([
     '@type': 'HomeAndConstructionBusiness',
     name: 'Пилорама Разбегаево',
     url: 'https://pilorama-razbegaevo.clients.site/',
-    image: 'https://pilorama-razbegaevo.clients.site/images/sawmill-hero.webp',
+    image: 'https://pilorama-razbegaevo.clients.site/images/paint-shop-4.jpg',
     address: {
       '@type': 'PostalAddress',
       addressLocality: 'Разбегаево',
       addressRegion: 'Ленинградская область',
       addressCountry: 'RU',
     },
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue: '5.0',
-      reviewCount: '11',
-    },
     makesOffer: products.map((product) =>
       defineOffer({
         itemOffered: defineProduct({
           name: product.title,
-          description: product.text,
+          description: product.use,
         }),
       }),
     ),
@@ -102,170 +102,220 @@ useSchemaOrg([
 
 <template>
   <main>
-    <section class="hero">
-      <NuxtImg
-        class="hero__image"
-        src="/images/sawmill-hero.webp"
-        alt="Штабели доски и бруса на территории пилорамы"
-        width="1755"
-        height="896"
-        sizes="xs:100vw sm:100vw md:100vw lg:100vw xl:100vw xxl:100vw"
-        densities="1"
-        format="webp"
-        loading="eager"
-        preload
-        fetchpriority="high"
-      />
-      <div class="hero__shade" aria-hidden="true" />
-
-      <div class="hero__content">
-        <div class="hero__copy">
-          <p class="eyebrow">Пиломатериалы в Разбегаево</p>
-          <h1>Доска и брус для стройки без лишних посредников</h1>
-          <p class="hero__lead">
-            Подберем пиломатериалы под каркас, кровлю, забор, баню или хозяйственную постройку.
-            Можно забрать самовывозом или оформить доставку по району и Санкт-Петербургу.
-          </p>
-          <div class="hero__actions">
-            <NuxtLink class="button button--primary" to="/kontakty">Рассчитать заказ</NuxtLink>
-            <NuxtLink class="button button--ghost" to="/pilomaterialy">Смотреть ассортимент</NuxtLink>
-          </div>
+    <section class="production-hero">
+      <div class="production-hero__copy">
+        <div class="production-stamp">
+          <span>59°45′ с. ш.</span>
+          <span>РАЗБЕГАЕВО / ЛО</span>
+          <span>ПИЛОМАТЕРИАЛЫ</span>
         </div>
 
-        <dl class="hero__facts" aria-label="Ключевые преимущества">
+        <p class="technical-label">Производство и продажа</p>
+        <h1>Доска и брус напрямую с пилорамы в Разбегаево</h1>
+        <p class="production-hero__lead">
+          На площадке подбирают пиломатериалы для каркасов, кровли, ограждений и хозяйственных
+          построек. Покупатель заранее сообщает размеры и объём, после чего сотрудник проверяет
+          наличие и рассчитывает заказ.
+        </p>
+
+        <div class="production-hero__actions">
+          <NuxtLink class="button button--signal" to="/kontakty">Подготовить запрос</NuxtLink>
+          <NuxtLink class="button button--outline" to="/pilomaterialy">Открыть каталог</NuxtLink>
+        </div>
+
+        <dl class="production-hero__facts">
           <div>
-            <dt>5,0</dt>
-            <dd>рейтинг по отзывам покупателей</dd>
+            <dt>Получение</dt>
+            <dd>Самовывоз или согласованная доставка</dd>
           </div>
           <div>
-            <dt>11</dt>
-            <dd>оценок на Яндекс Отзывах</dd>
+            <dt>Ассортимент</dt>
+            <dd>Доска, брус, брусок и рейка</dd>
           </div>
           <div>
-            <dt>1 день</dt>
-            <dd>быстрая отгрузка при наличии материала</dd>
+            <dt>Расчёт</dt>
+            <dd>После уточнения размеров и объёма</dd>
           </div>
         </dl>
       </div>
+
+      <figure class="production-hero__media">
+        <NuxtImg
+          src="/images/paint-shop-4.jpg"
+          alt="Цех обработки пиломатериалов с производственным оборудованием"
+          width="1600"
+          height="1200"
+          sizes="xs:100vw sm:100vw md:55vw lg:55vw xl:55vw"
+          densities="1"
+          format="webp"
+          loading="eager"
+          preload
+          fetchpriority="high"
+        />
+        <figcaption>
+          <span>Цех обработки</span>
+          <span>Разбегаево</span>
+        </figcaption>
+      </figure>
     </section>
 
-    <section class="section" id="assortiment">
-      <div class="section__inner">
-        <div class="section__head">
-          <div>
-            <p class="eyebrow">Ассортимент</p>
-            <h2>Основные позиции для частной и профессиональной стройки</h2>
-          </div>
-          <p>
-            На главной оставляем самые востребованные категории, а под SEO развиваем отдельные
-            страницы под доску, брус, заборную доску, доставку и районы работ.
-          </p>
+    <section class="catalog-preview" aria-labelledby="catalog-title">
+      <header class="editorial-head">
+        <div>
+          <span class="section-index">01</span>
+          <p class="technical-label">Ассортимент</p>
         </div>
+        <h2 id="catalog-title">Основные пиломатериалы для стройки и участка</h2>
+        <p>
+          Каталог собран как рабочая спецификация: рядом с названием указаны размеры, назначение
+          и условия уточнения. Актуальное наличие проверяется перед расчётом каждой партии.
+        </p>
+      </header>
 
-        <div class="grid grid--4">
-          <article v-for="product in products" :key="product.title" class="card product-card">
-            <div class="product-card__meta">
-              <span v-for="tag in product.tags" :key="tag" class="tag">{{ tag }}</span>
-            </div>
+      <div class="product-ledger">
+        <article v-for="product in products" :key="product.code" class="product-row">
+          <figure>
+            <NuxtImg
+              :src="product.image"
+              :alt="product.alt"
+              width="720"
+              height="520"
+              sizes="xs:100vw sm:42vw md:28vw lg:24vw"
+              densities="1"
+              format="webp"
+              loading="lazy"
+            />
+          </figure>
+          <span class="product-row__code">{{ product.code }}</span>
+          <div class="product-row__title">
             <h3>{{ product.title }}</h3>
-            <p>{{ product.text }}</p>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section class="section section--soft">
-      <div class="section__inner">
-        <div class="section__head">
-          <div>
-            <p class="eyebrow">Как работаем</p>
-            <h2>Понятный путь от заявки до отгрузки</h2>
+            <p>{{ product.use }}</p>
           </div>
-          <p>
-            Покупателю важно быстро понять стоимость, сроки и качество. Поэтому главная страница
-            сразу показывает процесс без длинных пояснений и лишних экранов.
-          </p>
-        </div>
+          <dl>
+            <div>
+              <dt>Размер</dt>
+              <dd>{{ product.size }}</dd>
+            </div>
+            <div>
+              <dt>Условия</dt>
+              <dd>{{ product.variants }}</dd>
+            </div>
+          </dl>
+        </article>
+      </div>
 
-        <div class="grid grid--4">
-          <article v-for="(step, index) in steps" :key="step[0]" class="card step-card">
-            <span class="step-card__number">{{ index + 1 }}</span>
-            <h3>{{ step[0] }}</h3>
-            <p>{{ step[1] }}</p>
-          </article>
-        </div>
+      <div class="section-action">
+        <NuxtLink class="text-link" to="/pilomaterialy">Посмотреть полную спецификацию</NuxtLink>
       </div>
     </section>
 
-    <section class="section">
-      <div class="section__inner quality">
+    <section class="production-story" aria-labelledby="production-title">
+      <div class="production-story__text">
+        <span class="section-index">02</span>
+        <p class="technical-label">Производственная площадка</p>
+        <h2 id="production-title">Материал проходит обработку на реальном оборудовании</h2>
+        <p>
+          Фотографии показывают действующий цех, линию подачи и участок работы с покрытиями.
+          Покупатель видит не декоративную древесную фактуру, а среду, где готовят материал.
+        </p>
+        <p>
+          Вариант обработки и внешний вид поверхности зависят от конкретного заказа. Перед
+          расчётом необходимо уточнить назначение материала и желаемый результат.
+        </p>
+      </div>
+
+      <figure class="production-story__portrait">
+        <NuxtImg
+          src="/images/paint-shop-2.jpg"
+          alt="Станок и линия подачи внутри производственного цеха"
+          width="1200"
+          height="1600"
+          sizes="xs:100vw sm:48vw md:32vw"
+          densities="1"
+          format="webp"
+          loading="lazy"
+        />
+        <figcaption>Оборудование участка обработки</figcaption>
+      </figure>
+
+      <figure class="production-story__detail">
+        <NuxtImg
+          src="/images/lumber-stack-2025-03-07.jpg"
+          alt="Партия окрашенных рифлёных досок на производственной линии"
+          width="1200"
+          height="1600"
+          sizes="xs:100vw sm:42vw md:28vw"
+          densities="1"
+          format="webp"
+          loading="lazy"
+        />
+        <figcaption>Подготовленная поверхность доски</figcaption>
+      </figure>
+    </section>
+
+    <section class="order-route" aria-labelledby="order-title">
+      <header class="order-route__head">
         <div>
-          <p class="eyebrow">Почему выбирают</p>
-          <h2>Главные сильные стороны текущего сайта превращаем в доверие</h2>
-          <p class="page-text">
-            По отзывам покупатели ценят качество, быстрый распил, честное общение и помощь с
-            доставкой. На новой главной эти сигналы вынесены выше, чтобы Яндекс и посетители
-            сразу видели реальную пользу.
-          </p>
+          <span class="section-index">03</span>
+          <p class="technical-label">Порядок заказа</p>
         </div>
+        <h2 id="order-title">От параметров материала до готовой отгрузки</h2>
+        <p>
+          Расчёт начинается с конкретных данных, поэтому заранее подготовленный список сокращает
+          количество уточнений и помогает быстрее проверить подходящий материал.
+        </p>
+      </header>
 
-        <div class="metric-panel">
-          <strong>5+</strong>
-          <p>акцентов на качество, сроки, выбор материала, цены и доставку прямо в первом экране и ключевых секциях.</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="section section--dark">
-      <div class="section__inner">
-        <div class="section__head">
+      <ol class="order-route__steps">
+        <li v-for="step in orderSteps" :key="step.number">
+          <span>{{ step.number }}</span>
           <div>
-            <p class="eyebrow">Доставка и самовывоз</p>
-            <h2>Работаем вокруг Разбегаево и по ближайшим направлениям</h2>
+            <h3>{{ step.title }}</h3>
+            <p>{{ step.text }}</p>
           </div>
-          <p>
-            Для роста в Яндексе важны страницы под географию спроса. Главная задает общий охват,
-            а внутренние страницы можно расширять под районы, размеры и типы пиломатериалов.
-          </p>
-        </div>
+        </li>
+      </ol>
 
-        <div class="area-list" aria-label="География доставки">
-          <span v-for="area in serviceAreas" :key="area">{{ area }}</span>
-        </div>
+      <div class="order-route__actions">
+        <NuxtLink class="button button--dark" to="/kontakty">Собрать данные для расчёта</NuxtLink>
+        <NuxtLink class="text-link" to="/dostavka">Узнать порядок получения</NuxtLink>
       </div>
     </section>
 
-    <section class="section">
-      <div class="section__inner">
-        <div class="section__head">
-          <div>
-            <p class="eyebrow">Отзывы</p>
-            <h2>Покупатели уже называют причины вернуться</h2>
-          </div>
-          <NuxtLink class="button button--dark" to="/otzyvy">Все отзывы и репутация</NuxtLink>
-        </div>
-
-        <div class="grid grid--3">
-          <article v-for="signal in reviewSignals" :key="signal.title" class="card review-card">
-            <div class="review-card__rating">5,0 на Яндекс Отзывах</div>
-            <h3>{{ signal.title }}</h3>
-            <p>{{ signal.text }}</p>
-          </article>
-        </div>
+    <section class="work-video" aria-labelledby="video-title">
+      <div class="work-video__heading">
+        <span class="section-index">04</span>
+        <p class="technical-label">Видео с площадки</p>
+        <h2 id="video-title">Производственный процесс без декоративной постановки</h2>
+        <p>
+          Короткая запись помогает оценить рабочую обстановку и характер производства. Видео
+          запускается только по команде пользователя и не расходует трафик автоматически.
+        </p>
       </div>
+
+      <video
+        controls
+        preload="metadata"
+        playsinline
+        poster="/images/paint-shop-4.jpg"
+        aria-label="Короткое видео с производственной площадки пилорамы"
+      >
+        <source src="/mp4/short-sawmill-video.mp4" type="video/mp4">
+        Ваш браузер не поддерживает воспроизведение видео.
+      </video>
     </section>
 
-    <section class="section">
-      <div class="section__inner cta">
-        <div>
-          <h2>Нужна доска или брус под конкретный объем?</h2>
-          <p>
-            Подготовьте размеры, количество и адрес доставки. Мы соберем заявку так, чтобы ее
-            было удобно быстро посчитать и отгрузить.
-          </p>
-        </div>
-        <NuxtLink class="button" to="/kontakty">Перейти к контактам</NuxtLink>
+    <section class="closing-band">
+      <div>
+        <p class="technical-label">Самовывоз и доставка</p>
+        <h2>Способ получения согласуется под объём материала</h2>
       </div>
+      <p>
+        Производственная площадка находится в Разбегаево Ломоносовского района. Для расчёта
+        доставки необходимо сообщить адрес, состав заказа и доступные условия подъезда к месту
+        разгрузки.
+      </p>
+      <NuxtLink class="button button--paper" to="/dostavka">Проверить условия</NuxtLink>
     </section>
   </main>
 </template>

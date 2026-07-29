@@ -5,61 +5,12 @@ definePageMeta({
   path: '/otzyvy',
 })
 
-type ReviewItem = Review & {
-  isFallback?: boolean
-}
-
-const fallbackReviews: ReviewItem[] = [
-  {
-    id: -1,
-    authorName: 'Анна',
-    text: 'Заказывали доску для каркаса. Материал подобрали быстро, по размерам все совпало, отгрузка прошла без суеты.',
-    rating: 5,
-    createdAt: '2026-01-18T10:00:00Z',
-    updatedAt: '2026-01-18T10:00:00Z',
-    isFallback: true,
-  },
-  {
-    id: -2,
-    authorName: 'Игорь',
-    text: 'Понравилось, что можно было на месте выбрать брус и сразу обсудить доставку. По цене все понятно.',
-    rating: 5,
-    createdAt: '2026-01-12T10:00:00Z',
-    updatedAt: '2026-01-12T10:00:00Z',
-    isFallback: true,
-  },
-  {
-    id: -3,
-    authorName: 'Марина',
-    text: 'Брали заборную доску для участка. Быстро подготовили объем, помогли с машиной, материал аккуратный.',
-    rating: 5,
-    createdAt: '2025-12-21T10:00:00Z',
-    updatedAt: '2025-12-21T10:00:00Z',
-    isFallback: true,
-  },
-]
-
-const trustPoints = [
-  {
-    title: 'Качество распила',
-    text: 'В отзывах чаще всего упоминают ровную геометрию, нормальный подбор партии и соответствие заявленным размерам.',
-  },
-  {
-    title: 'Понятная покупка',
-    text: 'Покупателям важны прозрачная цена, возможность выбрать материал на месте и быстрый ответ по наличию.',
-  },
-  {
-    title: 'Отгрузка без затяжек',
-    text: 'Для частной стройки критичны сроки, поэтому отдельно показываем скорость подготовки заказа и помощь с доставкой.',
-  },
-]
-
 const ratingOptions = [5, 4, 3, 2, 1]
 const starOptions = [1, 2, 3, 4, 5]
 const { listReviews, createReview } = useReviewsApi()
 
 const reviews = ref<Review[]>([])
-const hasLoadedFromApi = ref(false)
+const hasLoaded = ref(false)
 const isLoading = ref(false)
 const isSubmitting = ref(false)
 const feedback = reactive<{
@@ -75,43 +26,19 @@ const form = reactive<CreateReviewPayload>({
   rating: 5,
 })
 
-const visibleReviews = computed<ReviewItem[]>(() => {
-  if (hasLoadedFromApi.value) {
-    return reviews.value
-  }
-
-  return fallbackReviews
-})
-
 const averageRating = computed(() => {
-  if (!visibleReviews.value.length) {
-    return '5,0'
+  if (!reviews.value.length) {
+    return null
   }
 
-  const sum = visibleReviews.value.reduce((total: number, review: ReviewItem) => total + review.rating, 0)
-
-  return (sum / visibleReviews.value.length).toFixed(1).replace('.', ',')
+  const sum = reviews.value.reduce((total: number, review: Review) => total + review.rating, 0)
+  return (sum / reviews.value.length).toFixed(1).replace('.', ',')
 })
-
-const reviewStats = computed(() => [
-  {
-    value: averageRating.value,
-    label: 'средняя оценка',
-  },
-  {
-    value: String(visibleReviews.value.length || fallbackReviews.length),
-    label: 'отзыва на странице',
-  },
-  {
-    value: '1 день',
-    label: 'частый срок отгрузки',
-  },
-])
 
 const ratingBars = computed(() =>
   ratingOptions.map((rating) => {
-    const count = visibleReviews.value.filter((review: ReviewItem) => review.rating === rating).length
-    const percent = visibleReviews.value.length ? Math.round((count / visibleReviews.value.length) * 100) : 0
+    const count = reviews.value.filter((review: Review) => review.rating === rating).length
+    const percent = reviews.value.length ? Math.round((count / reviews.value.length) * 100) : 0
 
     return {
       rating,
@@ -127,10 +54,9 @@ const canSubmitReview = computed(
 
 useSeoMeta({
   title: 'Отзывы о пилораме в Разбегаево',
-  description:
-    'Отзывы покупателей о пилораме в Разбегаево: качество доски и бруса, цены, доставка, скорость распила и обслуживание.',
+  description: 'Отзывы покупателей о пилораме в Разбегаево и форма для публикации опыта покупки, самовывоза или доставки пиломатериалов.',
   ogTitle: 'Отзывы о пилораме в Разбегаево',
-  ogDescription: 'Реальные причины выбрать пилораму в Разбегаево: качество материала, понятная цена и быстрая отгрузка.',
+  ogDescription: 'Отзывы покупателей о материале, обслуживании, самовывозе и доставке.',
   ogType: 'website',
   robots: 'index, follow',
 })
@@ -141,31 +67,9 @@ useHead({
 })
 
 useSchemaOrg([
-  defineLocalBusiness({
-    '@id': 'https://pilorama-razbegaevo.clients.site/#localbusiness',
-    '@type': 'HomeAndConstructionBusiness',
-    name: 'Пилорама Разбегаево',
-    url: 'https://pilorama-razbegaevo.clients.site/otzyvy',
-    image: 'https://pilorama-razbegaevo.clients.site/images/paint-shop-4.webp',
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue: '5.0',
-      reviewCount: String(fallbackReviews.length),
-    },
-    review: fallbackReviews.map((review) =>
-      defineReview({
-        author: {
-          '@type': 'Person',
-          name: review.authorName,
-        },
-        reviewBody: review.text,
-        reviewRating: {
-          '@type': 'Rating',
-          ratingValue: review.rating,
-          bestRating: 5,
-        },
-      }),
-    ),
+  defineWebPage({
+    name: 'Отзывы о пилораме в Разбегаево',
+    description: 'Отзывы покупателей о пиломатериалах и обслуживании на производственной площадке.',
   }),
 ])
 
@@ -176,12 +80,12 @@ async function loadReviews() {
 
   try {
     reviews.value = await listReviews()
-    hasLoadedFromApi.value = true
+    hasLoaded.value = true
     clearFeedback()
   }
   catch {
-    hasLoadedFromApi.value = false
-    setFeedback('error', 'Не удалось загрузить отзывы из базы. Пока показываем базовые отзывы.')
+    hasLoaded.value = false
+    setFeedback('error', 'Отзывы из базы сейчас недоступны, попробуйте обновить страницу позднее.')
   }
   finally {
     isLoading.value = false
@@ -192,7 +96,7 @@ async function submitReview() {
   const payload = normalizeCreatePayload(form)
 
   if (!payload) {
-    setFeedback('error', 'Заполните имя, текст и оценку от 1 до 5.')
+    setFeedback('error', 'Заполните имя, текст и выберите оценку.')
     return
   }
 
@@ -200,13 +104,13 @@ async function submitReview() {
 
   try {
     const createdReview = await createReview(payload)
-    hasLoadedFromApi.value = true
     reviews.value = [createdReview, ...reviews.value]
+    hasLoaded.value = true
     resetForm()
-    setFeedback('success', 'Спасибо, отзыв добавлен.')
+    setFeedback('success', 'Спасибо, ваш отзыв успешно добавлен на страницу.')
   }
   catch {
-    setFeedback('error', 'Не удалось добавить отзыв. Проверьте, что backend запущен и доступен.')
+    setFeedback('error', 'Отзыв сейчас не отправился, попробуйте повторить позднее.')
   }
   finally {
     isSubmitting.value = false
@@ -252,7 +156,7 @@ function formatDate(value: string) {
   const parsedDate = new Date(value)
 
   if (Number.isNaN(parsedDate.getTime())) {
-    return 'недавно'
+    return 'Дата публикации этого отзыва пока не указана'
   }
 
   return new Intl.DateTimeFormat('ru-RU', {
@@ -263,153 +167,137 @@ function formatDate(value: string) {
 }
 
 function ratingLabel(value: number) {
-  return `${value} из 5`
+  return `Оценка ${value} из 5`
 }
 </script>
 
 <template>
   <main>
-    <section class="reviews-hero">
-      <NuxtImg
-        class="reviews-hero__image"
-        src="/images/paint-shop-4.webp"
-        alt="Готовые пиломатериалы на производстве в Разбегаево"
-        width="1600"
-        height="1200"
-        sizes="xs:100vw sm:100vw md:100vw lg:100vw xl:100vw xxl:100vw"
-        densities="1"
-        format="webp"
-        loading="eager"
-        preload
-        fetchpriority="high"
-      />
-      <div class="reviews-hero__shade" aria-hidden="true" />
-
-      <div class="reviews-hero__inner">
-        <p class="eyebrow">Отзывы покупателей</p>
-        <h1>Что говорят о пилораме в Разбегаево</h1>
+    <section class="reviews-masthead">
+      <div class="reviews-masthead__copy">
+        <div class="page-masthead__mark">
+          <span>ОТЗЫВЫ / БАЗА</span>
+          <span>РАЗБЕГАЕВО</span>
+        </div>
+        <p class="technical-label">Опыт покупателей</p>
+        <h1>Отзывы о пилораме в Разбегаево</h1>
         <p>
-          Собираем на странице реальные впечатления о качестве доски и бруса, скорости распила,
-          цене, самовывозе и доставке по Ломоносовскому району.
+          Здесь публикуются сообщения покупателей о материале, обслуживании, самовывозе и
+          доставке. Страница получает данные напрямую из базы и не подменяет их примерами.
         </p>
-
-        <dl class="reviews-hero__stats" aria-label="Сводка отзывов">
-          <div
-            v-for="stat in reviewStats"
-            :key="stat.label"
-          >
-            <dt>{{ stat.value }}</dt>
-            <dd>{{ stat.label }}</dd>
-          </div>
-        </dl>
       </div>
+
+      <figure>
+        <NuxtImg
+          src="/images/paint-shop-4.jpg"
+          alt="Производственный цех пилорамы с линией обработки древесины"
+          width="1600"
+          height="1200"
+          sizes="xs:100vw sm:52vw md:50vw"
+          densities="1"
+          format="webp"
+          loading="eager"
+          preload
+        />
+        <figcaption>Участок обработки пиломатериалов</figcaption>
+      </figure>
     </section>
 
-    <section class="section">
-      <div class="section__inner reviews-layout">
-        <section class="reviews-stream" aria-labelledby="reviews-list-title">
-          <div class="reviews-stream__head">
-            <div>
-              <p class="eyebrow">Репутация</p>
-              <h2 id="reviews-list-title">Отзывы о материале, сроках и доставке</h2>
-            </div>
-            <button
-              class="button button--light"
-              type="button"
-              :disabled="isLoading"
-              @click="loadReviews"
-            >
-              Обновить
-            </button>
+    <section class="reviews-workspace">
+      <section class="reviews-stream" aria-labelledby="reviews-list-title">
+        <header class="reviews-stream__head">
+          <div>
+            <span class="section-index">01</span>
+            <p class="technical-label">Опубликованные сообщения</p>
+            <h2 id="reviews-list-title">Отзывы покупателей</h2>
           </div>
-
-          <p
-            v-if="feedback.message"
-            class="form-feedback"
-            :class="`form-feedback--${feedback.type}`"
-            role="status"
+          <button
+            class="button button--outline"
+            type="button"
+            :disabled="isLoading"
+            @click="loadReviews"
           >
-            {{ feedback.message }}
-          </p>
+            {{ isLoading ? 'Обновляем данные' : 'Обновить отзывы' }}
+          </button>
+        </header>
 
-          <p
-            v-if="isLoading"
-            class="review-status"
-          >
-            Загружаем отзывы...
-          </p>
+        <p
+          v-if="feedback.message"
+          class="form-feedback"
+          :class="`form-feedback--${feedback.type}`"
+          role="status"
+        >
+          {{ feedback.message }}
+        </p>
 
-          <div
-            v-else-if="!visibleReviews.length"
-            class="review-status"
-          >
-            Пока отзывов нет.
-          </div>
+        <p v-if="isLoading" class="review-status">
+          Данные загружаются из базы отзывов покупателей.
+        </p>
 
-          <div
-            v-else
-            class="reviews-list"
-          >
-            <article
-              v-for="review in visibleReviews"
-              :key="review.id"
-              class="card public-review"
-            >
-              <header class="public-review__head">
-                <div>
-                  <div
-                    class="public-review__stars"
-                    :aria-label="ratingLabel(review.rating)"
-                  >
-                    <span
-                      v-for="rating in starOptions"
-                      :key="rating"
-                      :class="{ 'is-muted': rating > review.rating }"
-                      aria-hidden="true"
-                    >★</span>
-                  </div>
-                  <h3>{{ review.authorName }}</h3>
+        <p v-else-if="hasLoaded && !reviews.length" class="review-status">
+          Опубликованных отзывов пока нет, поэтому здесь не показаны вымышленные примеры.
+        </p>
+
+        <p v-else-if="!hasLoaded" class="review-status">
+          После восстановления соединения подтверждённые отзывы снова появятся на странице.
+        </p>
+
+        <div v-else class="reviews-list">
+          <article v-for="review in reviews" :key="review.id" class="public-review">
+            <header class="public-review__head">
+              <div>
+                <div class="public-review__stars" :aria-label="ratingLabel(review.rating)">
+                  <span
+                    v-for="rating in starOptions"
+                    :key="rating"
+                    :class="{ 'is-muted': rating > review.rating }"
+                    aria-hidden="true"
+                  >★</span>
                 </div>
-                <time :datetime="review.createdAt">{{ formatDate(review.createdAt) }}</time>
-              </header>
+                <h3>{{ review.authorName }}</h3>
+              </div>
+              <time :datetime="review.createdAt">{{ formatDate(review.createdAt) }}</time>
+            </header>
+            <p>{{ review.text }}</p>
+          </article>
+        </div>
+      </section>
 
-              <p>{{ review.text }}</p>
-            </article>
-          </div>
-        </section>
+      <aside class="reviews-side" aria-label="Форма отзыва и сводка">
+        <section class="review-form-panel">
+          <p class="technical-label">Новый отзыв</p>
+          <h2>Расскажите о своей покупке</h2>
+          <p>
+            Опишите материал, получение заказа и важные детали обслуживания. Конкретный опыт
+            помогает следующему покупателю понять условия без рекламных обещаний.
+          </p>
 
-        <aside class="reviews-side" aria-label="Форма и сводка">
-          <section class="review-form-panel">
-            <p class="eyebrow">Ваш опыт</p>
-            <h2>Оставить отзыв</h2>
+          <form class="review-form" @submit.prevent="submitReview">
+            <label>
+              <span>Имя</span>
+              <input
+                v-model="form.authorName"
+                name="authorName"
+                maxlength="80"
+                autocomplete="name"
+                placeholder="Ваше имя"
+              >
+            </label>
 
-            <form
-              class="review-form"
-              @submit.prevent="submitReview"
-            >
-              <label>
-                <span>Имя</span>
-                <input
-                  v-model="form.authorName"
-                  name="authorName"
-                  maxlength="80"
-                  autocomplete="name"
-                  placeholder="Анна"
-                >
-              </label>
+            <label>
+              <span>Отзыв</span>
+              <textarea
+                v-model="form.text"
+                name="text"
+                rows="6"
+                maxlength="1000"
+                placeholder="Опишите материал, отгрузку или доставку"
+              />
+            </label>
 
-              <label>
-                <span>Отзыв</span>
-                <textarea
-                  v-model="form.text"
-                  name="text"
-                  rows="5"
-                  maxlength="1000"
-                  placeholder="Что понравилось в материале, отгрузке или доставке"
-                />
-              </label>
-
-              <div class="rating-input" aria-label="Оценка">
+            <fieldset class="rating-fieldset">
+              <legend>Оценка</legend>
+              <div class="rating-input">
                 <label
                   v-for="rating in ratingOptions"
                   :key="rating"
@@ -424,66 +312,44 @@ function ratingLabel(value: number) {
                   <span>{{ rating }}</span>
                 </label>
               </div>
+            </fieldset>
 
-              <button
-                class="button button--primary"
-                type="submit"
-                :disabled="isSubmitting || !canSubmitReview"
-              >
-                {{ isSubmitting ? 'Отправляем...' : 'Опубликовать отзыв' }}
-              </button>
-            </form>
-          </section>
+            <button
+              class="button button--signal"
+              type="submit"
+              :disabled="isSubmitting || !canSubmitReview"
+            >
+              {{ isSubmitting ? 'Отправляем отзыв' : 'Опубликовать отзыв' }}
+            </button>
+          </form>
+        </section>
 
-          <section class="review-scoreboard">
-            <h2>Оценки</h2>
-            <div class="review-scoreboard__value">
-              {{ averageRating }}
+        <section v-if="reviews.length" class="review-scoreboard">
+          <p class="technical-label">Сводка базы</p>
+          <div class="review-scoreboard__value">{{ averageRating }}</div>
+          <p>{{ reviews.length }} подтверждённых сообщений загружено на страницу.</p>
+
+          <div class="rating-bars" aria-label="Распределение оценок">
+            <div v-for="bar in ratingBars" :key="bar.rating" class="rating-bar">
+              <span>{{ bar.rating }}</span>
+              <div><i :style="{ width: `${bar.percent}%` }" /></div>
+              <strong>{{ bar.count }}</strong>
             </div>
-
-            <div class="rating-bars">
-              <div
-                v-for="bar in ratingBars"
-                :key="bar.rating"
-                class="rating-bar"
-              >
-                <span>{{ bar.rating }}</span>
-                <div>
-                  <i :style="{ width: `${bar.percent}%` }" />
-                </div>
-                <strong>{{ bar.count }}</strong>
-              </div>
-            </div>
-          </section>
-        </aside>
-      </div>
+          </div>
+        </section>
+      </aside>
     </section>
 
-    <section class="section section--soft">
-      <div class="section__inner">
-        <div class="section__head">
-          <div>
-            <p class="eyebrow">Почему это важно</p>
-            <h2>Отзывы помогают выбрать пиломатериал без догадок</h2>
-          </div>
-          <p>
-            На странице собраны сигналы, которые важны покупателю перед заказом: качество,
-            честность по цене, сроки и помощь с доставкой.
-          </p>
-        </div>
-
-        <div class="grid grid--3">
-          <article
-            v-for="point in trustPoints"
-            :key="point.title"
-            class="card review-card"
-          >
-            <div class="review-card__rating">Покупатели отмечают</div>
-            <h3>{{ point.title }}</h3>
-            <p>{{ point.text }}</p>
-          </article>
-        </div>
+    <section class="review-policy">
+      <div>
+        <span class="section-index">02</span>
+        <p class="technical-label">Принцип публикации</p>
+        <h2>Только сообщения из действующей базы</h2>
       </div>
+      <p>
+        Мы не показываем декоративные оценки и не придумываем отзывы для заполнения страницы.
+        Если база временно недоступна, интерфейс сообщает об этом прямо.
+      </p>
     </section>
   </main>
 </template>

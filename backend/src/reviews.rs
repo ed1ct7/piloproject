@@ -12,10 +12,16 @@ use sea_orm::{
     entity::prelude::*, ActiveModelTrait, DatabaseConnection, DbErr, EntityTrait, QueryOrder, Set,
 };
 use serde::{Deserialize, Serialize};
-use std::{env, sync::Arc};
+use std::{env, fmt, sync::Arc};
 
 const MAX_AUTHOR_NAME_CHARS: usize = 80;
 const MAX_REVIEW_TEXT_CHARS: usize = 1000;
+const MIN_REVIEW_RATING: i32 = 1;
+const MAX_REVIEW_RATING: i32 = 5;
+const MESSAGE_DATABASE_ERROR: &str = "Не удалось обработать запрос";
+const MESSAGE_REVIEW_NOT_FOUND: &str = "Отзыв не найден";
+const MESSAGE_UNAUTHORIZED: &str = "Неверный логин или пароль администратора";
+const WWW_AUTHENTICATE_VALUE: &str = r#"Basic realm="piloproject-admin", charset="UTF-8""#;
 
 pub(crate) mod entity {
     use sea_orm::entity::prelude::*;
@@ -53,6 +59,37 @@ pub(crate) struct AdminCredentials {
     password: String,
 }
 
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum AdminCredentialsError {
+    MissingUsername,
+    InvalidUsernameUnicode,
+    MissingPassword,
+    InvalidPasswordUnicode,
+    EmptyUsername,
+    EmptyPassword,
+}
+
+impl AdminCredentialsError {
+    fn message(self) -> &'static str {
+        match self {
+            Self::MissingUsername => "ADMIN_USERNAME должен быть задан для админки",
+            Self::InvalidUsernameUnicode => "ADMIN_USERNAME должен быть корректной unicode-строкой",
+            Self::MissingPassword => "ADMIN_PASSWORD должен быть задан для админки",
+            Self::InvalidPasswordUnicode => "ADMIN_PASSWORD должен быть корректной unicode-строкой",
+            Self::EmptyUsername => "ADMIN_USERNAME не должен быть пустым",
+            Self::EmptyPassword => "ADMIN_PASSWORD не должен быть пустым",
+        }
+    }
+}
+
+impl fmt::Display for AdminCredentialsError {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        formatter.write_str(self.message())
+    }
+}
+
+impl std::error::Error for AdminCredentialsError {}
+
 impl AdminCredentials {
     /// Создает учетные данные администратора.
     ///
@@ -76,14 +113,22 @@ impl AdminCredentials {
     /// # Возвращаемое значение
     ///
     /// Учетные данные из `ADMIN_USERNAME` и `ADMIN_PASSWORD`
-    pub(crate) fn from_env() -> Result<Self, String> {
-        let username = env::var("ADMIN_USERNAME")
-            .map_err(|_| "ADMIN_USERNAME должен быть задан для админки".to_owned())?;
-        let password = env::var("ADMIN_PASSWORD")
-            .map_err(|_| "ADMIN_PASSWORD должен быть задан для админки".to_owned())?;
+    pub(crate) fn from_env() -> Result<Self, AdminCredentialsError> {
+        let username = env::var("ADMIN_USERNAME").map_err(|error| match error {
+            env::VarError::NotPresent => AdminCredentialsError::MissingUsername,
+            env::VarError::NotUnicode(_) => AdminCredentialsError::InvalidUsernameUnicode,
+        })?;
+        let password = env::var("ADMIN_PASSWORD").map_err(|error| match error {
+            env::VarError::NotPresent => AdminCredentialsError::MissingPassword,
+            env::VarError::NotUnicode(_) => AdminCredentialsError::InvalidPasswordUnicode,
+        })?;
 
-        if username.trim().is_empty() || password.is_empty() {
-            return Err("ADMIN_USERNAME и ADMIN_PASSWORD не должны быть пустыми".to_owned());
+        if username.trim().is_empty() {
+            return Err(AdminCredentialsError::EmptyUsername);
+        }
+
+        if password.is_empty() {
+            return Err(AdminCredentialsError::EmptyPassword);
         }
 
         Ok(Self::new(username, password))
@@ -296,22 +341,96 @@ impl From<Review> for ReviewResponse {
 
 #[derive(Serialize)]
 struct ErrorResponse {
-    error: &'static str,
     message: String,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum ReviewField {
+    AuthorName,
+    Text,
+    Rating,
+}
+
+impl ReviewField {
+    fn api_name(self) -> &'static str {
+        match self {
+            Self::AuthorName => "authorName",
+            Self::Text => "text",
+            Self::Rating => "rating",
+        }
+    }
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum ReviewValidationError {
+    EmptyPatch,
+    EmptyField(ReviewField),
+    TooLongField {
+        field: ReviewField,
+        max_chars: usize,
+    },
+    InvalidRating {
+        min: i32,
+        max: i32,
+    },
+}
+
+impl ReviewValidationError {
+    fn message(self) -> String {
+        match self {
+            Self::EmptyPatch => "Передайте хотя бы одно поле для изменения".to_owned(),
+            Self::EmptyField(field) => {
+                format!("Поле `{}` не должно быть пустым", field.api_name())
+            }
+            Self::TooLongField { field, max_chars } => format!(
+                "Поле `{}` не должно быть длиннее {max_chars} символов",
+                field.api_name()
+            ),
+            Self::InvalidRating { min, max } => {
+                format!(
+                    "Поле `{}` должно быть числом от {min} до {max}",
+                    ReviewField::Rating.api_name()
+                )
+            }
+        }
+    }
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum AdminAuthError {
+    MissingHeader,
+    InvalidScheme,
+    InvalidBase64,
+    InvalidUtf8,
+    MissingSeparator,
+    IncorrectCredentials,
+}
+
+impl AdminAuthError {
+    fn message(self) -> &'static str {
+        match self {
+            Self::MissingHeader
+            | Self::InvalidScheme
+            | Self::InvalidBase64
+            | Self::InvalidUtf8
+            | Self::MissingSeparator
+            | Self::IncorrectCredentials => MESSAGE_UNAUTHORIZED,
+        }
+    }
 }
 
 #[derive(Debug)]
 enum ApiError {
-    Database(String),
+    Database(DbErr),
     NotFound,
-    Unauthorized,
-    Validation(String),
+    Unauthorized(AdminAuthError),
+    Validation(ReviewValidationError),
 }
 
 impl From<ReviewStoreError> for ApiError {
     fn from(error: ReviewStoreError) -> Self {
         match error {
-            ReviewStoreError::Database(error) => Self::Database(error.to_string()),
+            ReviewStoreError::Database(error) => Self::Database(error),
             ReviewStoreError::NotFound => Self::NotFound,
         }
     }
@@ -319,44 +438,40 @@ impl From<ReviewStoreError> for ApiError {
 
 impl IntoResponse for ApiError {
     fn into_response(self) -> Response {
-        if matches!(self, Self::Unauthorized) {
-            return (
+        match self {
+            Self::Unauthorized(error) => (
                 StatusCode::UNAUTHORIZED,
-                [(
-                    header::WWW_AUTHENTICATE,
-                    r#"Basic realm="piloproject-admin", charset="UTF-8""#,
-                )],
+                [(header::WWW_AUTHENTICATE, WWW_AUTHENTICATE_VALUE)],
                 Json(ErrorResponse {
-                    error: "unauthorized",
-                    message: "Неверный логин или пароль администратора".to_owned(),
+                    message: error.message().to_owned(),
                 }),
             )
-                .into_response();
-        }
-
-        let (status, error, message) = match self {
-            Self::Database(message) => {
-                eprintln!("database error while handling reviews API: {message}");
+                .into_response(),
+            Self::Database(error) => {
+                eprintln!("database error while handling reviews API: {error}");
                 (
                     StatusCode::INTERNAL_SERVER_ERROR,
-                    "database_error",
-                    "Не удалось обработать запрос".to_owned(),
+                    Json(ErrorResponse {
+                        message: MESSAGE_DATABASE_ERROR.to_owned(),
+                    }),
                 )
+                    .into_response()
             }
             Self::NotFound => (
                 StatusCode::NOT_FOUND,
-                "review_not_found",
-                "Отзыв не найден".to_owned(),
-            ),
-            Self::Validation(message) => (
+                Json(ErrorResponse {
+                    message: MESSAGE_REVIEW_NOT_FOUND.to_owned(),
+                }),
+            )
+                .into_response(),
+            Self::Validation(error) => (
                 StatusCode::UNPROCESSABLE_ENTITY,
-                "validation_error",
-                message,
-            ),
-            Self::Unauthorized => unreachable!("unauthorized обрабатывается выше"),
-        };
-
-        (status, Json(ErrorResponse { error, message })).into_response()
+                Json(ErrorResponse {
+                    message: error.message(),
+                }),
+            )
+                .into_response(),
+        }
     }
 }
 
@@ -459,8 +574,12 @@ async fn delete_review(
 impl CreateReviewRequest {
     fn into_new_review(self) -> Result<NewReview, ApiError> {
         Ok(NewReview {
-            author_name: validate_text(self.author_name, "authorName", MAX_AUTHOR_NAME_CHARS)?,
-            text: validate_text(self.text, "text", MAX_REVIEW_TEXT_CHARS)?,
+            author_name: validate_text(
+                self.author_name,
+                ReviewField::AuthorName,
+                MAX_AUTHOR_NAME_CHARS,
+            )?,
+            text: validate_text(self.text, ReviewField::Text, MAX_REVIEW_TEXT_CHARS)?,
             rating: validate_rating(self.rating)?,
         })
     }
@@ -469,48 +588,48 @@ impl CreateReviewRequest {
 impl UpdateReviewRequest {
     fn into_patch(self) -> Result<ReviewPatch, ApiError> {
         if self.author_name.is_none() && self.text.is_none() && self.rating.is_none() {
-            return Err(ApiError::Validation(
-                "Передайте хотя бы одно поле для изменения".to_owned(),
-            ));
+            return Err(ApiError::Validation(ReviewValidationError::EmptyPatch));
         }
 
         Ok(ReviewPatch {
             author_name: self
                 .author_name
-                .map(|value| validate_text(value, "authorName", MAX_AUTHOR_NAME_CHARS))
+                .map(|value| validate_text(value, ReviewField::AuthorName, MAX_AUTHOR_NAME_CHARS))
                 .transpose()?,
             text: self
                 .text
-                .map(|value| validate_text(value, "text", MAX_REVIEW_TEXT_CHARS))
+                .map(|value| validate_text(value, ReviewField::Text, MAX_REVIEW_TEXT_CHARS))
                 .transpose()?,
             rating: self.rating.map(validate_rating).transpose()?,
         })
     }
 }
 
-fn validate_text(value: String, field: &'static str, max_chars: usize) -> Result<String, ApiError> {
+fn validate_text(value: String, field: ReviewField, max_chars: usize) -> Result<String, ApiError> {
     let value = value.trim().to_owned();
 
     if value.is_empty() {
-        return Err(ApiError::Validation(format!(
-            "Поле `{field}` не должно быть пустым"
+        return Err(ApiError::Validation(ReviewValidationError::EmptyField(
+            field,
         )));
     }
 
     if value.chars().count() > max_chars {
-        return Err(ApiError::Validation(format!(
-            "Поле `{field}` не должно быть длиннее {max_chars} символов"
-        )));
+        return Err(ApiError::Validation(ReviewValidationError::TooLongField {
+            field,
+            max_chars,
+        }));
     }
 
     Ok(value)
 }
 
 fn validate_rating(value: i32) -> Result<i32, ApiError> {
-    if !(1..=5).contains(&value) {
-        return Err(ApiError::Validation(
-            "Поле `rating` должно быть числом от 1 до 5".to_owned(),
-        ));
+    if !(MIN_REVIEW_RATING..=MAX_REVIEW_RATING).contains(&value) {
+        return Err(ApiError::Validation(ReviewValidationError::InvalidRating {
+            min: MIN_REVIEW_RATING,
+            max: MAX_REVIEW_RATING,
+        }));
     }
 
     Ok(value)
@@ -520,19 +639,22 @@ fn require_admin(headers: &HeaderMap, credentials: &AdminCredentials) -> Result<
     let authorization = headers
         .get(header::AUTHORIZATION)
         .and_then(|value| value.to_str().ok())
-        .ok_or(ApiError::Unauthorized)?;
+        .ok_or(ApiError::Unauthorized(AdminAuthError::MissingHeader))?;
     let encoded = authorization
         .strip_prefix("Basic ")
         .or_else(|| authorization.strip_prefix("basic "))
-        .ok_or(ApiError::Unauthorized)?;
+        .ok_or(ApiError::Unauthorized(AdminAuthError::InvalidScheme))?;
     let decoded = BASE64_STANDARD
         .decode(encoded)
-        .map_err(|_| ApiError::Unauthorized)?;
-    let decoded = String::from_utf8(decoded).map_err(|_| ApiError::Unauthorized)?;
-    let (username, password) = decoded.split_once(':').ok_or(ApiError::Unauthorized)?;
+        .map_err(|_| ApiError::Unauthorized(AdminAuthError::InvalidBase64))?;
+    let decoded = String::from_utf8(decoded)
+        .map_err(|_| ApiError::Unauthorized(AdminAuthError::InvalidUtf8))?;
+    let (username, password) = decoded
+        .split_once(':')
+        .ok_or(ApiError::Unauthorized(AdminAuthError::MissingSeparator))?;
 
     if !credentials.matches(username, password) {
-        return Err(ApiError::Unauthorized);
+        return Err(ApiError::Unauthorized(AdminAuthError::IncorrectCredentials));
     }
 
     Ok(())
@@ -564,11 +686,53 @@ mod tests {
         collections::BTreeMap,
         sync::{
             atomic::{AtomicI32, Ordering},
-            Arc,
+            Arc, Mutex as StdMutex,
         },
     };
     use tokio::sync::Mutex;
     use tower::ServiceExt;
+
+    static ADMIN_ENV_LOCK: StdMutex<()> = StdMutex::new(());
+
+    struct AdminEnvGuard {
+        username: Option<String>,
+        password: Option<String>,
+    }
+
+    impl AdminEnvGuard {
+        fn capture() -> Self {
+            Self {
+                username: env::var("ADMIN_USERNAME").ok(),
+                password: env::var("ADMIN_PASSWORD").ok(),
+            }
+        }
+
+        fn set(username: Option<&str>, password: Option<&str>) {
+            match username {
+                Some(value) => env::set_var("ADMIN_USERNAME", value),
+                None => env::remove_var("ADMIN_USERNAME"),
+            }
+
+            match password {
+                Some(value) => env::set_var("ADMIN_PASSWORD", value),
+                None => env::remove_var("ADMIN_PASSWORD"),
+            }
+        }
+    }
+
+    impl Drop for AdminEnvGuard {
+        fn drop(&mut self) {
+            match &self.username {
+                Some(value) => env::set_var("ADMIN_USERNAME", value),
+                None => env::remove_var("ADMIN_USERNAME"),
+            }
+
+            match &self.password {
+                Some(value) => env::set_var("ADMIN_PASSWORD", value),
+                None => env::remove_var("ADMIN_PASSWORD"),
+            }
+        }
+    }
 
     #[derive(Clone, Default)]
     struct MemoryReviewRepository {
@@ -687,6 +851,143 @@ mod tests {
         "Basic YWRtaW46c2VjcmV0"
     }
 
+    fn authorization_headers(value: Option<&'static str>) -> HeaderMap {
+        let mut headers = HeaderMap::new();
+
+        if let Some(value) = value {
+            headers.insert(header::AUTHORIZATION, value.parse().unwrap());
+        }
+
+        headers
+    }
+
+    fn admin_auth_error(value: Option<&'static str>) -> AdminAuthError {
+        let credentials = AdminCredentials::new("admin", "secret");
+        let headers = authorization_headers(value);
+
+        match require_admin(&headers, &credentials) {
+            Err(ApiError::Unauthorized(error)) => error,
+            Err(error) => panic!("expected admin auth error, got {error:?}"),
+            Ok(()) => panic!("expected admin auth error"),
+        }
+    }
+
+    fn validation_error<T>(result: Result<T, ApiError>) -> ReviewValidationError {
+        match result {
+            Err(ApiError::Validation(error)) => error,
+            Err(error) => panic!("expected validation error, got {error:?}"),
+            Ok(_) => panic!("expected validation error"),
+        }
+    }
+
+    #[test]
+    fn admin_credentials_from_env_returns_typed_errors() {
+        let _env_lock = ADMIN_ENV_LOCK.lock().unwrap();
+        let _env_guard = AdminEnvGuard::capture();
+
+        AdminEnvGuard::set(None, Some("secret"));
+        assert_eq!(
+            AdminCredentials::from_env().unwrap_err(),
+            AdminCredentialsError::MissingUsername
+        );
+
+        AdminEnvGuard::set(Some("admin"), None);
+        assert_eq!(
+            AdminCredentials::from_env().unwrap_err(),
+            AdminCredentialsError::MissingPassword
+        );
+
+        AdminEnvGuard::set(Some("   "), Some("secret"));
+        assert_eq!(
+            AdminCredentials::from_env().unwrap_err(),
+            AdminCredentialsError::EmptyUsername
+        );
+
+        AdminEnvGuard::set(Some("admin"), Some(""));
+        assert_eq!(
+            AdminCredentials::from_env().unwrap_err(),
+            AdminCredentialsError::EmptyPassword
+        );
+
+        AdminEnvGuard::set(Some("admin"), Some("secret"));
+        let credentials = AdminCredentials::from_env().unwrap();
+        assert!(credentials.matches("admin", "secret"));
+    }
+
+    #[test]
+    fn require_admin_returns_typed_auth_errors() {
+        assert_eq!(admin_auth_error(None), AdminAuthError::MissingHeader);
+        assert_eq!(
+            admin_auth_error(Some("Bearer token")),
+            AdminAuthError::InvalidScheme
+        );
+        assert_eq!(
+            admin_auth_error(Some("Basic *")),
+            AdminAuthError::InvalidBase64
+        );
+        assert_eq!(
+            admin_auth_error(Some("Basic /w==")),
+            AdminAuthError::InvalidUtf8
+        );
+        assert_eq!(
+            admin_auth_error(Some("Basic YWRtaW4=")),
+            AdminAuthError::MissingSeparator
+        );
+        assert_eq!(
+            admin_auth_error(Some("Basic YWRtaW46YmFk")),
+            AdminAuthError::IncorrectCredentials
+        );
+    }
+
+    #[test]
+    fn require_admin_accepts_valid_basic_auth() {
+        let credentials = AdminCredentials::new("admin", "secret");
+        let headers = authorization_headers(Some(admin_authorization()));
+
+        assert!(require_admin(&headers, &credentials).is_ok());
+    }
+
+    #[test]
+    fn review_validation_returns_typed_errors() {
+        assert_eq!(
+            validation_error(validate_text(
+                "   ".to_owned(),
+                ReviewField::AuthorName,
+                MAX_AUTHOR_NAME_CHARS,
+            )),
+            ReviewValidationError::EmptyField(ReviewField::AuthorName)
+        );
+        assert_eq!(
+            validation_error(validate_text(
+                "a".repeat(MAX_REVIEW_TEXT_CHARS + 1),
+                ReviewField::Text,
+                MAX_REVIEW_TEXT_CHARS,
+            )),
+            ReviewValidationError::TooLongField {
+                field: ReviewField::Text,
+                max_chars: MAX_REVIEW_TEXT_CHARS,
+            }
+        );
+        assert_eq!(
+            validation_error(validate_rating(0)),
+            ReviewValidationError::InvalidRating {
+                min: MIN_REVIEW_RATING,
+                max: MAX_REVIEW_RATING,
+            }
+        );
+        assert_eq!(
+            validation_error(
+                UpdateReviewRequest {
+                    author_name: None,
+                    text: None,
+                    rating: None,
+                }
+                .into_patch()
+            ),
+            ReviewValidationError::EmptyPatch
+        );
+    }
+
     #[tokio::test]
     async fn admin_session_returns_authenticated() {
         let app = test_app(MemoryReviewRepository::default());
@@ -732,7 +1033,7 @@ mod tests {
         );
 
         let body = response_json(response).await;
-        assert_eq!(body["error"], "unauthorized");
+        assert!(body.get("code").is_none());
     }
 
     #[tokio::test]
@@ -841,7 +1142,7 @@ mod tests {
         assert_eq!(response.status(), StatusCode::UNPROCESSABLE_ENTITY);
 
         let body = response_json(response).await;
-        assert_eq!(body["error"], "validation_error");
+        assert!(body.get("code").is_none());
     }
 
     #[tokio::test]
@@ -864,7 +1165,7 @@ mod tests {
         assert_eq!(response.status(), StatusCode::UNPROCESSABLE_ENTITY);
 
         let body = response_json(response).await;
-        assert_eq!(body["error"], "validation_error");
+        assert!(body.get("code").is_none());
     }
 
     #[tokio::test]
@@ -887,7 +1188,7 @@ mod tests {
         assert_eq!(response.status(), StatusCode::UNPROCESSABLE_ENTITY);
 
         let body = response_json(response).await;
-        assert_eq!(body["error"], "validation_error");
+        assert!(body.get("code").is_none());
     }
 
     #[tokio::test]
@@ -913,7 +1214,7 @@ mod tests {
         assert_eq!(response.status(), StatusCode::UNPROCESSABLE_ENTITY);
 
         let body = response_json(response).await;
-        assert_eq!(body["error"], "validation_error");
+        assert!(body.get("code").is_none());
     }
 
     #[tokio::test]
@@ -939,7 +1240,7 @@ mod tests {
         assert_eq!(response.status(), StatusCode::UNPROCESSABLE_ENTITY);
 
         let body = response_json(response).await;
-        assert_eq!(body["error"], "validation_error");
+        assert!(body.get("code").is_none());
     }
 
     #[tokio::test]
@@ -980,7 +1281,7 @@ mod tests {
         assert_eq!(response.status(), StatusCode::INTERNAL_SERVER_ERROR);
 
         let body = response_json(response).await;
-        assert_eq!(body["error"], "database_error");
+        assert!(body.get("code").is_none());
         assert_eq!(body["message"], "Не удалось обработать запрос");
     }
 
@@ -1109,7 +1410,7 @@ mod tests {
         assert_eq!(response.status(), StatusCode::UNPROCESSABLE_ENTITY);
 
         let body = response_json(response).await;
-        assert_eq!(body["error"], "validation_error");
+        assert!(body.get("code").is_none());
     }
 
     #[tokio::test]
@@ -1134,7 +1435,7 @@ mod tests {
         assert_eq!(response.status(), StatusCode::UNPROCESSABLE_ENTITY);
 
         let body = response_json(response).await;
-        assert_eq!(body["error"], "validation_error");
+        assert!(body.get("code").is_none());
     }
 
     #[tokio::test]
@@ -1159,7 +1460,7 @@ mod tests {
         assert_eq!(response.status(), StatusCode::UNPROCESSABLE_ENTITY);
 
         let body = response_json(response).await;
-        assert_eq!(body["error"], "validation_error");
+        assert!(body.get("code").is_none());
     }
 
     #[tokio::test]

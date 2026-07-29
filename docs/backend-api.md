@@ -61,7 +61,6 @@ Backend ограничивает JSON-тело запроса 16 КБ, `authorNa
 
 ```json
 {
-  "error": "unauthorized",
   "message": "Неверный логин или пароль администратора"
 }
 ```

@@ -37,6 +37,13 @@ export interface UpdateReviewPayload {
 }
 
 /**
+ * Ответ проверки админской авторизации
+ */
+export interface AdminSession {
+  authenticated: boolean
+}
+
+/**
  * Возвращает базовый URL backend-сервиса из runtime-конфигурации
  * @note значение переопределяется переменной окружения `NUXT_PUBLIC_API_BASE`
  * @returns базовый URL backend-сервиса
@@ -62,8 +69,16 @@ export function useHealth() {
  */
 export function useReviewsApi() {
   const apiBase = useApiBase()
+  const adminHeaders = (authorization: string) => ({
+    authorization,
+  })
 
   return {
+    verifyAdminSession: (authorization: string) =>
+      $fetch<AdminSession>('/api/admin/session', {
+        baseURL: apiBase,
+        headers: adminHeaders(authorization),
+      }),
     listReviews: () => $fetch<Review[]>('/api/reviews', { baseURL: apiBase }),
     getReview: (id: number) => $fetch<Review>(`/api/reviews/${id}`, { baseURL: apiBase }),
     createReview: (payload: CreateReviewPayload) =>
@@ -72,16 +87,18 @@ export function useReviewsApi() {
         method: 'POST',
         body: payload,
       }),
-    updateReview: (id: number, payload: UpdateReviewPayload) =>
+    updateReview: (id: number, payload: UpdateReviewPayload, authorization: string) =>
       $fetch<Review>(`/api/reviews/${id}`, {
         baseURL: apiBase,
         method: 'PUT',
+        headers: adminHeaders(authorization),
         body: payload,
       }),
-    deleteReview: (id: number) =>
+    deleteReview: (id: number, authorization: string) =>
       $fetch<void>(`/api/reviews/${id}`, {
         baseURL: apiBase,
         method: 'DELETE',
+        headers: adminHeaders(authorization),
       }),
   }
 }

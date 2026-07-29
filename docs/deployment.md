@@ -40,10 +40,14 @@ Backend по текущей реализации слушает `0.0.0.0:8080`. 
 оставляют backend на внутреннем порту, а наружу открывают только Nginx с HTTPS.
 
 Backend подключается к PostgreSQL через SeaORM. Подключение задается переменной
-`DATABASE_URL`:
+`DATABASE_URL`. Админка использует `ADMIN_USERNAME` и `ADMIN_PASSWORD` для Basic Auth
+на защищенных операциях модерации. CORS ограничивается переменной `ALLOWED_ORIGINS`:
 
 ```bash
 export DATABASE_URL=postgres://piloproject:password@127.0.0.1:5432/piloproject
+export ADMIN_USERNAME=admin
+export ADMIN_PASSWORD=change-me
+export ALLOWED_ORIGINS=https://example.com
 ```
 
 Перед первым запуском примените схему:
@@ -93,6 +97,9 @@ sudo nano /etc/piloproject/backend.env
 
 ```env
 DATABASE_URL=postgres://piloproject:password@127.0.0.1:5432/piloproject
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=change-me
+ALLOWED_ORIGINS=https://example.com
 ```
 
 На сервере схему можно применить из скопированного файла:
@@ -139,6 +146,8 @@ sudo systemctl status piloproject-backend
 ```bash
 curl http://127.0.0.1:8080/api/health
 curl http://127.0.0.1:8080/api/reviews
+curl -u "$ADMIN_USERNAME:$ADMIN_PASSWORD" http://127.0.0.1:8080/api/admin/session
+curl -I -H "Origin: https://example.com" http://127.0.0.1:8080/api/health
 ```
 
 Ожидаемый ответ:
@@ -246,7 +255,8 @@ curl -I https://example.com/
 
 В браузере откройте `https://example.com/`: главная страница должна загрузиться без
 ошибок изображений. Затем откройте `https://example.com/system-status`: страница должна
-запросить `/api/health` и показать состояние backend-сервиса.
+запросить `/api/health` и показать состояние backend-сервиса. Админка должна открываться
+по `https://example.com/admin` и принимать логин/пароль из backend-окружения.
 
 ## 9. Обновление версии
 
@@ -260,7 +270,10 @@ curl -I https://example.com/
 6. Запустить backend: `sudo systemctl start piloproject-backend`.
 7. Выполнить `npm ci` и `NUXT_PUBLIC_API_BASE=... npm run generate`.
 8. Обновить `/var/www/piloproject` содержимым `frontend/.output/public`.
-9. Проверить `/api/health`, `/api/reviews` и главную страницу.
+9. Проверить `/api/health`, `/api/reviews`, `/api/admin/session`, главную страницу и `/admin`.
+10. Проверить, что `ALLOWED_ORIGINS` содержит только реальные frontend-домены без `*`.
+11. Проверить security headers: `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`,
+    `Permissions-Policy`, `Content-Security-Policy`.
 
 ## 10. Частые проблемы
 
@@ -269,7 +282,8 @@ curl -I https://example.com/
 - `curl http://127.0.0.1:8080/api/health` не отвечает: проверьте статус
   `piloproject-backend` и логи `journalctl -u piloproject-backend -e`.
 - Backend падает при старте: проверьте `DATABASE_URL`, доступность PostgreSQL и наличие
-  таблицы `reviews`.
+  таблицы `reviews`. Также проверьте, что заданы `ADMIN_USERNAME`, `ADMIN_PASSWORD` и корректный
+  `ALLOWED_ORIGINS` без wildcard.
 - После обновления сайт выглядит старым: проверьте, что в `/var/www/piloproject`
   скопирована свежая директория `frontend/.output/public`.
 - HTTPS не работает: проверьте DNS-записи домена, выпуск сертификата и Nginx-конфигурацию.

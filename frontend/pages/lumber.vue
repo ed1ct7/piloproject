@@ -20,7 +20,7 @@ const catalog = [
   {
     number: '02',
     title: 'Брус',
-    image: '/images/paint-shop-1.jpg',
+    image: '/images/paint-shop-4.jpg',
     alt: 'Производственная линия и подготовленные пиломатериалы в цехе',
     description: 'Брус подходит для опорных элементов, лаг, навесов, бань и других конструкций.',
     rows: [

@@ -40,7 +40,7 @@ useHead({
     <section class="contact-workspace" aria-labelledby="contact-data-title">
       <figure>
         <NuxtImg
-          src="/images/paint-shop-1.jpg"
+          src="/images/paint-shop-4.jpg"
           alt="Рабочая зона производственного цеха пилорамы"
           width="1200"
           height="1600"

@@ -13,39 +13,41 @@ watch(
 <template>
   <div class="site-shell">
     <header class="site-header">
-      <NuxtLink class="site-brand" to="/" aria-label="Пилорама Разбегаево, главная страница">
-        <span class="site-brand__mark" aria-hidden="true">ПР</span>
-        <span class="site-brand__name">
-          <strong>Пилорама Разбегаево</strong>
-          <small>Ломоносовский район</small>
-        </span>
-      </NuxtLink>
+      <div class="site-header__inner">
+        <NuxtLink class="site-brand" to="/" aria-label="Пилорама Разбегаево, главная страница">
+          <span class="site-brand__mark" aria-hidden="true">ПР</span>
+          <span class="site-brand__name">
+            <strong>Пилорама Разбегаево</strong>
+            <small>Ломоносовский район</small>
+          </span>
+        </NuxtLink>
 
-      <button
-        class="nav-toggle"
-        type="button"
-        :aria-expanded="navOpen"
-        aria-controls="main-navigation"
-        aria-label="Открыть основную навигацию"
-        @click="navOpen = !navOpen"
-      >
-        <span />
-        <span />
-      </button>
+        <button
+          class="nav-toggle"
+          type="button"
+          :aria-expanded="navOpen"
+          aria-controls="main-navigation"
+          aria-label="Открыть основную навигацию"
+          @click="navOpen = !navOpen"
+        >
+          <span />
+          <span />
+        </button>
 
-      <nav
-        id="main-navigation"
-        class="site-nav"
-        :class="{ 'is-open': navOpen }"
-        aria-label="Основная навигация"
-      >
-        <NuxtLink to="/pilomaterialy">Пиломатериалы</NuxtLink>
-        <NuxtLink to="/dostavka">Доставка</NuxtLink>
-        <NuxtLink to="/otzyvy">Отзывы</NuxtLink>
-        <NuxtLink to="/kontakty">Контакты</NuxtLink>
-      </nav>
+        <nav
+          id="main-navigation"
+          class="site-nav"
+          :class="{ 'is-open': navOpen }"
+          aria-label="Основная навигация"
+        >
+          <NuxtLink to="/pilomaterialy">Пиломатериалы</NuxtLink>
+          <NuxtLink to="/dostavka">Доставка</NuxtLink>
+          <NuxtLink to="/otzyvy">Отзывы</NuxtLink>
+          <NuxtLink to="/kontakty">Контакты</NuxtLink>
+        </nav>
 
-      <NuxtLink class="header-action" to="/kontakty">Запросить стоимость</NuxtLink>
+        <NuxtLink class="header-action" to="/kontakty">Запросить стоимость</NuxtLink>
+      </div>
     </header>
 
     <slot />

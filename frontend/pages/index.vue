@@ -15,7 +15,7 @@ const products = [
     size: '100×100 и 150×150 мм',
     variants: 'Доступность размеров уточняется по заказу',
     use: 'Опорные элементы, лаги, навесы, бани и другие несущие конструкции.',
-    image: '/images/paint-shop-2.jpg',
+    image: '/images/paint-shop-4.jpg',
     alt: 'Производственное оборудование в цехе обработки пиломатериалов',
   },
   {
@@ -225,10 +225,10 @@ useSchemaOrg([
 
       <figure class="production-story__portrait">
         <NuxtImg
-          src="/images/paint-shop-2.jpg"
-          alt="Станок и линия подачи внутри производственного цеха"
-          width="1200"
-          height="1600"
+          src="/images/paint-shop-4.jpg"
+          alt="Линия обработки пиломатериалов внутри производственного цеха"
+          width="1600"
+          height="1200"
           sizes="xs:100vw sm:48vw md:32vw"
           densities="1"
           format="webp"
@@ -239,10 +239,10 @@ useSchemaOrg([
 
       <figure class="production-story__detail">
         <NuxtImg
-          src="/images/lumber-stack-2025-03-07.jpg"
-          alt="Партия окрашенных рифлёных досок на производственной линии"
-          width="1200"
-          height="1600"
+          src="/images/lumber-yard-2025-05-21.jpg"
+          alt="Партия серых окрашенных досок после обработки"
+          width="1600"
+          height="1200"
           sizes="xs:100vw sm:42vw md:28vw"
           densities="1"
           format="webp"

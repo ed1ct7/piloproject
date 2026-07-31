@@ -16,12 +16,11 @@ useSeoMeta({
   ogTitle: 'Доставка пиломатериалов из Разбегаево',
   ogDescription: 'Порядок самовывоза и согласования доставки доски, бруса и других пиломатериалов.',
   ogType: 'website',
-  robots: 'index, follow',
 })
 
 useHead({
   htmlAttrs: { lang: 'ru' },
-  link: [{ rel: 'canonical', href: 'https://pilorama-razbegaevo.clients.site/dostavka' }],
+  link: [{ rel: 'canonical', href: `${siteUrl}/dostavka` }],
 })
 </script>
 

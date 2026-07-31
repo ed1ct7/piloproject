@@ -5,7 +5,7 @@ const securityHeaders = {
   'Content-Security-Policy': [
     "default-src 'self'",
     "base-uri 'self'",
-    "connect-src 'self' http://localhost:8080 http://127.0.0.1:8080 https://pilorama-razbegaevo.clients.site",
+    `connect-src 'self' http://localhost:8080 http://127.0.0.1:8080 ${siteUrl}`,
     "font-src 'self' data:",
     "form-action 'self'",
     "frame-ancestors 'none'",

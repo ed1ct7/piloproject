@@ -9,9 +9,20 @@ const ratingOptions = [5, 4, 3, 2, 1]
 const starOptions = [1, 2, 3, 4, 5]
 const { listReviews, createReview } = useReviewsApi()
 
-const reviews = ref<Review[]>([])
-const hasLoaded = ref(false)
-const isLoading = ref(false)
+// Отзывы загружаются на этапе генерации (SSG) и попадают в статический HTML,
+// чтобы поисковые роботы видели их без выполнения JavaScript. Для этого backend
+// должен быть доступен по `NUXT_PUBLIC_API_BASE` в момент `npm run generate`.
+const {
+  data: reviews,
+  status: reviewsStatus,
+  error: reviewsError,
+  refresh: refreshReviews,
+} = await useAsyncData<Review[]>('reviews', () => listReviews(), {
+  default: () => [],
+})
+
+const isLoading = computed(() => reviewsStatus.value === 'pending')
+const hasLoaded = computed(() => !reviewsError.value && reviewsStatus.value !== 'idle')
 const isSubmitting = ref(false)
 const feedback = reactive<{
   type: 'success' | 'error' | ''
@@ -58,12 +69,11 @@ useSeoMeta({
   ogTitle: 'Отзывы о пилораме в Разбегаево',
   ogDescription: 'Отзывы покупателей о материале, обслуживании, самовывозе и доставке.',
   ogType: 'website',
-  robots: 'index, follow',
 })
 
 useHead({
   htmlAttrs: { lang: 'ru' },
-  link: [{ rel: 'canonical', href: 'https://pilorama-razbegaevo.clients.site/otzyvy' }],
+  link: [{ rel: 'canonical', href: `${siteUrl}/otzyvy` }],
 })
 
 useSchemaOrg([
@@ -73,22 +83,21 @@ useSchemaOrg([
   }),
 ])
 
-onMounted(loadReviews)
+// Если во время генерации backend был недоступен, пробуем догрузить на клиенте.
+onMounted(() => {
+  if (reviewsError.value) {
+    loadReviews()
+  }
+})
 
 async function loadReviews() {
-  isLoading.value = true
+  await refreshReviews()
 
-  try {
-    reviews.value = await listReviews()
-    hasLoaded.value = true
-    clearFeedback()
-  }
-  catch {
-    hasLoaded.value = false
+  if (reviewsError.value) {
     setFeedback('error', 'Отзывы из базы сейчас недоступны, попробуйте обновить страницу позднее.')
   }
-  finally {
-    isLoading.value = false
+  else {
+    clearFeedback()
   }
 }
 
@@ -105,7 +114,7 @@ async function submitReview() {
   try {
     const createdReview = await createReview(payload)
     reviews.value = [createdReview, ...reviews.value]
-    hasLoaded.value = true
+    reviewsError.value = null
     resetForm()
     setFeedback('success', 'Спасибо, ваш отзыв успешно добавлен на страницу.')
   }

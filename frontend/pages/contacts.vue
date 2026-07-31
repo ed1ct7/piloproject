@@ -9,12 +9,11 @@ useSeoMeta({
   ogTitle: 'Контакты пилорамы в Разбегаево',
   ogDescription: 'Адрес производства и подготовка запроса на расчёт пиломатериалов.',
   ogType: 'website',
-  robots: 'index, follow',
 })
 
 useHead({
   htmlAttrs: { lang: 'ru' },
-  link: [{ rel: 'canonical', href: 'https://pilorama-razbegaevo.clients.site/kontakty' }],
+  link: [{ rel: 'canonical', href: `${siteUrl}/kontakty` }],
 })
 </script>
 

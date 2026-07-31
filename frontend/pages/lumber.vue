@@ -64,12 +64,11 @@ useSeoMeta({
   ogTitle: 'Пиломатериалы в Разбегаево',
   ogDescription: 'Рабочий каталог обрезной доски, бруса, рейки, бруска и заборной доски.',
   ogType: 'website',
-  robots: 'index, follow',
 })
 
 useHead({
   htmlAttrs: { lang: 'ru' },
-  link: [{ rel: 'canonical', href: 'https://pilorama-razbegaevo.clients.site/pilomaterialy' }],
+  link: [{ rel: 'canonical', href: `${siteUrl}/pilomaterialy` }],
 })
 
 useSchemaOrg([

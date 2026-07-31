@@ -67,21 +67,20 @@ useSeoMeta({
   ogTitle: 'Пилорама Разбегаево',
   ogDescription: 'Обрезная доска, брус и другие пиломатериалы с производственной площадки в Разбегаево.',
   ogType: 'website',
-  robots: 'index, follow',
 })
 
 useHead({
   htmlAttrs: { lang: 'ru' },
-  link: [{ rel: 'canonical', href: 'https://pilorama-razbegaevo.clients.site/' }],
+  link: [{ rel: 'canonical', href: `${siteUrl}/` }],
 })
 
 useSchemaOrg([
   defineLocalBusiness({
-    '@id': 'https://pilorama-razbegaevo.clients.site/#localbusiness',
+    '@id': `${siteUrl}/#localbusiness`,
     '@type': 'HomeAndConstructionBusiness',
     name: 'Пилорама Разбегаево',
-    url: 'https://pilorama-razbegaevo.clients.site/',
-    image: 'https://pilorama-razbegaevo.clients.site/images/paint-shop-4.jpg',
+    url: `${siteUrl}/`,
+    image: `${siteUrl}/images/paint-shop-4.jpg`,
     address: {
       '@type': 'PostalAddress',
       addressLocality: 'Разбегаево',

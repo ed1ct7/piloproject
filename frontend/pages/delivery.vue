@@ -42,8 +42,8 @@ useHead({
 
       <figure>
         <NuxtImg
-          src="/images/lumber-stack-2025-03-07.jpg"
-          alt="Подготовленная партия окрашенных досок на производственной линии"
+          src="/images/dostavka-pilomaterialov.jpg"
+          alt="Машина с пиломатериалами на доставке у участка заказчика"
           width="1200"
           height="1600"
           sizes="xs:100vw sm:50vw md:48vw"
@@ -52,7 +52,7 @@ useHead({
           loading="eager"
           preload
         />
-        <figcaption>Партия материала перед комплектованием</figcaption>
+        <figcaption>Доставка заказа на участок покупателя</figcaption>
       </figure>
     </section>
 

@@ -4,10 +4,11 @@ definePageMeta({
 })
 
 useSeoMeta({
-  title: 'Контакты пилорамы в Разбегаево',
-  description: 'Адрес пилорамы в Разбегаево и список данных для расчёта доски, бруса, самовывоза и доставки по Ломоносовскому району.',
+  title: 'Контакты пилорамы в Разбегаево – телефон, WhatsApp, адрес',
+  description: 'Телефон и WhatsApp пилорамы в Разбегаево, адрес производственной площадки, реквизиты и список данных для расчёта доски, бруса, самовывоза и доставки.',
   ogTitle: 'Контакты пилорамы в Разбегаево',
-  ogDescription: 'Адрес производства и подготовка запроса на расчёт пиломатериалов.',
+  ogDescription: 'Телефон, WhatsApp и адрес производства. Подготовка запроса на расчёт пиломатериалов.',
+  ogImage: `${siteUrl}/images/ploshchadka-otgruzka-pilomaterialov.jpg`,
   ogType: 'website',
 })
 
@@ -15,6 +16,15 @@ useHead({
   htmlAttrs: { lang: 'ru' },
   link: [{ rel: 'canonical', href: `${siteUrl}/kontakty` }],
 })
+
+useSchemaOrg([
+  defineBreadcrumb({
+    itemListElement: [
+      { name: 'Главная', item: '/' },
+      { name: 'Контакты', item: '/kontakty' },
+    ],
+  }),
+])
 </script>
 
 <template>
@@ -40,9 +50,9 @@ useHead({
     <section class="contact-workspace" aria-labelledby="contact-data-title">
       <figure>
         <NuxtImg
-          src="/images/paint-shop-4.jpg"
-          alt="Рабочая зона производственного цеха пилорамы"
-          width="1200"
+          src="/images/ploshchadka-otgruzka-pilomaterialov.jpg"
+          alt="Производственная площадка пилорамы с партией доски на отгрузке"
+          width="900"
           height="1600"
           sizes="xs:100vw sm:48vw md:42vw"
           densities="1"
@@ -50,16 +60,31 @@ useHead({
           loading="eager"
           preload
         />
-        <figcaption>Рабочая зона производственной площадки</figcaption>
+        <figcaption>Комплектование партии на площадке</figcaption>
       </figure>
 
       <div class="contact-checklist">
         <span class="section-index">01</span>
-        <p class="technical-label">Запрос на расчёт</p>
-        <h2 id="contact-data-title">Подготовьте параметры будущего заказа</h2>
+        <p class="technical-label">Связь с производством</p>
+        <h2 id="contact-data-title">Позвоните или напишите в WhatsApp</h2>
+
+        <div class="contact-channels">
+          <a class="contact-channels__phone" :href="businessPhoneHref">{{ businessPhone }}</a>
+          <p>Звонки и сообщения принимаются в рабочее время площадки.</p>
+          <div class="section-actions">
+            <a
+              class="button button--signal"
+              :href="businessWhatsAppUrl"
+              target="_blank"
+              rel="noopener"
+            >Написать в WhatsApp</a>
+            <a class="button button--outline" :href="businessPhoneHref">Позвонить</a>
+          </div>
+        </div>
+
         <p>
-          Для расчёта потребуется название материала, размеры и количество. Также укажите
-          назначение, если нужна помощь с выбором подходящей позиции.
+          Чтобы расчёт занял один разговор, подготовьте параметры заказа по списку.
+          Если нужна помощь с выбором позиции, назовите назначение конструкции.
         </p>
 
         <ol>
@@ -69,13 +94,24 @@ useHead({
           <li><span>04</span>Самовывоз или адрес доставки</li>
         </ol>
 
-        <div class="contact-notice" role="note">
-          <strong>Контактный номер временно уточняется.</strong>
-          <p>
-            До публикации проверенного номера подготовьте параметры заказа по списку выше.
-            Актуальный способ связи будет указан здесь после подтверждения контакта.
-          </p>
-        </div>
+        <dl class="contact-requisites">
+          <div>
+            <dt>Организация</dt>
+            <dd>{{ businessRequisites.fullName }}</dd>
+          </div>
+          <div>
+            <dt>ИНН</dt>
+            <dd>{{ businessRequisites.inn }}</dd>
+          </div>
+          <div>
+            <dt>ОГРНИП</dt>
+            <dd>{{ businessRequisites.ogrnip }}</dd>
+          </div>
+          <div>
+            <dt>Учёт продукции</dt>
+            <dd>ЛесЕГАИС</dd>
+          </div>
+        </dl>
       </div>
     </section>
 

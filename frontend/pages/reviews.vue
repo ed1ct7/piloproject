@@ -198,17 +198,17 @@ function ratingLabel(value: number) {
 
       <figure>
         <NuxtImg
-          src="/images/paint-shop-4.jpg"
-          alt="Производственный цех пилорамы с линией обработки древесины"
-          width="1600"
-          height="1200"
+          src="/images/shtabel-suhoi-doski.jpg"
+          alt="Штабели сухой доски в пачках на складе пилорамы"
+          width="960"
+          height="1280"
           sizes="xs:100vw sm:52vw md:50vw"
           densities="1"
           format="webp"
           loading="eager"
           preload
         />
-        <figcaption>Участок обработки пиломатериалов</figcaption>
+        <figcaption>Склад сухой доски на площадке</figcaption>
       </figure>
     </section>
 

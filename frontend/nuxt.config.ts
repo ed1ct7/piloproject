@@ -1,4 +1,5 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import { businessPhone } from './utils/business'
 import { indexableRoutes, siteUrl } from './utils/seo-routes'
 
 const securityHeaders = {
@@ -99,7 +100,8 @@ export default defineNuxtConfig({
       '@type': 'HomeAndConstructionBusiness',
       name: 'Пилорама Разбегаево',
       url: siteUrl,
-      image: `${siteUrl}/images/paint-shop-4.jpg`,
+      telephone: businessPhone,
+      image: `${siteUrl}/images/lentochnaya-pilorama-raspil.jpg`,
       address: {
         '@type': 'PostalAddress',
         addressLocality: 'Разбегаево',

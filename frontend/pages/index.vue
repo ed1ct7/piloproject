@@ -1,42 +1,6 @@
 <script setup lang="ts">
-const products = [
-  {
-    code: '01 / ДСК',
-    title: 'Обрезная доска',
-    size: '25–50 мм / длина 6 м',
-    variants: 'Хвойные породы, наличие уточняется',
-    use: 'Каркасы, перекрытия, черновые полы, кровля и хозяйственные постройки.',
-    image: '/images/brushing-1.jpg',
-    alt: 'Крупный план обработанной хвойной доски на производственной линии',
-  },
-  {
-    code: '02 / БРС',
-    title: 'Брус',
-    size: '100×100 и 150×150 мм',
-    variants: 'Доступность размеров уточняется по заказу',
-    use: 'Опорные элементы, лаги, навесы, бани и другие несущие конструкции.',
-    image: '/images/paint-shop-4.jpg',
-    alt: 'Производственное оборудование в цехе обработки пиломатериалов',
-  },
-  {
-    code: '03 / ЗБР',
-    title: 'Заборная доска',
-    size: 'Размер партии согласуется',
-    variants: 'Распил и обработка обсуждаются отдельно',
-    use: 'Ограждения, временные конструкции и практические работы на участке.',
-    image: '/images/lumber-yard-2025-05-21.jpg',
-    alt: 'Окрашенные доски серого цвета после обработки',
-  },
-  {
-    code: '04 / РЕЙ',
-    title: 'Брусок и рейка',
-    size: 'Сечение уточняется по наличию',
-    variants: 'Подбор под назначение покупателя',
-    use: 'Обрешётка, подсистемы, упаковка, отделка и небольшие строительные работы.',
-    image: '/images/timber-order-2025-05-16.jpg',
-    alt: 'Образцы окрашенной древесины с различными вариантами покрытия',
-  },
-]
+// Первые четыре позиции прайса показываются в витрине на главной.
+const featuredProducts = priceListProducts.slice(0, 4)
 
 const orderSteps = [
   {
@@ -61,11 +25,35 @@ const orderSteps = [
   },
 ]
 
+const galleryPreview = [
+  {
+    image: '/images/pilorama-stanok-brevno.jpg',
+    alt: 'Пилорамный станок с бревном на подаче под навесом производства',
+    caption: 'Распил бревна',
+  },
+  {
+    image: '/images/sklad-obrabotannoi-doski.jpg',
+    alt: 'Штабели обработанной доски на крытом складе пилорамы',
+    caption: 'Крытый склад',
+  },
+  {
+    image: '/images/ploshchadka-otgruzka-pilomaterialov.jpg',
+    alt: 'Производственная площадка с партией доски и машиной на отгрузке',
+    caption: 'Отгрузка партии',
+  },
+  {
+    image: '/images/doska-s-ognebiozashchitoi.jpg',
+    alt: 'Штабель доски, обработанной огнебиозащитным составом',
+    caption: 'Огнебиозащита',
+  },
+]
+
 useSeoMeta({
   title: 'Пилорама Разбегаево – доска, брус и пиломатериалы с доставкой',
-  description: 'Пиломатериалы от производителя в Разбегаево: обрезная доска, брус, заборная доска, брусок и рейка. Самовывоз и согласование доставки по Ленинградской области и Санкт-Петербургу.',
+  description: 'Пиломатериалы от производителя в Разбегаево: сухая строганая доска, брусок, рейка, имитация бруса, огнебиозащитная обработка. Цены за м³, доставка по Санкт-Петербургу и Ленинградской области.',
   ogTitle: 'Пилорама Разбегаево',
-  ogDescription: 'Обрезная доска, брус и другие пиломатериалы с производственной площадки в Разбегаево.',
+  ogDescription: 'Доска, брусок, рейка и имитация бруса с производственной площадки в Разбегаево. Цены и фото производства.',
+  ogImage: `${siteUrl}/images/lentochnaya-pilorama-raspil.jpg`,
   ogType: 'website',
 })
 
@@ -80,18 +68,22 @@ useSchemaOrg([
     '@type': 'HomeAndConstructionBusiness',
     name: 'Пилорама Разбегаево',
     url: `${siteUrl}/`,
-    image: `${siteUrl}/images/paint-shop-4.jpg`,
+    telephone: businessPhone,
+    image: `${siteUrl}/images/lentochnaya-pilorama-raspil.jpg`,
     address: {
       '@type': 'PostalAddress',
       addressLocality: 'Разбегаево',
       addressRegion: 'Ленинградская область',
       addressCountry: 'RU',
     },
-    makesOffer: products.map((product) =>
+    makesOffer: priceListProducts.map((product) =>
       defineOffer({
+        price: product.price,
+        priceCurrency: 'RUB',
         itemOffered: defineProduct({
           name: product.title,
-          description: product.use,
+          description: product.description,
+          image: `${siteUrl}${product.image}`,
         }),
       }),
     ),
@@ -112,38 +104,38 @@ useSchemaOrg([
         <p class="technical-label">Производство и продажа</p>
         <h1>Доска и брус напрямую с пилорамы в Разбегаево</h1>
         <p class="production-hero__lead">
-          На площадке подбирают пиломатериалы для каркасов, кровли, ограждений и хозяйственных
-          построек. Покупатель заранее сообщает размеры и объём, после чего сотрудник проверяет
-          наличие и рассчитывает заказ.
+          Собственное производство: распил, камерная сушка, строжка и обработка
+          огнебиозащитным составом. Цены указаны за кубометр, наличие подтверждается
+          перед расчётом, доставка по Санкт-Петербургу и Ленинградской области.
         </p>
 
         <div class="production-hero__actions">
-          <NuxtLink class="button button--signal" to="/kontakty">Подготовить запрос</NuxtLink>
-          <NuxtLink class="button button--outline" to="/pilomaterialy">Открыть каталог</NuxtLink>
+          <NuxtLink class="button button--signal" to="/pilomaterialy">Каталог и цены</NuxtLink>
+          <NuxtLink class="button button--outline" to="/kontakty">Подготовить запрос</NuxtLink>
         </div>
 
         <dl class="production-hero__facts">
           <div>
-            <dt>Получение</dt>
-            <dd>Самовывоз или согласованная доставка</dd>
+            <dt>Телефон</dt>
+            <dd><a :href="businessPhoneHref">{{ businessPhone }}</a></dd>
           </div>
           <div>
             <dt>Ассортимент</dt>
-            <dd>Доска, брус, брусок и рейка</dd>
+            <dd>Доска, брусок, рейка, имитация бруса</dd>
           </div>
           <div>
-            <dt>Расчёт</dt>
-            <dd>После уточнения размеров и объёма</dd>
+            <dt>Получение</dt>
+            <dd>Самовывоз или согласованная доставка</dd>
           </div>
         </dl>
       </div>
 
       <figure class="production-hero__media">
         <NuxtImg
-          src="/images/paint-shop-4.jpg"
-          alt="Цех обработки пиломатериалов с производственным оборудованием"
-          width="1600"
-          height="1200"
+          src="/images/lentochnaya-pilorama-raspil.jpg"
+          alt="Ленточная пилорама с бревном на рельсах производственной площадки"
+          width="1200"
+          height="1600"
           sizes="xs:100vw sm:100vw md:55vw lg:55vw xl:55vw"
           densities="1"
           format="webp"
@@ -152,7 +144,7 @@ useSchemaOrg([
           fetchpriority="high"
         />
         <figcaption>
-          <span>Цех обработки</span>
+          <span>Ленточная пилорама</span>
           <span>Разбегаево</span>
         </figcaption>
       </figure>
@@ -162,17 +154,18 @@ useSchemaOrg([
       <header class="editorial-head">
         <div>
           <span class="section-index">01</span>
-          <p class="technical-label">Ассортимент</p>
+          <p class="technical-label">Прайс-лист</p>
         </div>
-        <h2 id="catalog-title">Основные пиломатериалы для стройки и участка</h2>
+        <h2 id="catalog-title">Основные позиции с ценами за кубометр</h2>
         <p>
-          Каталог собран как рабочая спецификация: рядом с названием указаны размеры, назначение
-          и условия уточнения. Актуальное наличие проверяется перед расчётом каждой партии.
+          В каталоге указаны реальные цены производства: сухой строганый материал,
+          доска камерной сушки, имитация бруса и позиции с огнебиозащитной обработкой.
+          Наличие подтверждается перед расчётом партии.
         </p>
       </header>
 
       <div class="product-ledger">
-        <article v-for="product in products" :key="product.code" class="product-row">
+        <article v-for="product in featuredProducts" :key="product.number" class="product-row">
           <figure>
             <NuxtImg
               :src="product.image"
@@ -185,26 +178,26 @@ useSchemaOrg([
               loading="lazy"
             />
           </figure>
-          <span class="product-row__code">{{ product.code }}</span>
+          <span class="product-row__code">{{ product.number }} / М³</span>
           <div class="product-row__title">
             <h3>{{ product.title }}</h3>
-            <p>{{ product.use }}</p>
+            <p>{{ product.description }}</p>
           </div>
           <dl>
             <div>
-              <dt>Размер</dt>
-              <dd>{{ product.size }}</dd>
+              <dt>Сечение</dt>
+              <dd>{{ product.specs[0][1] }}</dd>
             </div>
             <div>
-              <dt>Условия</dt>
-              <dd>{{ product.variants }}</dd>
+              <dt>Цена</dt>
+              <dd class="product-row__price">{{ formatPricePerCubicMeter(product.price) }}</dd>
             </div>
           </dl>
         </article>
       </div>
 
       <div class="section-action">
-        <NuxtLink class="text-link" to="/pilomaterialy">Посмотреть полную спецификацию</NuxtLink>
+        <NuxtLink class="text-link" to="/pilomaterialy">Все позиции и цены каталога</NuxtLink>
       </div>
     </section>
 
@@ -212,50 +205,78 @@ useSchemaOrg([
       <div class="production-story__text">
         <span class="section-index">02</span>
         <p class="technical-label">Производственная площадка</p>
-        <h2 id="production-title">Материал проходит обработку на реальном оборудовании</h2>
+        <h2 id="production-title">Материал проходит полный цикл на месте</h2>
         <p>
-          Фотографии показывают действующий цех, линию подачи и участок работы с покрытиями.
-          Покупатель видит не декоративную древесную фактуру, а среду, где готовят материал.
+          Бревно поступает на ленточную пилораму, дальше материал сушится, строгается и
+          при необходимости обрабатывается огнебиозащитным составом. Фотографии сделаны
+          на действующей площадке, а не в шоуруме.
         </p>
         <p>
-          Вариант обработки и внешний вид поверхности зависят от конкретного заказа. Перед
-          расчётом необходимо уточнить назначение материала и желаемый результат.
+          Вся продукция регистрируется в ЛесЕГАИС. Перед расчётом достаточно назвать
+          назначение материала — сотрудник подберёт сечение и вариант обработки.
         </p>
       </div>
 
       <figure class="production-story__portrait">
         <NuxtImg
-          src="/images/paint-shop-4.jpg"
-          alt="Линия обработки пиломатериалов внутри производственного цеха"
-          width="1600"
-          height="1200"
+          src="/images/pilorama-stanok-brevno.jpg"
+          alt="Пилорамный станок с бревном на подаче под навесом"
+          width="1200"
+          height="900"
           sizes="xs:100vw sm:48vw md:32vw"
           densities="1"
           format="webp"
           loading="lazy"
         />
-        <figcaption>Оборудование участка обработки</figcaption>
+        <figcaption>Распил бревна на станке</figcaption>
       </figure>
 
       <figure class="production-story__detail">
         <NuxtImg
-          src="/images/lumber-yard-2025-05-21.jpg"
-          alt="Партия серых окрашенных досок после обработки"
-          width="1600"
-          height="1200"
+          src="/images/sklad-obrabotannoi-doski.jpg"
+          alt="Штабели обработанной доски на крытом складе"
+          width="960"
+          height="720"
           sizes="xs:100vw sm:42vw md:28vw"
           densities="1"
           format="webp"
           loading="lazy"
         />
-        <figcaption>Подготовленная поверхность доски</figcaption>
+        <figcaption>Крытый склад готовой доски</figcaption>
       </figure>
+    </section>
+
+    <section class="photo-band" aria-labelledby="photo-band-title">
+      <header class="photo-band__head">
+        <div>
+          <span class="section-index">03</span>
+          <p class="technical-label">Фото с производства</p>
+        </div>
+        <h2 id="photo-band-title">Площадка, склад и отгрузка без постановки</h2>
+        <NuxtLink class="text-link" to="/foto">Смотреть все фотографии</NuxtLink>
+      </header>
+
+      <div class="photo-band__grid">
+        <figure v-for="photo in galleryPreview" :key="photo.image">
+          <NuxtImg
+            :src="photo.image"
+            :alt="photo.alt"
+            width="720"
+            height="900"
+            sizes="xs:50vw sm:25vw md:24vw"
+            densities="1"
+            format="webp"
+            loading="lazy"
+          />
+          <figcaption>{{ photo.caption }}</figcaption>
+        </figure>
+      </div>
     </section>
 
     <section class="order-route" aria-labelledby="order-title">
       <header class="order-route__head">
         <div>
-          <span class="section-index">03</span>
+          <span class="section-index">04</span>
           <p class="technical-label">Порядок заказа</p>
         </div>
         <h2 id="order-title">От параметров материала до готовой отгрузки</h2>
@@ -281,9 +302,47 @@ useSchemaOrg([
       </div>
     </section>
 
+    <section class="about-strip" aria-labelledby="about-title">
+      <div class="about-strip__text">
+        <span class="section-index">05</span>
+        <p class="technical-label">О производстве</p>
+        <h2 id="about-title">Официальный производитель, а не перекупщик</h2>
+        <p>
+          Пилораму ведёт {{ businessRequisites.fullName }}. Продукция регистрируется
+          в системе ЛесЕГАИС, покупатель получает документы на партию. Оценка
+          покупателей на Яндекс Картах — 4,6.
+        </p>
+        <div class="section-actions">
+          <a class="button button--signal" :href="businessWhatsAppUrl" target="_blank" rel="noopener">
+            Написать в WhatsApp
+          </a>
+          <a class="button button--outline" :href="businessPhoneHref">{{ businessPhone }}</a>
+        </div>
+      </div>
+
+      <dl class="about-strip__facts">
+        <div>
+          <dt>Организация</dt>
+          <dd>{{ businessRequisites.fullName }}</dd>
+        </div>
+        <div>
+          <dt>ИНН</dt>
+          <dd>{{ businessRequisites.inn }}</dd>
+        </div>
+        <div>
+          <dt>ОГРНИП</dt>
+          <dd>{{ businessRequisites.ogrnip }}</dd>
+        </div>
+        <div>
+          <dt>Учёт продукции</dt>
+          <dd>ЛесЕГАИС</dd>
+        </div>
+      </dl>
+    </section>
+
     <section class="work-video" aria-labelledby="video-title">
       <div class="work-video__heading">
-        <span class="section-index">04</span>
+        <span class="section-index">06</span>
         <p class="technical-label">Видео с площадки</p>
         <h2 id="video-title">Производственный процесс без декоративной постановки</h2>
         <p>
@@ -296,7 +355,7 @@ useSchemaOrg([
         controls
         preload="metadata"
         playsinline
-        poster="/images/paint-shop-4.jpg"
+        poster="/images/pilorama-stanok-brevno.jpg"
         aria-label="Короткое видео с производственной площадки пилорамы"
       >
         <source src="/mp4/short-sawmill-video.mp4" type="video/mp4">

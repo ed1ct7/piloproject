@@ -274,7 +274,10 @@ mod tests {
             unreachable!("health endpoint не обращается к отзывам")
         }
 
-        async fn list(&self) -> Result<Vec<reviews::Review>, reviews::ReviewStoreError> {
+        async fn list(
+            &self,
+            _options: reviews::ReviewListOptions,
+        ) -> Result<Vec<reviews::Review>, reviews::ReviewStoreError> {
             unreachable!("health endpoint не обращается к отзывам")
         }
 

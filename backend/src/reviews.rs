@@ -1,6 +1,6 @@
 use async_trait::async_trait;
 use axum::{
-    extract::{Path, State},
+    extract::{Path, Query, State},
     http::{header, HeaderMap, StatusCode},
     response::{IntoResponse, Response},
     routing::get,
@@ -9,18 +9,29 @@ use axum::{
 use base64::{engine::general_purpose::STANDARD as BASE64_STANDARD, Engine as _};
 use chrono::{DateTime, Utc};
 use sea_orm::{
-    entity::prelude::*, ActiveModelTrait, DatabaseConnection, DbErr, EntityTrait, QueryOrder, Set,
+    entity::prelude::*, ActiveModelTrait, ColumnTrait, DatabaseConnection, DbErr, EntityTrait,
+    QueryFilter, QueryOrder, Set,
 };
 use serde::{Deserialize, Serialize};
 use std::{env, fmt, sync::Arc};
 
+/// Максимальная длина имени автора отзыва в символах.
 const MAX_AUTHOR_NAME_CHARS: usize = 80;
+/// Максимальная длина текста отзыва в символах.
 const MAX_REVIEW_TEXT_CHARS: usize = 1000;
+/// Минимальная допустимая оценка отзыва.
 const MIN_REVIEW_RATING: i32 = 1;
+/// Максимальная допустимая оценка отзыва.
 const MAX_REVIEW_RATING: i32 = 5;
+/// Порядок сортировки отзывов по умолчанию для публичного API.
+const DEFAULT_REVIEW_SORT: ReviewSortOrder = ReviewSortOrder::Newest;
+/// Публичное сообщение при ошибке базы данных без раскрытия внутренних деталей.
 const MESSAGE_DATABASE_ERROR: &str = "Не удалось обработать запрос";
+/// Публичное сообщение, когда отзыв не найден.
 const MESSAGE_REVIEW_NOT_FOUND: &str = "Отзыв не найден";
+/// Публичное сообщение при неуспешной админской авторизации.
 const MESSAGE_UNAUTHORIZED: &str = "Неверный логин или пароль администратора";
+/// Значение `WWW-Authenticate` для Basic Auth админских эндпоинтов.
 const WWW_AUTHENTICATE_VALUE: &str = r#"Basic realm="piloproject-admin", charset="UTF-8""#;
 
 pub(crate) mod entity {
@@ -166,6 +177,40 @@ pub(crate) struct ReviewPatch {
     pub rating: Option<i32>,
 }
 
+/// Порядок вывода отзывов для публичной страницы.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum ReviewSortOrder {
+    Newest,
+    Highest,
+    Lowest,
+}
+
+impl ReviewSortOrder {
+    fn api_name(self) -> &'static str {
+        match self {
+            Self::Newest => "newest",
+            Self::Highest => "highest",
+            Self::Lowest => "lowest",
+        }
+    }
+}
+
+/// Параметры выборки отзывов.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) struct ReviewListOptions {
+    pub rating: Option<i32>,
+    pub sort: ReviewSortOrder,
+}
+
+impl Default for ReviewListOptions {
+    fn default() -> Self {
+        Self {
+            rating: None,
+            sort: DEFAULT_REVIEW_SORT,
+        }
+    }
+}
+
 #[derive(Debug)]
 pub(crate) enum ReviewStoreError {
     Database(DbErr),
@@ -181,7 +226,7 @@ impl From<DbErr> for ReviewStoreError {
 #[async_trait]
 pub(crate) trait ReviewRepository: Send + Sync {
     async fn create(&self, new_review: NewReview) -> Result<Review, ReviewStoreError>;
-    async fn list(&self) -> Result<Vec<Review>, ReviewStoreError>;
+    async fn list(&self, options: ReviewListOptions) -> Result<Vec<Review>, ReviewStoreError>;
     async fn get(&self, id: i32) -> Result<Review, ReviewStoreError>;
     async fn update(&self, id: i32, patch: ReviewPatch) -> Result<Review, ReviewStoreError>;
     async fn delete(&self, id: i32) -> Result<(), ReviewStoreError>;
@@ -225,9 +270,24 @@ impl ReviewRepository for SeaOrmReviewRepository {
         Ok(model.into())
     }
 
-    async fn list(&self) -> Result<Vec<Review>, ReviewStoreError> {
-        let reviews = entity::Entity::find()
-            .order_by_desc(entity::Column::CreatedAt)
+    async fn list(&self, options: ReviewListOptions) -> Result<Vec<Review>, ReviewStoreError> {
+        let mut query = entity::Entity::find();
+
+        if let Some(rating) = options.rating {
+            query = query.filter(entity::Column::Rating.eq(rating));
+        }
+
+        query = match options.sort {
+            ReviewSortOrder::Newest => query.order_by_desc(entity::Column::CreatedAt),
+            ReviewSortOrder::Highest => query
+                .order_by_desc(entity::Column::Rating)
+                .order_by_desc(entity::Column::CreatedAt),
+            ReviewSortOrder::Lowest => query
+                .order_by_asc(entity::Column::Rating)
+                .order_by_desc(entity::Column::CreatedAt),
+        };
+
+        let reviews = query
             .all(&self.db)
             .await?
             .into_iter()
@@ -309,6 +369,12 @@ struct UpdateReviewRequest {
     rating: Option<i32>,
 }
 
+#[derive(Deserialize)]
+struct PublicReviewsQuery {
+    rating: Option<String>,
+    sort: Option<String>,
+}
+
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
 struct ReviewResponse {
@@ -318,6 +384,33 @@ struct ReviewResponse {
     rating: i32,
     created_at: DateTime<Utc>,
     updated_at: DateTime<Utc>,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+struct RatingBarResponse {
+    rating: i32,
+    count: usize,
+    percent: i32,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+struct ReviewSummaryResponse {
+    total_count: usize,
+    average_rating: Option<String>,
+    rating_bars: Vec<RatingBarResponse>,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+struct PublicReviewsResponse {
+    reviews: Vec<ReviewResponse>,
+    summary: ReviewSummaryResponse,
+    rating_options: Vec<i32>,
+    review_text_limit: usize,
+    selected_rating: Option<i32>,
+    sort: &'static str,
 }
 
 #[derive(Serialize)]
@@ -373,6 +466,7 @@ enum ReviewValidationError {
         min: i32,
         max: i32,
     },
+    InvalidSort,
 }
 
 impl ReviewValidationError {
@@ -391,6 +485,9 @@ impl ReviewValidationError {
                     "Поле `{}` должно быть числом от {min} до {max}",
                     ReviewField::Rating.api_name()
                 )
+            }
+            Self::InvalidSort => {
+                "Параметр `sort` должен быть одним из: newest, highest, lowest".to_owned()
             }
         }
     }
@@ -490,6 +587,7 @@ pub(crate) fn routes(
 ) -> Router {
     Router::new()
         .route("/api/admin/session", get(admin_session))
+        .route("/api/reviews/public", get(public_reviews))
         .route("/api/reviews", get(list_reviews).post(create_review))
         .route(
             "/api/reviews/:id",
@@ -522,12 +620,36 @@ async fn create_review(
     Ok((StatusCode::CREATED, Json(review.into())))
 }
 
+async fn public_reviews(
+    State(state): State<ReviewState>,
+    Query(query): Query<PublicReviewsQuery>,
+) -> Result<Json<PublicReviewsResponse>, ApiError> {
+    let options = query.into_options()?;
+    let all_reviews = state.store.list(ReviewListOptions::default()).await?;
+    let reviews = state
+        .store
+        .list(options)
+        .await?
+        .into_iter()
+        .map(ReviewResponse::from)
+        .collect();
+
+    Ok(Json(PublicReviewsResponse {
+        reviews,
+        summary: ReviewSummaryResponse::from_reviews(&all_reviews),
+        rating_options: rating_options(),
+        review_text_limit: MAX_REVIEW_TEXT_CHARS,
+        selected_rating: options.rating,
+        sort: options.sort.api_name(),
+    }))
+}
+
 async fn list_reviews(
     State(state): State<ReviewState>,
 ) -> Result<Json<Vec<ReviewResponse>>, ApiError> {
     let reviews = state
         .store
-        .list()
+        .list(ReviewListOptions::default())
         .await?
         .into_iter()
         .map(ReviewResponse::from)
@@ -571,6 +693,19 @@ async fn delete_review(
     Ok(StatusCode::NO_CONTENT)
 }
 
+impl PublicReviewsQuery {
+    fn into_options(self) -> Result<ReviewListOptions, ApiError> {
+        Ok(ReviewListOptions {
+            rating: self
+                .rating
+                .as_deref()
+                .map(parse_review_rating_filter)
+                .transpose()?,
+            sort: parse_review_sort(self.sort.as_deref())?,
+        })
+    }
+}
+
 impl CreateReviewRequest {
     fn into_new_review(self) -> Result<NewReview, ApiError> {
         Ok(NewReview {
@@ -602,6 +737,70 @@ impl UpdateReviewRequest {
                 .transpose()?,
             rating: self.rating.map(validate_rating).transpose()?,
         })
+    }
+}
+
+impl ReviewSummaryResponse {
+    fn from_reviews(reviews: &[Review]) -> Self {
+        Self {
+            total_count: reviews.len(),
+            average_rating: average_rating_label(reviews),
+            rating_bars: rating_options()
+                .into_iter()
+                .map(|rating| rating_bar(reviews, rating))
+                .collect(),
+        }
+    }
+}
+
+fn parse_review_sort(value: Option<&str>) -> Result<ReviewSortOrder, ApiError> {
+    match value.unwrap_or(DEFAULT_REVIEW_SORT.api_name()) {
+        "newest" => Ok(ReviewSortOrder::Newest),
+        "highest" => Ok(ReviewSortOrder::Highest),
+        "lowest" => Ok(ReviewSortOrder::Lowest),
+        _ => Err(ApiError::Validation(ReviewValidationError::InvalidSort)),
+    }
+}
+
+fn parse_review_rating_filter(value: &str) -> Result<i32, ApiError> {
+    let rating = value.parse::<i32>().map_err(|_| {
+        ApiError::Validation(ReviewValidationError::InvalidRating {
+            min: MIN_REVIEW_RATING,
+            max: MAX_REVIEW_RATING,
+        })
+    })?;
+
+    validate_rating(rating)
+}
+
+fn rating_options() -> Vec<i32> {
+    (MIN_REVIEW_RATING..=MAX_REVIEW_RATING).rev().collect()
+}
+
+fn average_rating_label(reviews: &[Review]) -> Option<String> {
+    if reviews.is_empty() {
+        return None;
+    }
+
+    let sum: i32 = reviews.iter().map(|review| review.rating).sum();
+    Some(format!("{:.1}", sum as f64 / reviews.len() as f64).replace('.', ","))
+}
+
+fn rating_bar(reviews: &[Review], rating: i32) -> RatingBarResponse {
+    let count = reviews
+        .iter()
+        .filter(|review| review.rating == rating)
+        .count();
+    let percent = if reviews.is_empty() {
+        0
+    } else {
+        ((count as f64 / reviews.len() as f64) * 100.0).round() as i32
+    };
+
+    RatingBarResponse {
+        rating,
+        count,
+        percent,
     }
 }
 
@@ -759,7 +958,7 @@ mod tests {
             Ok(review)
         }
 
-        async fn list(&self) -> Result<Vec<Review>, ReviewStoreError> {
+        async fn list(&self, options: ReviewListOptions) -> Result<Vec<Review>, ReviewStoreError> {
             let mut reviews = self
                 .reviews
                 .lock()
@@ -767,7 +966,27 @@ mod tests {
                 .values()
                 .cloned()
                 .collect::<Vec<_>>();
-            reviews.sort_by(|left, right| right.created_at.cmp(&left.created_at));
+
+            if let Some(rating) = options.rating {
+                reviews.retain(|review| review.rating == rating);
+            }
+
+            match options.sort {
+                ReviewSortOrder::Newest => {
+                    reviews.sort_by(|left, right| right.created_at.cmp(&left.created_at));
+                }
+                ReviewSortOrder::Highest => reviews.sort_by(|left, right| {
+                    right
+                        .rating
+                        .cmp(&left.rating)
+                        .then_with(|| right.created_at.cmp(&left.created_at))
+                }),
+                ReviewSortOrder::Lowest => reviews.sort_by(|left, right| {
+                    left.rating
+                        .cmp(&right.rating)
+                        .then_with(|| right.created_at.cmp(&left.created_at))
+                }),
+            }
 
             Ok(reviews)
         }
@@ -820,7 +1039,7 @@ mod tests {
             Err(secret_database_error())
         }
 
-        async fn list(&self) -> Result<Vec<Review>, ReviewStoreError> {
+        async fn list(&self, _options: ReviewListOptions) -> Result<Vec<Review>, ReviewStoreError> {
             Err(secret_database_error())
         }
 
@@ -977,6 +1196,16 @@ mod tests {
         );
         assert_eq!(
             validation_error(
+                PublicReviewsQuery {
+                    rating: None,
+                    sort: Some("oldest".to_owned()),
+                }
+                .into_options()
+            ),
+            ReviewValidationError::InvalidSort
+        );
+        assert_eq!(
+            validation_error(
                 UpdateReviewRequest {
                     author_name: None,
                     text: None,
@@ -1059,15 +1288,27 @@ mod tests {
     }
 
     async fn create_review_for_test(app: Router) -> serde_json::Value {
+        create_review_with_rating_for_test(app, "Анна", "Хороший брус и быстрая доставка", 5).await
+    }
+
+    async fn create_review_with_rating_for_test(
+        app: Router,
+        author_name: &str,
+        text: &str,
+        rating: i32,
+    ) -> serde_json::Value {
+        let body = serde_json::json!({
+            "authorName": author_name,
+            "text": text,
+            "rating": rating,
+        });
         let response = app
             .oneshot(
                 Request::builder()
                     .method("POST")
                     .uri("/api/reviews")
                     .header("content-type", "application/json")
-                    .body(Body::from(
-                        r#"{"authorName":"Анна","text":"Хороший брус и быстрая доставка","rating":5}"#,
-                    ))
+                    .body(Body::from(body.to_string()))
                     .unwrap(),
             )
             .await
@@ -1266,12 +1507,129 @@ mod tests {
     }
 
     #[tokio::test]
+    async fn public_reviews_returns_server_prepared_page_data() {
+        let store = MemoryReviewRepository::default();
+        let app = test_app(store);
+        create_review_with_rating_for_test(app.clone(), "Анна", "Хороший брус", 5).await;
+        create_review_with_rating_for_test(app.clone(), "Игорь", "Быстро привезли", 4).await;
+        create_review_with_rating_for_test(app.clone(), "Ольга", "Ровная доска", 5).await;
+
+        let response = app
+            .oneshot(
+                Request::builder()
+                    .uri("/api/reviews/public?rating=5&sort=highest")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        assert_eq!(response.status(), StatusCode::OK);
+
+        let body = response_json(response).await;
+        assert_eq!(body["reviews"].as_array().unwrap().len(), 2);
+        assert!(body["reviews"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .all(|review| review["rating"] == 5));
+        assert_eq!(body["summary"]["totalCount"], 3);
+        assert_eq!(body["summary"]["averageRating"], "4,7");
+        assert_eq!(body["summary"]["ratingBars"][0]["rating"], 5);
+        assert_eq!(body["summary"]["ratingBars"][0]["count"], 2);
+        assert_eq!(body["summary"]["ratingBars"][0]["percent"], 67);
+        assert_eq!(body["summary"]["ratingBars"][1]["rating"], 4);
+        assert_eq!(body["summary"]["ratingBars"][1]["count"], 1);
+        assert_eq!(body["ratingOptions"], serde_json::json!([5, 4, 3, 2, 1]));
+        assert_eq!(body["reviewTextLimit"], MAX_REVIEW_TEXT_CHARS);
+        assert_eq!(body["selectedRating"], 5);
+        assert_eq!(body["sort"], "highest");
+    }
+
+    #[tokio::test]
+    async fn public_reviews_rejects_invalid_rating_filter() {
+        let app = test_app(MemoryReviewRepository::default());
+        let response = app
+            .oneshot(
+                Request::builder()
+                    .uri("/api/reviews/public?rating=0")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        assert_eq!(response.status(), StatusCode::UNPROCESSABLE_ENTITY);
+
+        let body = response_json(response).await;
+        assert!(body.get("code").is_none());
+    }
+
+    #[tokio::test]
+    async fn public_reviews_rejects_non_numeric_rating_filter() {
+        let app = test_app(MemoryReviewRepository::default());
+        let response = app
+            .oneshot(
+                Request::builder()
+                    .uri("/api/reviews/public?rating=abc")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        assert_eq!(response.status(), StatusCode::UNPROCESSABLE_ENTITY);
+
+        let body = response_json(response).await;
+        assert!(body.get("code").is_none());
+    }
+
+    #[tokio::test]
+    async fn public_reviews_rejects_invalid_sort() {
+        let app = test_app(MemoryReviewRepository::default());
+        let response = app
+            .oneshot(
+                Request::builder()
+                    .uri("/api/reviews/public?sort=oldest")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        assert_eq!(response.status(), StatusCode::UNPROCESSABLE_ENTITY);
+
+        let body = response_json(response).await;
+        assert!(body.get("code").is_none());
+    }
+
+    #[tokio::test]
     async fn database_errors_do_not_expose_internal_details() {
         let app = test_app(FailingReviewRepository);
         let response = app
             .oneshot(
                 Request::builder()
                     .uri("/api/reviews")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        assert_eq!(response.status(), StatusCode::INTERNAL_SERVER_ERROR);
+
+        let body = response_json(response).await;
+        assert!(body.get("code").is_none());
+        assert_eq!(body["message"], "Не удалось обработать запрос");
+    }
+
+    #[tokio::test]
+    async fn public_reviews_database_errors_do_not_expose_internal_details() {
+        let app = test_app(FailingReviewRepository);
+        let response = app
+            .oneshot(
+                Request::builder()
+                    .uri("/api/reviews/public")
                     .body(Body::empty())
                     .unwrap(),
             )
@@ -1575,7 +1933,7 @@ mod tests {
             .into_connection();
         let repo = SeaOrmReviewRepository::new(db);
 
-        let reviews = repo.list().await.unwrap();
+        let reviews = repo.list(ReviewListOptions::default()).await.unwrap();
 
         assert_eq!(reviews.len(), 2);
         assert_eq!(reviews[0].author_name, "Анна");
@@ -1589,6 +1947,33 @@ mod tests {
         assert!(log[0].statements()[0]
             .sql
             .contains(r#"ORDER BY "reviews"."created_at" DESC"#));
+    }
+
+    #[tokio::test]
+    async fn sea_orm_repository_lists_reviews_with_filter_and_sort() {
+        let first_model = review_model(1, "Анна", "Отличная доска", 5);
+        let second_model = review_model(2, "Ольга", "Ровная доска", 5);
+        let db = MockDatabase::new(DbBackend::Postgres)
+            .append_query_results([vec![first_model, second_model]])
+            .into_connection();
+        let repo = SeaOrmReviewRepository::new(db);
+
+        let reviews = repo
+            .list(ReviewListOptions {
+                rating: Some(5),
+                sort: ReviewSortOrder::Highest,
+            })
+            .await
+            .unwrap();
+
+        assert_eq!(reviews.len(), 2);
+
+        let log = repo.db.into_transaction_log();
+        assert_eq!(log.len(), 1);
+        let sql = &log[0].statements()[0].sql;
+        assert!(sql.contains(r#"WHERE "reviews"."rating" = $1"#));
+        assert!(sql.contains(r#"ORDER BY "reviews"."rating" DESC"#));
+        assert!(sql.contains(r#""reviews"."created_at" DESC"#));
     }
 
     #[tokio::test]

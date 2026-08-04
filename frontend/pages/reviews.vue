@@ -1,26 +1,55 @@
 <script setup lang="ts">
-import type { CreateReviewPayload, Review } from "~/composables/useApi";
+import type {
+  CreateReviewPayload,
+  PublicReviews,
+  PublicReviewsQuery,
+  ReviewSort,
+} from "~/composables/useApi";
 
 definePageMeta({
   path: "/otzyvy",
 });
 
-const ratingOptions = [5, 4, 3, 2, 1];
 const starOptions = [1, 2, 3, 4, 5];
 const ratingSourceUrl = "https://pilorama-razbegaevo.clients.site/#rating";
-const { listReviews, createReview } = useReviewsApi();
+const { listPublicReviews, createReview } = useReviewsApi();
+const fallbackReviewTextLimit = 1000;
+const fallbackRatingOptions = [5, 4, 3, 2, 1];
+
+const selectedRatingFilter = ref<number | null>(null);
+const reviewSort = ref<ReviewSort>("newest");
+const publicReviewsQuery = computed<PublicReviewsQuery>(() => ({
+  rating: selectedRatingFilter.value ?? undefined,
+  sort: reviewSort.value,
+}));
+
+const form = reactive<CreateReviewPayload>({
+  authorName: "",
+  text: "",
+  rating: 5,
+});
 
 // Отзывы загружаются на этапе генерации (SSG) и попадают в статический HTML,
 // чтобы поисковые роботы видели их без выполнения JavaScript. Для этого backend
 // должен быть доступен по `NUXT_PUBLIC_API_BASE` в момент `npm run generate`.
 const {
-  data: reviews,
+  data: publicReviews,
   status: reviewsStatus,
   error: reviewsError,
   refresh: refreshReviews,
-} = await useAsyncData<Review[]>("reviews", () => listReviews(), {
-  default: () => [],
-});
+} = await useAsyncData<PublicReviews>(
+  "public-reviews",
+  () => listPublicReviews(publicReviewsQuery.value),
+  {
+    default: emptyPublicReviews,
+  },
+);
+
+const reviews = computed(() => publicReviews.value.reviews);
+const reviewSummary = computed(() => publicReviews.value.summary);
+const ratingOptions = computed(() => publicReviews.value.ratingOptions);
+const ratingBars = computed(() => reviewSummary.value.ratingBars);
+const reviewTextLimit = computed(() => publicReviews.value.reviewTextLimit);
 
 const isLoading = computed(() => reviewsStatus.value === "pending");
 const hasLoaded = computed(
@@ -34,47 +63,14 @@ const feedback = reactive<{
   type: "",
   message: "",
 });
-const form = reactive<CreateReviewPayload>({
-  authorName: "",
-  text: "",
-  rating: 5,
-});
-
-const averageRating = computed(() => {
-  if (!reviews.value.length) {
-    return null;
-  }
-
-  const sum = reviews.value.reduce(
-    (total: number, review: Review) => total + review.rating,
-    0,
-  );
-  return (sum / reviews.value.length).toFixed(1).replace(".", ",");
-});
-
-const ratingBars = computed(() =>
-  ratingOptions.map((rating) => {
-    const count = reviews.value.filter(
-      (review: Review) => review.rating === rating,
-    ).length;
-    const percent = reviews.value.length
-      ? Math.round((count / reviews.value.length) * 100)
-      : 0;
-
-    return {
-      rating,
-      count,
-      percent,
-    };
-  }),
-);
 
 const canSubmitReview = computed(
   () =>
     Boolean(form.authorName.trim()) &&
     Boolean(form.text.trim()) &&
-    isValidRating(form.rating),
+    ratingOptions.value.includes(form.rating),
 );
+const reviewTextLength = computed(() => form.text.length);
 
 useSeoMeta({
   title: "Отзывы о пилораме в Разбегаево",
@@ -106,6 +102,25 @@ onMounted(() => {
   }
 });
 
+function emptyPublicReviews(): PublicReviews {
+  return {
+    reviews: [],
+    summary: {
+      totalCount: 0,
+      averageRating: null,
+      ratingBars: fallbackRatingOptions.map((rating) => ({
+        rating,
+        count: 0,
+        percent: 0,
+      })),
+    },
+    ratingOptions: fallbackRatingOptions,
+    reviewTextLimit: fallbackReviewTextLimit,
+    selectedRating: null,
+    sort: "newest",
+  };
+}
+
 async function loadReviews() {
   await refreshReviews();
 
@@ -120,9 +135,7 @@ async function loadReviews() {
 }
 
 async function submitReview() {
-  const payload = normalizeCreatePayload(form);
-
-  if (!payload) {
+  if (!canSubmitReview.value) {
     setFeedback("error", "Заполните имя, текст и выберите оценку.");
     return;
   }
@@ -130,10 +143,15 @@ async function submitReview() {
   isSubmitting.value = true;
 
   try {
-    const createdReview = await createReview(payload);
-    reviews.value = [createdReview, ...reviews.value];
+    await createReview({
+      authorName: form.authorName,
+      text: form.text,
+      rating: form.rating,
+    });
+    selectedRatingFilter.value = null;
     reviewsError.value = null;
     resetForm();
+    await refreshReviews();
     setFeedback("success", "Спасибо, ваш отзыв успешно добавлен на страницу.");
   } catch {
     setFeedback(
@@ -143,23 +161,6 @@ async function submitReview() {
   } finally {
     isSubmitting.value = false;
   }
-}
-
-function normalizeCreatePayload(
-  payload: CreateReviewPayload,
-): CreateReviewPayload | null {
-  const authorName = payload.authorName.trim();
-  const text = payload.text.trim();
-
-  if (!authorName || !text || !isValidRating(payload.rating)) {
-    return null;
-  }
-
-  return {
-    authorName,
-    text,
-    rating: payload.rating,
-  };
 }
 
 function resetForm() {
@@ -178,8 +179,13 @@ function clearFeedback() {
   feedback.message = "";
 }
 
-function isValidRating(value: number) {
-  return value >= 1 && value <= 5;
+async function setRatingFilter(value: number | null) {
+  selectedRatingFilter.value = value;
+  await loadReviews();
+}
+
+function reviewInitial(authorName: string) {
+  return authorName.trim().slice(0, 1).toLocaleUpperCase("ru-RU") || "?";
 }
 
 function formatDate(value: string) {
@@ -269,10 +275,25 @@ function ratingLabel(value: number) {
                 На сайте
               </dt>
               <dd class="m-0 text-[2rem] font-[760] leading-none text-[#1f3a2f]">
-                {{ reviews.length }}
+                {{ reviewSummary.totalCount }}
               </dd>
             </div>
           </dl>
+
+          <div class="mt-8 flex flex-wrap gap-2.5">
+            <a
+              class="inline-flex min-h-11 cursor-pointer items-center justify-center border border-[#d65a1f] bg-[#d65a1f] px-4 py-2.5 text-center font-[Segoe_UI,Arial,sans-serif] font-[760] leading-[1.1] text-[#fffdf7] no-underline transition-colors duration-150 hover:border-[#a53e10] hover:bg-[#a53e10]"
+              href="#review-form"
+            >
+              Оставить отзыв
+            </a>
+            <a
+              class="inline-flex min-h-11 cursor-pointer items-center justify-center border border-[#171916] bg-transparent px-4 py-2.5 text-center font-[Segoe_UI,Arial,sans-serif] font-[760] leading-[1.1] no-underline transition-colors duration-150 hover:bg-[#171916] hover:text-[#fffdf7]"
+              href="#reviews-list-title"
+            >
+              Читать отзывы
+            </a>
+          </div>
         </div>
 
         <figure
@@ -348,7 +369,7 @@ function ratingLabel(value: number) {
         </p>
 
         <p
-          v-else-if="hasLoaded && !reviews.length"
+          v-else-if="hasLoaded && !reviewSummary.totalCount"
           class="mb-5 mt-0 border border-[#aaa69b] bg-[#f5f2eb] px-4 py-3.5 leading-[1.55]"
         >
           Опубликованных отзывов пока нет.
@@ -361,59 +382,118 @@ function ratingLabel(value: number) {
           Отзывы сейчас недоступны.
         </p>
 
-        <div v-else class="grid gap-4">
-          <article
-            v-for="review in reviews"
-            :key="review.id"
-            class="border border-[#aaa69b] bg-[#f5f2eb] p-6 shadow-[0_16px_34px_rgba(23,25,22,0.08)] transition-colors duration-150 hover:border-[#171916] max-[560px]:p-5 [&>p]:mb-0 [&>p]:text-[#393d37] [&>p]:leading-[1.68]"
+        <template v-else>
+          <div
+            class="mb-5 grid grid-cols-[minmax(0,1fr)_minmax(190px,auto)] gap-4 border border-[#aaa69b] bg-[#f5f2eb] p-4 max-[700px]:grid-cols-1"
           >
-            <header
-              class="mb-5 grid grid-cols-[minmax(0,1fr)_auto] items-start gap-5 max-[560px]:grid-cols-1"
-            >
-              <div class="flex min-w-0 items-start gap-3.5">
-                <span
-                  class="grid size-11 shrink-0 place-items-center bg-[#1f3a2f] font-[Segoe_UI,Arial,sans-serif] text-[1.15rem] font-[760] uppercase leading-none text-[#fffdf7]"
-                  aria-hidden="true"
-                >
-                  {{ review.authorName.slice(0, 1) }}
-                </span>
-                <div class="min-w-0">
-                  <h3 class="mb-1 !text-[1.25rem] !leading-[1.18]">
-                    {{ review.authorName }}
-                  </h3>
-                  <time
-                    class="font-[Segoe_UI,Arial,sans-serif] text-[0.8125rem] leading-[1.4] text-[#5d5f58]"
-                    :datetime="review.createdAt"
-                  >
-                    {{ formatDate(review.createdAt) }}
-                  </time>
-                </div>
-              </div>
-
-              <div
-                class="flex gap-0.5 justify-self-end leading-none text-[#d65a1f] max-[560px]:justify-self-start"
-                :aria-label="ratingLabel(review.rating)"
+            <div class="flex flex-wrap gap-2" aria-label="Фильтр отзывов по оценке">
+              <button
+                class="min-h-10 border px-3 py-2 font-[Segoe_UI,Arial,sans-serif] text-[0.9rem] font-[760] transition-colors duration-150"
+                :class="
+                  selectedRatingFilter === null
+                    ? 'border-[#1f3a2f] bg-[#1f3a2f] text-[#fffdf7]'
+                    : 'border-[#aaa69b] bg-[#fffdf7] hover:border-[#171916]'
+                "
+                type="button"
+                @click="setRatingFilter(null)"
               >
-                <span
-                  v-for="rating in starOptions"
-                  :key="rating"
-                  :class="rating > review.rating ? 'text-[#aaa69b]' : 'text-[#d65a1f]'"
-                  aria-hidden="true"
+                Все
+              </button>
+              <button
+                v-for="bar in ratingBars"
+                :key="bar.rating"
+                class="min-h-10 border px-3 py-2 font-[Segoe_UI,Arial,sans-serif] text-[0.9rem] font-[760] transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-45"
+                :class="
+                  selectedRatingFilter === bar.rating
+                    ? 'border-[#1f3a2f] bg-[#1f3a2f] text-[#fffdf7]'
+                    : 'border-[#aaa69b] bg-[#fffdf7] hover:border-[#171916]'
+                "
+                type="button"
+                :disabled="bar.count === 0"
+                @click="setRatingFilter(bar.rating)"
+              >
+                {{ bar.rating }} ★ · {{ bar.count }}
+              </button>
+            </div>
+
+            <label
+              class="grid gap-2 justify-self-end font-[Segoe_UI,Arial,sans-serif] text-[0.8125rem] font-bold uppercase leading-[1.35] max-[700px]:justify-self-stretch"
+            >
+              <span>Порядок</span>
+              <select
+                v-model="reviewSort"
+                class="min-h-10 border border-[#171916] bg-[#fffdf7] px-3 py-2 text-[0.95rem] normal-case text-[#171916]"
+                @change="loadReviews"
+              >
+                <option value="newest">Сначала новые</option>
+                <option value="highest">Сначала высокая оценка</option>
+                <option value="lowest">Сначала низкая оценка</option>
+              </select>
+            </label>
+          </div>
+
+          <p
+            v-if="!reviews.length"
+            class="mb-5 mt-0 border border-[#aaa69b] bg-[#f5f2eb] px-4 py-3.5 leading-[1.55]"
+          >
+            По выбранной оценке отзывов нет.
+          </p>
+
+          <div v-else class="grid gap-4">
+            <article
+              v-for="review in reviews"
+              :key="review.id"
+              class="border border-[#aaa69b] bg-[#f5f2eb] p-6 shadow-[0_16px_34px_rgba(23,25,22,0.08)] transition-colors duration-150 hover:border-[#171916] max-[560px]:p-5 [&>p]:mb-0 [&>p]:text-[#393d37] [&>p]:leading-[1.68]"
+            >
+              <header
+                class="mb-5 grid grid-cols-[minmax(0,1fr)_auto] items-start gap-5 max-[560px]:grid-cols-1"
+              >
+                <div class="flex min-w-0 items-start gap-3.5">
+                  <span
+                    class="grid size-11 shrink-0 place-items-center bg-[#1f3a2f] font-[Segoe_UI,Arial,sans-serif] text-[1.15rem] font-[760] uppercase leading-none text-[#fffdf7]"
+                    aria-hidden="true"
+                  >
+                    {{ reviewInitial(review.authorName) }}
+                  </span>
+                  <div class="min-w-0">
+                    <h3 class="mb-1 !text-[1.25rem] !leading-[1.18]">
+                      {{ review.authorName }}
+                    </h3>
+                    <time
+                      class="font-[Segoe_UI,Arial,sans-serif] text-[0.8125rem] leading-[1.4] text-[#5d5f58]"
+                      :datetime="review.createdAt"
+                    >
+                      {{ formatDate(review.createdAt) }}
+                    </time>
+                  </div>
+                </div>
+
+                <div
+                  class="flex gap-0.5 justify-self-end leading-none text-[#d65a1f] max-[560px]:justify-self-start"
+                  :aria-label="ratingLabel(review.rating)"
                 >
-                  ★
-                </span>
-              </div>
-            </header>
-            <p>{{ review.text }}</p>
-          </article>
-        </div>
+                  <span
+                    v-for="rating in starOptions"
+                    :key="rating"
+                    :class="rating > review.rating ? 'text-[#aaa69b]' : 'text-[#d65a1f]'"
+                    aria-hidden="true"
+                  >
+                    ★
+                  </span>
+                </div>
+              </header>
+              <p>{{ review.text }}</p>
+            </article>
+          </div>
+        </template>
       </section>
 
-      <aside class="min-w-0 space-y-6" aria-label="Форма отзыва и сводка">
-        <section
-          v-if="reviews.length"
-          class="border border-[#171916] bg-[#d8d2c6] p-6 max-[560px]:p-5"
-        >
+      <aside class="min-w-0" aria-label="Форма отзыва и сводка">
+        <div class="sticky top-[96px] space-y-6 max-[980px]:static">
+          <section
+            v-if="reviewSummary.totalCount"
+            class="border border-[#171916] bg-[#d8d2c6] p-6 max-[560px]:p-5"
+          >
           <p
             class="mb-4 font-[Segoe_UI,Arial,sans-serif] text-[0.8125rem] font-[760] uppercase leading-[1.4] tracking-[0.04em]"
           >
@@ -422,10 +502,10 @@ function ratingLabel(value: number) {
           <div
             class="mb-3 font-[Segoe_UI,Arial,sans-serif] text-[clamp(3.7rem,7vw,6.5rem)] font-[760] leading-[0.85] text-[#1f3a2f]"
           >
-            {{ averageRating }}
+            {{ reviewSummary.averageRating }}
           </div>
           <p class="mb-0 text-[#393d37]">
-            {{ reviews.length }} отзывов опубликовано на сайте.
+            {{ reviewSummary.totalCount }} отзывов опубликовано на сайте.
           </p>
 
           <div class="mt-6 grid gap-2.5" aria-label="Распределение оценок">
@@ -444,9 +524,12 @@ function ratingLabel(value: number) {
               <strong>{{ bar.count }}</strong>
             </div>
           </div>
-        </section>
+          </section>
 
-        <section class="border border-[#171916] bg-[#f5f2eb] p-6 max-[560px]:p-5">
+          <section
+            id="review-form"
+            class="scroll-mt-28 border border-[#171916] bg-[#f5f2eb] p-6 max-[560px]:p-5"
+          >
           <p
             class="mb-3 font-[Segoe_UI,Arial,sans-serif] text-[0.8125rem] font-[760] uppercase leading-[1.4] tracking-[0.04em]"
           >
@@ -473,13 +556,20 @@ function ratingLabel(value: number) {
             </label>
 
             <label class="grid gap-2 font-[Segoe_UI,Arial,sans-serif] font-bold">
-              <span>Отзыв</span>
+              <span class="flex items-center justify-between gap-3">
+                <span>Отзыв</span>
+                <span
+                  class="font-[Segoe_UI,Arial,sans-serif] text-[0.8125rem] font-semibold leading-[1.35] text-[#5d5f58]"
+                >
+                  {{ reviewTextLength }}/{{ reviewTextLimit }}
+                </span>
+              </span>
               <textarea
                 v-model="form.text"
                 class="min-h-[128px] w-full min-w-0 resize-y border border-[#171916] bg-[#fffdf7] p-3 leading-[1.5] text-[#171916] focus:border-[#d65a1f] focus:outline focus:outline-[3px] focus:outline-offset-2 focus:outline-[#d65a1f]"
                 name="text"
                 rows="6"
-                maxlength="1000"
+                :maxlength="reviewTextLimit"
                 placeholder="Опишите материал, отгрузку или доставку"
               />
             </label>
@@ -488,11 +578,11 @@ function ratingLabel(value: number) {
               <legend class="mb-2 font-[Segoe_UI,Arial,sans-serif] font-bold">
                 Оценка
               </legend>
-              <div class="flex gap-2 max-[560px]:justify-between">
+              <div class="grid grid-cols-5 gap-2">
                 <label
-                  v-for="rating in ratingOptions"
+                  v-for="rating in starOptions"
                   :key="rating"
-                  class="relative grid h-[42px] w-[46px] cursor-pointer"
+                  class="relative grid min-h-[44px] cursor-pointer"
                   :class="
                     form.rating === rating
                       ? '[&>span]:border-[#d65a1f] [&>span]:bg-[#d65a1f] [&>span]:text-[#fffdf7]'
@@ -501,15 +591,16 @@ function ratingLabel(value: number) {
                 >
                   <input
                     v-model.number="form.rating"
-                    class="absolute size-px opacity-0"
+                    class="peer absolute size-px opacity-0"
                     type="radio"
                     name="rating"
                     :value="rating"
+                    :aria-label="ratingLabel(rating)"
                   />
                   <span
-                    class="grid h-full w-full place-items-center border border-[#171916] bg-[#fffdf7] font-[Segoe_UI,Arial,sans-serif] font-[760] transition-colors duration-150 hover:border-[#d65a1f] hover:bg-[#d65a1f] hover:text-[#fffdf7]"
+                    class="grid h-full w-full place-items-center border border-[#171916] bg-[#fffdf7] font-[Segoe_UI,Arial,sans-serif] text-[0.95rem] font-[760] transition-colors duration-150 hover:border-[#d65a1f] hover:bg-[#d65a1f] hover:text-[#fffdf7] peer-focus:outline peer-focus:outline-[3px] peer-focus:outline-offset-2 peer-focus:outline-[#d65a1f]"
                   >
-                    {{ rating }}
+                    {{ rating }} ★
                   </span>
                 </label>
               </div>
@@ -523,7 +614,8 @@ function ratingLabel(value: number) {
               {{ isSubmitting ? "Отправляем отзыв" : "Опубликовать отзыв" }}
             </button>
           </form>
-        </section>
+          </section>
+        </div>
       </aside>
     </section>
   </main>

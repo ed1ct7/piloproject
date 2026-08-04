@@ -1,0 +1,22 @@
+[Unit]
+Description=Pilorama Razbegaevo backend
+After=network-online.target postgresql.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=piloproject
+Group=piloproject
+WorkingDirectory=/opt/piloproject
+EnvironmentFile=/etc/piloproject/backend.env
+ExecStart=/opt/piloproject/backend
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/piloproject
+
+[Install]
+WantedBy=multi-user.target

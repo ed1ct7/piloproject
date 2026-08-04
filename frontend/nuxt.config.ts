@@ -1,11 +1,12 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import { businessPhone } from './utils/business'
 import { indexableRoutes, siteUrl } from './utils/seo-routes'
 
 const securityHeaders = {
   'Content-Security-Policy': [
     "default-src 'self'",
     "base-uri 'self'",
-    "connect-src 'self' http://localhost:8080 http://127.0.0.1:8080 https://pilorama-razbegaevo.clients.site",
+    `connect-src 'self' http://localhost:8080 http://127.0.0.1:8080 ${siteUrl}`,
     "font-src 'self' data:",
     "form-action 'self'",
     "frame-ancestors 'none'",
@@ -99,7 +100,8 @@ export default defineNuxtConfig({
       '@type': 'HomeAndConstructionBusiness',
       name: 'Пилорама Разбегаево',
       url: siteUrl,
-      image: `${siteUrl}/images/sawmill-hero.webp`,
+      telephone: businessPhone,
+      image: `${siteUrl}/images/lentochnaya-pilorama-raspil.jpg`,
       address: {
         '@type': 'PostalAddress',
         addressLocality: 'Разбегаево',

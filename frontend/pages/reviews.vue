@@ -203,79 +203,122 @@ function ratingLabel(value: number) {
 
 <template>
   <main>
-    <section
-      class="max-[840px]:grid-cols-1 mx-auto grid min-h-[380px] w-[min(1280px,100%)] grid-cols-[minmax(0,0.64fr)_minmax(0,0.36fr)] border-b border-[#171916]"
-    >
+    <section class="border-b border-[#171916] bg-[#f5f2eb]">
       <div
-        class="max-[840px]:min-h-[360px] max-[560px]:min-h-0 max-[560px]:px-[18px] max-[560px]:pb-10 max-[560px]:pt-[34px] flex flex-col justify-center p-10"
+        class="mx-auto grid w-[min(1280px,100%)] grid-cols-[minmax(0,1.12fr)_minmax(340px,0.88fr)] max-[900px]:grid-cols-1"
       >
         <div
-          class="max-[840px]:mb-8 max-[560px]:mb-7 font-[Segoe_UI,Arial,sans-serif] uppercase grid self-start gap-1.5 text-[0.8125rem] font-bold leading-[1.4] tracking-[0.035em]"
+          class="flex min-h-[350px] min-w-0 flex-col justify-center px-12 py-12 max-[840px]:min-h-0 max-[560px]:px-[18px] max-[560px]:py-9"
         >
-          <span>ОТЗЫВЫ / БАЗА</span>
-          <span>РАЗБЕГАЕВО</span>
-        </div>
-        <p
-          class="font-[Segoe_UI,Arial,sans-serif] uppercase mb-3 text-[0.8125rem] font-[760] leading-[1.4] tracking-[0.04em]"
-        >
-          Опыт покупателей
-        </p>
-        <h1 class="max-w-[680px] border-l-[6px] border-[#d65a1f] pl-5 !text-[clamp(2.15rem,3vw,3.6rem)] !leading-[1.08]">Отзывы о пилораме в Разбегаево</h1>
-        <p class="max-w-[660px]">
-          На Яндекс Картах указаны рейтинг 4,6 из 5 и 12 отзывов.
-          <a
-            class="w-max cursor-pointer border-0 border-b-2 border-current bg-transparent px-0 pb-[3px] font-[Segoe_UI,Arial,sans-serif] font-[760] text-[#1f3a2f] no-underline transition-colors duration-150 hover:text-[#d65a1f] disabled:cursor-not-allowed disabled:opacity-50"
-            :href="ratingSourceUrl"
-            target="_blank"
-            rel="noopener"
+          <div
+            class="mb-9 grid self-start gap-1.5 font-[Segoe_UI,Arial,sans-serif] text-[0.8125rem] font-bold uppercase leading-[1.4] tracking-[0.035em] max-[560px]:mb-7"
           >
-            Источник рейтинга
-          </a>
-        </p>
-      </div>
+            <span>ОТЗЫВЫ / БАЗА</span>
+            <span>РАЗБЕГАЕВО</span>
+          </div>
 
-      <figure
-        class="relative min-h-[380px] border-l border-[#171916] max-[840px]:min-h-[340px] max-[840px]:border-l-0 max-[840px]:border-t max-[560px]:min-h-[320px] [&_figcaption]:absolute [&_figcaption]:inset-x-0 [&_figcaption]:bottom-0 [&_img]:h-full [&_img]:w-full [&_img]:object-cover"
-      >
-        <NuxtImg
-          src="/images/shtabel-suhoi-doski.jpg"
-          alt="Штабели сухой доски в пачках на складе пилорамы"
-          width="960"
-          height="1280"
-          sizes="xs:100vw sm:52vw md:50vw"
-          densities="1"
-          format="webp"
-          loading="eager"
-          preload
-        />
-        <figcaption>Склад сухой доски на площадке</figcaption>
-      </figure>
+          <p
+            class="mb-3 font-[Segoe_UI,Arial,sans-serif] text-[0.8125rem] font-[760] uppercase leading-[1.4] tracking-[0.04em] text-[#a53e10]"
+          >
+            Опыт покупателей
+          </p>
+          <h1
+            class="mb-5 max-w-[760px] !text-[clamp(2.35rem,4.2vw,4.4rem)] !leading-[1.02]"
+          >
+            Отзывы о пилораме в Разбегаево
+          </h1>
+          <p
+            class="mb-0 max-w-[650px] text-[clamp(1.03rem,1.25vw,1.18rem)] leading-[1.65] text-[#393d37]"
+          >
+            Рейтинг и количество отзывов на Яндекс Картах будут добавлены после подключения подтвержденного источника.
+            <a
+              class="ml-1 inline-flex w-max cursor-pointer border-0 border-b-2 border-current bg-transparent px-0 pb-[3px] font-[Segoe_UI,Arial,sans-serif] font-[760] text-[#1f3a2f] no-underline transition-colors duration-150 hover:text-[#d65a1f] disabled:cursor-not-allowed disabled:opacity-50"
+              :href="ratingSourceUrl"
+              target="_blank"
+              rel="noopener"
+            >
+              Источник рейтинга
+            </a>
+          </p>
+
+          <dl
+            class="mt-8 grid max-w-[560px] grid-cols-3 border-y border-[#aaa69b] font-[Segoe_UI,Arial,sans-serif] max-[560px]:grid-cols-1"
+          >
+            <div
+              class="border-r border-[#aaa69b] px-4 py-4 max-[560px]:border-b max-[560px]:border-r-0"
+            >
+              <dt class="mb-2 text-[0.8125rem] font-[760] uppercase leading-[1.35]">
+                Яндекс Карты
+              </dt>
+              <dd class="m-0 text-[2rem] font-[760] leading-none text-[#1f3a2f]">
+                —
+              </dd>
+            </div>
+            <div
+              class="border-r border-[#aaa69b] px-4 py-4 max-[560px]:border-b max-[560px]:border-r-0"
+            >
+              <dt class="mb-2 text-[0.8125rem] font-[760] uppercase leading-[1.35]">
+                Отзывы
+              </dt>
+              <dd class="m-0 text-[2rem] font-[760] leading-none text-[#1f3a2f]">
+                —
+              </dd>
+            </div>
+            <div class="px-4 py-4">
+              <dt class="mb-2 text-[0.8125rem] font-[760] uppercase leading-[1.35]">
+                На сайте
+              </dt>
+              <dd class="m-0 text-[2rem] font-[760] leading-none text-[#1f3a2f]">
+                {{ reviews.length }}
+              </dd>
+            </div>
+          </dl>
+        </div>
+
+        <figure
+          class="relative min-h-[350px] overflow-hidden border-l border-[#171916] bg-[#13251e] max-[900px]:min-h-[320px] max-[900px]:border-l-0 max-[900px]:border-t max-[560px]:min-h-[280px] [&_figcaption]:absolute [&_figcaption]:inset-x-0 [&_figcaption]:bottom-0 [&_img]:h-full [&_img]:w-full [&_img]:object-cover"
+        >
+          <NuxtImg
+            src="/images/shtabel-suhoi-doski.jpg"
+            alt="Штабели сухой доски в пачках на складе пилорамы"
+            width="960"
+            height="1280"
+            sizes="xs:100vw sm:100vw md:42vw lg:42vw"
+            densities="1"
+            format="webp"
+            loading="eager"
+            preload
+          />
+          <figcaption>
+            <span>Склад сухой доски</span>
+            <span>Разбегаево</span>
+          </figcaption>
+        </figure>
+      </div>
     </section>
 
     <section
-      class="max-[840px]:grid-cols-1 mx-auto grid w-[min(1280px,100%)] grid-cols-[minmax(0,0.58fr)_minmax(360px,0.42fr)] border-b border-[#171916]"
+      class="mx-auto grid w-[min(1280px,100%)] grid-cols-[minmax(0,0.66fr)_minmax(320px,0.34fr)] gap-8 px-8 py-14 max-[980px]:grid-cols-1 max-[560px]:px-[18px] max-[560px]:py-10"
     >
-      <section
-        class="max-[840px]:border-r-0 max-[840px]:border-b max-[840px]:border-[#171916] max-[560px]:px-[18px] min-w-0 border-r border-[#171916] px-[48px] py-14"
-        aria-labelledby="reviews-list-title"
-      >
+      <section class="min-w-0" aria-labelledby="reviews-list-title">
         <header
-          class="max-[560px]:grid max-[560px]:items-start mb-[42px] flex items-end justify-between gap-7"
+          class="mb-8 grid grid-cols-[minmax(0,1fr)_auto] items-end gap-6 border-b border-[#171916] pb-6 max-[560px]:grid-cols-1"
         >
           <div>
-            <span
-              class="max-[560px]:mb-[26px] max-[560px]:text-[3.2rem] font-[Segoe_UI,Arial,sans-serif] uppercase mb-[22px] inline-block text-[clamp(2rem,3vw,3.3rem)] font-bold leading-[0.9]"
-              >01</span
-            >
             <p
-              class="font-[Segoe_UI,Arial,sans-serif] uppercase mb-4 text-[0.8125rem] font-[760] leading-[1.4] tracking-[0.04em]"
+              class="mb-3 font-[Segoe_UI,Arial,sans-serif] text-[0.8125rem] font-[760] uppercase leading-[1.4] tracking-[0.04em]"
             >
               Опубликованные сообщения
             </p>
-            <h2 id="reviews-list-title">Отзывы посетителей сайта</h2>
+            <h2
+              id="reviews-list-title"
+              class="mb-0 !text-[clamp(1.7rem,2.2vw,2.55rem)] !leading-[1.1]"
+            >
+              Отзывы посетителей сайта
+            </h2>
           </div>
           <button
-            class="inline-flex min-h-12 cursor-pointer items-center justify-center border border-[#171916] px-[18px] py-3 text-center font-[Segoe_UI,Arial,sans-serif] font-[760] leading-[1.1] no-underline transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-50 bg-transparent text-[#171916] hover:bg-[#171916] hover:text-[#fffdf7]"
+            class="inline-flex min-h-11 cursor-pointer items-center justify-center border border-[#171916] bg-transparent px-4 py-2.5 text-center font-[Segoe_UI,Arial,sans-serif] text-[0.95rem] font-[760] leading-[1.1] no-underline transition-colors duration-150 hover:bg-[#171916] hover:text-[#fffdf7] disabled:cursor-not-allowed disabled:opacity-50"
             type="button"
             :disabled="isLoading"
             @click="loadReviews"
@@ -286,7 +329,7 @@ function ratingLabel(value: number) {
 
         <p
           v-if="feedback.message"
-          class="mb-[22px] mt-0 border border-[#171916] px-[18px] py-4 leading-[1.55]"
+          class="mb-5 mt-0 border px-4 py-3.5 leading-[1.55]"
           :class="
             feedback.type === 'success'
               ? 'border-[#1f3a2f] bg-[#dfe8df] text-[#13251e]'
@@ -299,82 +342,129 @@ function ratingLabel(value: number) {
 
         <p
           v-if="isLoading"
-          class="mb-[22px] mt-0 border border-[#171916] px-[18px] py-4 leading-[1.55] bg-[#f5f2eb]"
+          class="mb-5 mt-0 border border-[#aaa69b] bg-[#f5f2eb] px-4 py-3.5 leading-[1.55]"
         >
           Загружаем отзывы.
         </p>
 
         <p
           v-else-if="hasLoaded && !reviews.length"
-          class="mb-[22px] mt-0 border border-[#171916] px-[18px] py-4 leading-[1.55] bg-[#f5f2eb]"
+          class="mb-5 mt-0 border border-[#aaa69b] bg-[#f5f2eb] px-4 py-3.5 leading-[1.55]"
         >
           Опубликованных отзывов пока нет.
         </p>
 
         <p
           v-else-if="!hasLoaded"
-          class="mb-[22px] mt-0 border border-[#171916] px-[18px] py-4 leading-[1.55] bg-[#f5f2eb]"
+          class="mb-5 mt-0 border border-[#aaa69b] bg-[#f5f2eb] px-4 py-3.5 leading-[1.55]"
         >
           Отзывы сейчас недоступны.
         </p>
 
-        <div v-else class="border-b border-[#171916]">
+        <div v-else class="grid gap-4">
           <article
             v-for="review in reviews"
             :key="review.id"
-            class="border-t border-[#171916] bg-transparent py-7 [&>p]:mb-0 [&>p]:max-w-[760px] [&>p]:text-[#393d37] [&>p]:leading-[1.65] [&_time]:shrink-0 [&_time]:font-[Segoe_UI,Arial,sans-serif] [&_time]:text-[0.8125rem] [&_time]:leading-[1.4] [&_time]:text-[#393d37]"
+            class="border border-[#aaa69b] bg-[#f5f2eb] p-6 shadow-[0_16px_34px_rgba(23,25,22,0.08)] transition-colors duration-150 hover:border-[#171916] max-[560px]:p-5 [&>p]:mb-0 [&>p]:text-[#393d37] [&>p]:leading-[1.68]"
           >
             <header
-              class="max-[560px]:grid mb-[18px] flex justify-between gap-[18px]"
+              class="mb-5 grid grid-cols-[minmax(0,1fr)_auto] items-start gap-5 max-[560px]:grid-cols-1"
             >
-              <div>
-                <div
-                  class="mb-2.5 flex gap-0.5 leading-none text-[#d65a1f]"
-                  :aria-label="ratingLabel(review.rating)"
+              <div class="flex min-w-0 items-start gap-3.5">
+                <span
+                  class="grid size-11 shrink-0 place-items-center bg-[#1f3a2f] font-[Segoe_UI,Arial,sans-serif] text-[1.15rem] font-[760] uppercase leading-none text-[#fffdf7]"
+                  aria-hidden="true"
                 >
-                  <span
-                    v-for="rating in starOptions"
-                    :key="rating"
-                    :class="
-                      rating > review.rating
-                        ? 'text-[#aaa69b]'
-                        : 'text-[#d65a1f]'
-                    "
-                    aria-hidden="true"
-                    >★</span
+                  {{ review.authorName.slice(0, 1) }}
+                </span>
+                <div class="min-w-0">
+                  <h3 class="mb-1 !text-[1.25rem] !leading-[1.18]">
+                    {{ review.authorName }}
+                  </h3>
+                  <time
+                    class="font-[Segoe_UI,Arial,sans-serif] text-[0.8125rem] leading-[1.4] text-[#5d5f58]"
+                    :datetime="review.createdAt"
                   >
+                    {{ formatDate(review.createdAt) }}
+                  </time>
                 </div>
-                <h3>{{ review.authorName }}</h3>
               </div>
-              <time :datetime="review.createdAt">{{
-                formatDate(review.createdAt)
-              }}</time>
+
+              <div
+                class="flex gap-0.5 justify-self-end leading-none text-[#d65a1f] max-[560px]:justify-self-start"
+                :aria-label="ratingLabel(review.rating)"
+              >
+                <span
+                  v-for="rating in starOptions"
+                  :key="rating"
+                  :class="rating > review.rating ? 'text-[#aaa69b]' : 'text-[#d65a1f]'"
+                  aria-hidden="true"
+                >
+                  ★
+                </span>
+              </div>
             </header>
             <p>{{ review.text }}</p>
           </article>
         </div>
       </section>
 
-      <aside class="min-w-0 bg-[#d8d2c6]" aria-label="Форма отзыва и сводка">
+      <aside class="min-w-0 space-y-6" aria-label="Форма отзыва и сводка">
         <section
-          class="max-[560px]:px-[18px] border-b border-[#171916] px-10 py-12"
+          v-if="reviews.length"
+          class="border border-[#171916] bg-[#d8d2c6] p-6 max-[560px]:p-5"
         >
           <p
-            class="font-[Segoe_UI,Arial,sans-serif] uppercase mb-4 text-[0.8125rem] font-[760] leading-[1.4] tracking-[0.04em]"
+            class="mb-4 font-[Segoe_UI,Arial,sans-serif] text-[0.8125rem] font-[760] uppercase leading-[1.4] tracking-[0.04em]"
+          >
+            Сводка базы
+          </p>
+          <div
+            class="mb-3 font-[Segoe_UI,Arial,sans-serif] text-[clamp(3.7rem,7vw,6.5rem)] font-[760] leading-[0.85] text-[#1f3a2f]"
+          >
+            {{ averageRating }}
+          </div>
+          <p class="mb-0 text-[#393d37]">
+            {{ reviews.length }} отзывов опубликовано на сайте.
+          </p>
+
+          <div class="mt-6 grid gap-2.5" aria-label="Распределение оценок">
+            <div
+              v-for="bar in ratingBars"
+              :key="bar.rating"
+              class="grid grid-cols-[24px_minmax(0,1fr)_26px] items-center gap-2.5 font-[Segoe_UI,Arial,sans-serif] text-[0.8125rem] font-semibold"
+            >
+              <span>{{ bar.rating }}</span>
+              <div class="h-2 border border-[#171916] bg-[#f5f2eb]">
+                <i
+                  class="block h-full bg-[#d65a1f]"
+                  :style="{ width: `${bar.percent}%` }"
+                />
+              </div>
+              <strong>{{ bar.count }}</strong>
+            </div>
+          </div>
+        </section>
+
+        <section class="border border-[#171916] bg-[#f5f2eb] p-6 max-[560px]:p-5">
+          <p
+            class="mb-3 font-[Segoe_UI,Arial,sans-serif] text-[0.8125rem] font-[760] uppercase leading-[1.4] tracking-[0.04em]"
           >
             Новый отзыв
           </p>
-          <h2>Расскажите о своей покупке</h2>
-          <p>Укажите материал и кратко опишите свой опыт покупки.</p>
+          <h2 class="mb-3 !text-[clamp(1.45rem,2vw,2rem)] !leading-[1.12]">
+            Расскажите о своей покупке
+          </h2>
+          <p class="mb-0 text-[#393d37]">
+            Укажите материал и кратко опишите свой опыт покупки.
+          </p>
 
-          <form
-            class="mt-7 grid gap-[18px] [&>label]:grid [&>label]:gap-2 [&>label]:font-[Segoe_UI,Arial,sans-serif] [&>label]:font-bold [&>label>input]:min-h-12 [&>label>input]:w-full [&>label>input]:min-w-0 [&>label>input]:border [&>label>input]:border-[#171916] [&>label>input]:bg-[#f5f2eb] [&>label>input]:px-3 [&>label>input]:py-[11px] [&>label>input]:text-[#171916] [&>label>input:focus]:border-[#d65a1f] [&>label>input:focus]:outline [&>label>input:focus]:outline-[3px] [&>label>input:focus]:outline-offset-2 [&>label>input:focus]:outline-[#d65a1f] [&>label>textarea]:min-h-[130px] [&>label>textarea]:w-full [&>label>textarea]:min-w-0 [&>label>textarea]:resize-y [&>label>textarea]:border [&>label>textarea]:border-[#171916] [&>label>textarea]:bg-[#f5f2eb] [&>label>textarea]:p-3 [&>label>textarea]:leading-[1.5] [&>label>textarea]:text-[#171916] [&>label>textarea:focus]:border-[#d65a1f] [&>label>textarea:focus]:outline [&>label>textarea:focus]:outline-[3px] [&>label>textarea:focus]:outline-offset-2 [&>label>textarea:focus]:outline-[#d65a1f]"
-            @submit.prevent="submitReview"
-          >
-            <label>
+          <form class="mt-6 grid gap-4" @submit.prevent="submitReview">
+            <label class="grid gap-2 font-[Segoe_UI,Arial,sans-serif] font-bold">
               <span>Имя</span>
               <input
                 v-model="form.authorName"
+                class="min-h-12 w-full min-w-0 border border-[#171916] bg-[#fffdf7] px-3 py-[11px] text-[#171916] focus:border-[#d65a1f] focus:outline focus:outline-[3px] focus:outline-offset-2 focus:outline-[#d65a1f]"
                 name="authorName"
                 maxlength="80"
                 autocomplete="name"
@@ -382,10 +472,11 @@ function ratingLabel(value: number) {
               />
             </label>
 
-            <label>
+            <label class="grid gap-2 font-[Segoe_UI,Arial,sans-serif] font-bold">
               <span>Отзыв</span>
               <textarea
                 v-model="form.text"
+                class="min-h-[128px] w-full min-w-0 resize-y border border-[#171916] bg-[#fffdf7] p-3 leading-[1.5] text-[#171916] focus:border-[#d65a1f] focus:outline focus:outline-[3px] focus:outline-offset-2 focus:outline-[#d65a1f]"
                 name="text"
                 rows="6"
                 maxlength="1000"
@@ -393,16 +484,15 @@ function ratingLabel(value: number) {
               />
             </label>
 
-            <fieldset
-              class="m-0 border-0 p-0 [&_legend]:mb-2 [&_legend]:font-[Segoe_UI,Arial,sans-serif] [&_legend]:font-bold"
-            >
-              <legend>Оценка</legend>
-              <div
-                class="max-[560px]:justify-between flex gap-2 [&_input]:absolute [&_input]:size-px [&_input]:opacity-0 [&_label]:relative [&_label]:grid [&_label]:h-[42px] [&_label]:w-[46px] [&_label]:cursor-pointer [&_span]:grid [&_span]:h-full [&_span]:w-full [&_span]:place-items-center [&_span]:border [&_span]:border-[#171916] [&_span]:bg-[#f5f2eb] [&_span]:font-[Segoe_UI,Arial,sans-serif] [&_span]:font-[760] [&_label:hover>span]:border-[#d65a1f] [&_label:hover>span]:bg-[#d65a1f] [&_label:hover>span]:text-[#fffdf7]"
-              >
+            <fieldset class="m-0 border-0 p-0">
+              <legend class="mb-2 font-[Segoe_UI,Arial,sans-serif] font-bold">
+                Оценка
+              </legend>
+              <div class="flex gap-2 max-[560px]:justify-between">
                 <label
                   v-for="rating in ratingOptions"
                   :key="rating"
+                  class="relative grid h-[42px] w-[46px] cursor-pointer"
                   :class="
                     form.rating === rating
                       ? '[&>span]:border-[#d65a1f] [&>span]:bg-[#d65a1f] [&>span]:text-[#fffdf7]'
@@ -411,52 +501,28 @@ function ratingLabel(value: number) {
                 >
                   <input
                     v-model.number="form.rating"
+                    class="absolute size-px opacity-0"
                     type="radio"
                     name="rating"
                     :value="rating"
                   />
-                  <span>{{ rating }}</span>
+                  <span
+                    class="grid h-full w-full place-items-center border border-[#171916] bg-[#fffdf7] font-[Segoe_UI,Arial,sans-serif] font-[760] transition-colors duration-150 hover:border-[#d65a1f] hover:bg-[#d65a1f] hover:text-[#fffdf7]"
+                  >
+                    {{ rating }}
+                  </span>
                 </label>
               </div>
             </fieldset>
 
             <button
-              class="inline-flex min-h-12 cursor-pointer items-center justify-center border border-[#171916] px-[18px] py-3 text-center font-[Segoe_UI,Arial,sans-serif] font-[760] leading-[1.1] no-underline transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-50 border-[#d65a1f] bg-[#d65a1f] text-[#fffdf7] hover:border-[#a53e10] hover:bg-[#a53e10]"
+              class="inline-flex min-h-12 cursor-pointer items-center justify-center border border-[#d65a1f] bg-[#d65a1f] px-[18px] py-3 text-center font-[Segoe_UI,Arial,sans-serif] font-[760] leading-[1.1] text-[#fffdf7] no-underline transition-colors duration-150 hover:border-[#a53e10] hover:bg-[#a53e10] disabled:cursor-not-allowed disabled:opacity-50"
               type="submit"
               :disabled="isSubmitting || !canSubmitReview"
             >
               {{ isSubmitting ? "Отправляем отзыв" : "Опубликовать отзыв" }}
             </button>
           </form>
-        </section>
-
-        <section
-          v-if="reviews.length"
-          class="max-[560px]:px-[18px] border-b border-[#171916] px-10 py-12"
-        >
-          <p
-            class="font-[Segoe_UI,Arial,sans-serif] uppercase mb-4 text-[0.8125rem] font-[760] leading-[1.4] tracking-[0.04em]"
-          >
-            Сводка базы
-          </p>
-          <div
-            class="my-[18px] font-[Segoe_UI,Arial,sans-serif] text-[clamp(4rem,8vw,8rem)] font-[760] leading-[0.8]"
-          >
-            {{ averageRating }}
-          </div>
-          <p>{{ reviews.length }} отзывов опубликовано на сайте.</p>
-
-          <div class="mt-[26px] grid gap-2.5" aria-label="Распределение оценок">
-            <div
-              v-for="bar in ratingBars"
-              :key="bar.rating"
-              class="grid grid-cols-[20px_minmax(0,1fr)_24px] items-center gap-2.5 font-[Segoe_UI,Arial,sans-serif] text-[0.8125rem] font-semibold [&>div]:h-2 [&>div]:border [&>div]:border-[#171916] [&_i]:block [&_i]:h-full [&_i]:bg-[#d65a1f]"
-            >
-              <span>{{ bar.rating }}</span>
-              <div><i :style="{ width: `${bar.percent}%` }" /></div>
-              <strong>{{ bar.count }}</strong>
-            </div>
-          </div>
         </section>
       </aside>
     </section>

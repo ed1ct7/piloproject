@@ -1,4 +1,5 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import tailwindcss from '@tailwindcss/vite'
 import { businessPhone } from './utils/business'
 import { indexableRoutes, siteUrl } from './utils/seo-routes'
 
@@ -25,7 +26,6 @@ const securityHeaders = {
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-24',
   devtools: { enabled: true },
-  css: ['~/assets/css/main.css'],
   modules: [
     '@nuxtjs/robots',
     '@nuxtjs/sitemap',
@@ -124,6 +124,9 @@ export default defineNuxtConfig({
   typescript: {
     strict: true,
     typeCheck: true,
+  },
+  vite: {
+    plugins: [tailwindcss()],
   },
 
   // Базовый URL Rust-backend, переопределяется через NUXT_PUBLIC_API_BASE.

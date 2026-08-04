@@ -117,23 +117,23 @@ useSchemaOrg([
 
 <template>
   <main>
-    <section class="page-masthead page-masthead--catalog">
-      <div class="page-masthead__mark">
+    <section class="max-[840px]:grid-cols-1 max-[840px]:min-h-0 max-[560px]:block max-[560px]:px-[18px] max-[560px]:pb-12 max-[560px]:pt-[42px] grid min-h-[390px] grid-cols-[72px_minmax(380px,1.45fr)_minmax(280px,0.75fr)] items-end gap-11 border-b border-[#171916] px-[max(24px,calc((100vw_-_1280px)/2))] pb-[52px] pt-[72px] bg-[#d8d2c6]">
+      <div class="max-[840px]:mb-12 max-[560px]:mb-[38px] font-[Segoe_UI,Arial,sans-serif] uppercase grid self-start gap-1.5 text-[0.8125rem] font-bold leading-[1.4] tracking-[0.035em]">
         <span>ФОТО / ПЛОЩАДКА</span>
         <span>РАЗБЕГАЕВО</span>
       </div>
-      <div class="page-masthead__title">
-        <p class="technical-label">Производство без постановки</p>
+      <div class="max-w-[760px] [&_h1]:mb-0">
+        <p class="font-[Segoe_UI,Arial,sans-serif] uppercase mb-4 text-[0.8125rem] font-[760] leading-[1.4] tracking-[0.04em]">Производство без постановки</p>
         <h1>Фото пилорамы и склада</h1>
       </div>
-      <p class="page-masthead__intro">
+      <p class="mb-0 max-w-[480px] text-[1.03rem] leading-[1.65] text-[#393d37]">
         Снимки сделаны на действующей площадке: распил бревна, сушка и строжка, склад
         готовой доски, обработка огнебиозащитой и отгрузка партий покупателям.
       </p>
     </section>
 
-    <section class="photo-wall" aria-label="Фотографии производственной площадки">
-      <figure v-for="photo in photos" :key="photo.image">
+    <section class="max-[840px]:grid-cols-2 max-[560px]:px-[18px] max-[560px]:grid-cols-1 max-[560px]:gap-[18px] grid grid-cols-3 gap-6 bg-[#f5f2eb] px-[max(24px,calc((100vw_-_1280px)/2))] pb-[88px] pt-[72px]" aria-label="Фотографии производственной площадки">
+      <figure v-for="photo in photos" :key="photo.image" class="overflow-hidden bg-[#d8d2c6] [&_img]:aspect-[4/5] [&_img]:h-full [&_img]:w-full [&_img]:object-cover">
         <NuxtImg
           :src="photo.image"
           :alt="photo.alt"
@@ -148,17 +148,17 @@ useSchemaOrg([
       </figure>
     </section>
 
-    <section class="contact-next">
+    <section class="max-[840px]:grid-cols-1 max-[560px]:px-[18px] max-[560px]:items-start grid grid-cols-[minmax(300px,0.8fr)_minmax(320px,0.7fr)] gap-[72px] border-t border-[#171916] bg-[#d8d2c6] px-[max(24px,calc((100vw_-_1280px)/2))] py-[72px] grid-cols-[minmax(300px,0.7fr)_minmax(300px,0.55fr)_auto] items-end bg-[#f5f2eb]">
       <div>
-        <span class="section-index">02</span>
-        <p class="technical-label">Следующий шаг</p>
+        <span class="max-[560px]:mb-[26px] max-[560px]:text-[3.2rem] font-[Segoe_UI,Arial,sans-serif] uppercase mb-[22px] inline-block text-[clamp(2rem,3vw,3.3rem)] font-bold leading-[0.9]">02</span>
+        <p class="font-[Segoe_UI,Arial,sans-serif] uppercase mb-4 text-[0.8125rem] font-[760] leading-[1.4] tracking-[0.04em]">Следующий шаг</p>
         <h2>Выберите материал и уточните наличие</h2>
       </div>
       <p>
         В каталоге собраны основные позиции с ценами за кубометр. Наличие и итоговая
         стоимость подтверждаются перед расчётом партии.
       </p>
-      <NuxtLink class="button button--signal" to="/pilomaterialy">Открыть каталог</NuxtLink>
+      <NuxtLink class="inline-flex min-h-12 cursor-pointer items-center justify-center border border-[#171916] px-[18px] py-3 text-center font-[Segoe_UI,Arial,sans-serif] font-[760] leading-[1.1] no-underline transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-50 border-[#d65a1f] bg-[#d65a1f] text-[#fffdf7] hover:border-[#a53e10] hover:bg-[#a53e10]" to="/pilomaterialy">Открыть каталог</NuxtLink>
     </section>
   </main>
 </template>

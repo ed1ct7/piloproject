@@ -182,13 +182,13 @@ function ratingLabel(value: number) {
 
 <template>
   <main>
-    <section class="reviews-masthead">
-      <div class="reviews-masthead__copy">
-        <div class="page-masthead__mark">
+    <section class="max-[840px]:grid-cols-1 mx-auto grid min-h-[540px] w-[min(1280px,100%)] grid-cols-[minmax(0,0.54fr)_minmax(0,0.46fr)] border-b border-[#171916]">
+      <div class="max-[840px]:min-h-[500px] max-[560px]:min-h-0 max-[560px]:px-[18px] max-[560px]:pb-12 max-[560px]:pt-[42px] flex flex-col justify-end p-[52px]">
+        <div class="max-[840px]:mb-12 max-[560px]:mb-[38px] font-[Segoe_UI,Arial,sans-serif] uppercase grid self-start gap-1.5 text-[0.8125rem] font-bold leading-[1.4] tracking-[0.035em]">
           <span>ОТЗЫВЫ / БАЗА</span>
           <span>РАЗБЕГАЕВО</span>
         </div>
-        <p class="technical-label">Опыт покупателей</p>
+        <p class="font-[Segoe_UI,Arial,sans-serif] uppercase mb-4 text-[0.8125rem] font-[760] leading-[1.4] tracking-[0.04em]">Опыт покупателей</p>
         <h1>Отзывы о пилораме в Разбегаево</h1>
         <p>
           Здесь публикуются сообщения покупателей о материале, обслуживании, самовывозе и
@@ -196,7 +196,7 @@ function ratingLabel(value: number) {
         </p>
       </div>
 
-      <figure>
+      <figure class="relative min-h-[540px] border-l border-[#171916] max-[840px]:min-h-[500px] max-[840px]:border-l-0 max-[840px]:border-t max-[560px]:min-h-[380px] [&_figcaption]:absolute [&_figcaption]:inset-x-0 [&_figcaption]:bottom-0 [&_img]:h-full [&_img]:w-full [&_img]:object-cover">
         <NuxtImg
           src="/images/shtabel-suhoi-doski.jpg"
           alt="Штабели сухой доски в пачках на складе пилорамы"
@@ -212,16 +212,16 @@ function ratingLabel(value: number) {
       </figure>
     </section>
 
-    <section class="reviews-workspace">
-      <section class="reviews-stream" aria-labelledby="reviews-list-title">
-        <header class="reviews-stream__head">
+    <section class="max-[840px]:grid-cols-1 mx-auto grid w-[min(1280px,100%)] grid-cols-[minmax(0,0.62fr)_minmax(340px,0.38fr)] border-b border-[#171916]">
+      <section class="max-[840px]:border-r-0 max-[840px]:border-b max-[840px]:border-[#171916] max-[560px]:px-[18px] min-w-0 border-r border-[#171916] px-[52px] py-16" aria-labelledby="reviews-list-title">
+        <header class="max-[560px]:grid max-[560px]:items-start mb-[42px] flex items-end justify-between gap-7">
           <div>
-            <span class="section-index">01</span>
-            <p class="technical-label">Опубликованные сообщения</p>
+            <span class="max-[560px]:mb-[26px] max-[560px]:text-[3.2rem] font-[Segoe_UI,Arial,sans-serif] uppercase mb-[22px] inline-block text-[clamp(2rem,3vw,3.3rem)] font-bold leading-[0.9]">01</span>
+            <p class="font-[Segoe_UI,Arial,sans-serif] uppercase mb-4 text-[0.8125rem] font-[760] leading-[1.4] tracking-[0.04em]">Опубликованные сообщения</p>
             <h2 id="reviews-list-title">Отзывы покупателей</h2>
           </div>
           <button
-            class="button button--outline"
+            class="inline-flex min-h-12 cursor-pointer items-center justify-center border border-[#171916] px-[18px] py-3 text-center font-[Segoe_UI,Arial,sans-serif] font-[760] leading-[1.1] no-underline transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-50 bg-transparent text-[#171916] hover:bg-[#171916] hover:text-[#fffdf7]"
             type="button"
             :disabled="isLoading"
             @click="loadReviews"
@@ -232,34 +232,34 @@ function ratingLabel(value: number) {
 
         <p
           v-if="feedback.message"
-          class="form-feedback"
-          :class="`form-feedback--${feedback.type}`"
+          class="mb-[22px] mt-0 border border-[#171916] px-[18px] py-4 leading-[1.55]"
+          :class="feedback.type === 'success' ? 'border-[#1f3a2f] bg-[#dfe8df] text-[#13251e]' : 'border-[#a53e10] bg-[#f4d9ca] text-[#6a290d]'"
           role="status"
         >
           {{ feedback.message }}
         </p>
 
-        <p v-if="isLoading" class="review-status">
+        <p v-if="isLoading" class="mb-[22px] mt-0 border border-[#171916] px-[18px] py-4 leading-[1.55] bg-[#f5f2eb]">
           Данные загружаются из базы отзывов покупателей.
         </p>
 
-        <p v-else-if="hasLoaded && !reviews.length" class="review-status">
+        <p v-else-if="hasLoaded && !reviews.length" class="mb-[22px] mt-0 border border-[#171916] px-[18px] py-4 leading-[1.55] bg-[#f5f2eb]">
           Опубликованных отзывов пока нет, поэтому здесь не показаны вымышленные примеры.
         </p>
 
-        <p v-else-if="!hasLoaded" class="review-status">
+        <p v-else-if="!hasLoaded" class="mb-[22px] mt-0 border border-[#171916] px-[18px] py-4 leading-[1.55] bg-[#f5f2eb]">
           После восстановления соединения подтверждённые отзывы снова появятся на странице.
         </p>
 
-        <div v-else class="reviews-list">
-          <article v-for="review in reviews" :key="review.id" class="public-review">
-            <header class="public-review__head">
+        <div v-else class="border-b border-[#171916]">
+          <article v-for="review in reviews" :key="review.id" class="border-t border-[#171916] bg-transparent py-7 [&>p]:mb-0 [&>p]:max-w-[760px] [&>p]:text-[#393d37] [&>p]:leading-[1.65] [&_time]:shrink-0 [&_time]:font-[Segoe_UI,Arial,sans-serif] [&_time]:text-[0.8125rem] [&_time]:leading-[1.4] [&_time]:text-[#393d37]">
+            <header class="max-[560px]:grid mb-[18px] flex justify-between gap-[18px]">
               <div>
-                <div class="public-review__stars" :aria-label="ratingLabel(review.rating)">
+                <div class="mb-2.5 flex gap-0.5 leading-none text-[#d65a1f]" :aria-label="ratingLabel(review.rating)">
                   <span
                     v-for="rating in starOptions"
                     :key="rating"
-                    :class="{ 'is-muted': rating > review.rating }"
+                    :class="rating > review.rating ? 'text-[#aaa69b]' : 'text-[#d65a1f]'"
                     aria-hidden="true"
                   >★</span>
                 </div>
@@ -272,16 +272,16 @@ function ratingLabel(value: number) {
         </div>
       </section>
 
-      <aside class="reviews-side" aria-label="Форма отзыва и сводка">
-        <section class="review-form-panel">
-          <p class="technical-label">Новый отзыв</p>
+      <aside class="min-w-0 bg-[#d8d2c6]" aria-label="Форма отзыва и сводка">
+        <section class="max-[560px]:px-[18px] border-b border-[#171916] px-[46px] py-14">
+          <p class="font-[Segoe_UI,Arial,sans-serif] uppercase mb-4 text-[0.8125rem] font-[760] leading-[1.4] tracking-[0.04em]">Новый отзыв</p>
           <h2>Расскажите о своей покупке</h2>
           <p>
             Опишите материал, получение заказа и важные детали обслуживания. Конкретный опыт
             помогает следующему покупателю понять условия без рекламных обещаний.
           </p>
 
-          <form class="review-form" @submit.prevent="submitReview">
+          <form class="mt-7 grid gap-[18px] [&>label]:grid [&>label]:gap-2 [&>label]:font-[Segoe_UI,Arial,sans-serif] [&>label]:font-bold [&>label>input]:min-h-12 [&>label>input]:w-full [&>label>input]:min-w-0 [&>label>input]:border [&>label>input]:border-[#171916] [&>label>input]:bg-[#f5f2eb] [&>label>input]:px-3 [&>label>input]:py-[11px] [&>label>input]:text-[#171916] [&>label>input:focus]:border-[#d65a1f] [&>label>input:focus]:outline [&>label>input:focus]:outline-[3px] [&>label>input:focus]:outline-offset-2 [&>label>input:focus]:outline-[#d65a1f] [&>label>textarea]:min-h-[130px] [&>label>textarea]:w-full [&>label>textarea]:min-w-0 [&>label>textarea]:resize-y [&>label>textarea]:border [&>label>textarea]:border-[#171916] [&>label>textarea]:bg-[#f5f2eb] [&>label>textarea]:p-3 [&>label>textarea]:leading-[1.5] [&>label>textarea]:text-[#171916] [&>label>textarea:focus]:border-[#d65a1f] [&>label>textarea:focus]:outline [&>label>textarea:focus]:outline-[3px] [&>label>textarea:focus]:outline-offset-2 [&>label>textarea:focus]:outline-[#d65a1f]" @submit.prevent="submitReview">
             <label>
               <span>Имя</span>
               <input
@@ -304,13 +304,13 @@ function ratingLabel(value: number) {
               />
             </label>
 
-            <fieldset class="rating-fieldset">
+            <fieldset class="m-0 border-0 p-0 [&_legend]:mb-2 [&_legend]:font-[Segoe_UI,Arial,sans-serif] [&_legend]:font-bold">
               <legend>Оценка</legend>
-              <div class="rating-input">
+              <div class="max-[560px]:justify-between flex gap-2 [&_input]:absolute [&_input]:size-px [&_input]:opacity-0 [&_label]:relative [&_label]:grid [&_label]:h-[42px] [&_label]:w-[46px] [&_label]:cursor-pointer [&_span]:grid [&_span]:h-full [&_span]:w-full [&_span]:place-items-center [&_span]:border [&_span]:border-[#171916] [&_span]:bg-[#f5f2eb] [&_span]:font-[Segoe_UI,Arial,sans-serif] [&_span]:font-[760] [&_label:hover>span]:border-[#d65a1f] [&_label:hover>span]:bg-[#d65a1f] [&_label:hover>span]:text-[#fffdf7]">
                 <label
                   v-for="rating in ratingOptions"
                   :key="rating"
-                  :class="{ 'is-active': form.rating === rating }"
+                  :class="form.rating === rating ? '[&>span]:border-[#d65a1f] [&>span]:bg-[#d65a1f] [&>span]:text-[#fffdf7]' : ''"
                 >
                   <input
                     v-model.number="form.rating"
@@ -324,7 +324,7 @@ function ratingLabel(value: number) {
             </fieldset>
 
             <button
-              class="button button--signal"
+              class="inline-flex min-h-12 cursor-pointer items-center justify-center border border-[#171916] px-[18px] py-3 text-center font-[Segoe_UI,Arial,sans-serif] font-[760] leading-[1.1] no-underline transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-50 border-[#d65a1f] bg-[#d65a1f] text-[#fffdf7] hover:border-[#a53e10] hover:bg-[#a53e10]"
               type="submit"
               :disabled="isSubmitting || !canSubmitReview"
             >
@@ -333,13 +333,13 @@ function ratingLabel(value: number) {
           </form>
         </section>
 
-        <section v-if="reviews.length" class="review-scoreboard">
-          <p class="technical-label">Сводка базы</p>
-          <div class="review-scoreboard__value">{{ averageRating }}</div>
+        <section v-if="reviews.length" class="max-[560px]:px-[18px] border-b border-[#171916] px-[46px] py-14">
+          <p class="font-[Segoe_UI,Arial,sans-serif] uppercase mb-4 text-[0.8125rem] font-[760] leading-[1.4] tracking-[0.04em]">Сводка базы</p>
+          <div class="my-[18px] font-[Segoe_UI,Arial,sans-serif] text-[clamp(4rem,8vw,8rem)] font-[760] leading-[0.8]">{{ averageRating }}</div>
           <p>{{ reviews.length }} подтверждённых сообщений загружено на страницу.</p>
 
-          <div class="rating-bars" aria-label="Распределение оценок">
-            <div v-for="bar in ratingBars" :key="bar.rating" class="rating-bar">
+          <div class="mt-[26px] grid gap-2.5" aria-label="Распределение оценок">
+            <div v-for="bar in ratingBars" :key="bar.rating" class="grid grid-cols-[20px_minmax(0,1fr)_24px] items-center gap-2.5 font-[Segoe_UI,Arial,sans-serif] text-[0.8125rem] font-semibold [&>div]:h-2 [&>div]:border [&>div]:border-[#171916] [&_i]:block [&_i]:h-full [&_i]:bg-[#d65a1f]">
               <span>{{ bar.rating }}</span>
               <div><i :style="{ width: `${bar.percent}%` }" /></div>
               <strong>{{ bar.count }}</strong>
@@ -349,10 +349,10 @@ function ratingLabel(value: number) {
       </aside>
     </section>
 
-    <section class="review-policy">
+    <section class="max-[840px]:grid-cols-1 max-[560px]:px-[18px] grid grid-cols-[minmax(300px,0.8fr)_minmax(320px,0.7fr)] gap-[72px] border-t border-[#171916] bg-[#d8d2c6] px-[max(24px,calc((100vw_-_1280px)/2))] py-[72px] bg-[#f5f2eb]">
       <div>
-        <span class="section-index">02</span>
-        <p class="technical-label">Принцип публикации</p>
+        <span class="max-[560px]:mb-[26px] max-[560px]:text-[3.2rem] font-[Segoe_UI,Arial,sans-serif] uppercase mb-[22px] inline-block text-[clamp(2rem,3vw,3.3rem)] font-bold leading-[0.9]">02</span>
+        <p class="font-[Segoe_UI,Arial,sans-serif] uppercase mb-4 text-[0.8125rem] font-[760] leading-[1.4] tracking-[0.04em]">Принцип публикации</p>
         <h2>Только сообщения из действующей базы</h2>
       </div>
       <p>

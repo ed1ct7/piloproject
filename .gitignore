@@ -6,12 +6,14 @@ node_modules
 .cache
 dist
 frontend/verify/
+/verify/
 
 # бэкенд
 /backend/target
 
 # прочее
 /.idea/
+.codex-logs/
 .env
 *.log
 .DS_Store

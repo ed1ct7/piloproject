@@ -18,3 +18,7 @@ useHead({
     <NuxtPage />
   </NuxtLayout>
 </template>
+
+<style>
+@import "tailwindcss";
+</style>

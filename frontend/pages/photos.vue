@@ -91,7 +91,7 @@ useSeoMeta({
   title: 'Фото пилорамы в Разбегаево – производство, склад, отгрузка',
   description: 'Фотографии производственной площадки пилорамы в Разбегаево: ленточная пилорама, распил бревна, склад сухой доски и бруска, обработка огнебиозащитой, отгрузка и доставка.',
   ogTitle: 'Фото производства пилорамы в Разбегаево',
-  ogDescription: 'Реальные фотографии площадки: станки, склад, готовые пиломатериалы и отгрузка.',
+  ogDescription: 'Фотографии площадки: станки, склад, готовые пиломатериалы и отгрузка.',
   ogImage: `${siteUrl}/images/pilorama-stanok-brevno.jpg`,
   ogType: 'website',
 })
@@ -118,17 +118,12 @@ useSchemaOrg([
 <template>
   <main>
     <section class="page-masthead page-masthead--catalog">
-      <div class="page-masthead__mark">
-        <span>ФОТО / ПЛОЩАДКА</span>
-        <span>РАЗБЕГАЕВО</span>
-      </div>
+      <div class="page-masthead__mark" aria-hidden="true" />
       <div class="page-masthead__title">
-        <p class="technical-label">Производство без постановки</p>
         <h1>Фото пилорамы и склада</h1>
       </div>
       <p class="page-masthead__intro">
-        Снимки сделаны на действующей площадке: распил бревна, сушка и строжка, склад
-        готовой доски, обработка огнебиозащитой и отгрузка партий покупателям.
+        Производственная площадка, пилорама, склад, готовые пиломатериалы и отгрузка.
       </p>
     </section>
 
@@ -148,17 +143,5 @@ useSchemaOrg([
       </figure>
     </section>
 
-    <section class="contact-next">
-      <div>
-        <span class="section-index">02</span>
-        <p class="technical-label">Следующий шаг</p>
-        <h2>Выберите материал и уточните наличие</h2>
-      </div>
-      <p>
-        В каталоге собраны основные позиции с ценами за кубометр. Наличие и итоговая
-        стоимость подтверждаются перед расчётом партии.
-      </p>
-      <NuxtLink class="button button--signal" to="/pilomaterialy">Открыть каталог</NuxtLink>
-    </section>
   </main>
 </template>

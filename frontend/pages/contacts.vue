@@ -5,7 +5,7 @@ definePageMeta({
 
 useSeoMeta({
   title: 'Контакты пилорамы в Разбегаево – телефон, WhatsApp, адрес',
-  description: 'Телефон и WhatsApp пилорамы в Разбегаево, адрес производственной площадки, реквизиты и список данных для расчёта доски, бруса, самовывоза и доставки.',
+  description: 'Телефон и WhatsApp пилорамы в Разбегаево, адрес производственной площадки и юридические реквизиты.',
   ogTitle: 'Контакты пилорамы в Разбегаево',
   ogDescription: 'Телефон, WhatsApp и адрес производства. Подготовка запроса на расчёт пиломатериалов.',
   ogImage: `${siteUrl}/images/ploshchadka-otgruzka-pilomaterialov.jpg`,
@@ -31,11 +31,6 @@ useSchemaOrg([
   <main>
     <section class="contact-masthead">
       <div class="contact-masthead__title">
-        <div class="page-masthead__mark">
-          <span>КОНТАКТ / 01</span>
-          <span>ЛОМОНОСОВСКИЙ РАЙОН</span>
-        </div>
-        <p class="technical-label">Производственная площадка</p>
         <h1>Контакты пилорамы в Разбегаево</h1>
       </div>
 
@@ -64,13 +59,10 @@ useSchemaOrg([
       </figure>
 
       <div class="contact-checklist">
-        <span class="section-index">01</span>
-        <p class="technical-label">Связь с производством</p>
         <h2 id="contact-data-title">Позвоните или напишите в WhatsApp</h2>
 
         <div class="contact-channels">
           <a class="contact-channels__phone" :href="businessPhoneHref">{{ businessPhone }}</a>
-          <p>Звонки и сообщения принимаются в рабочее время площадки.</p>
           <div class="section-actions">
             <a
               class="button button--signal"
@@ -83,16 +75,8 @@ useSchemaOrg([
         </div>
 
         <p>
-          Чтобы расчёт занял один разговор, подготовьте параметры заказа по списку.
-          Если нужна помощь с выбором позиции, назовите назначение конструкции.
+          При обращении укажите нужный материал, размеры и количество.
         </p>
-
-        <ol>
-          <li><span>01</span>Материал и требуемые размеры</li>
-          <li><span>02</span>Количество штук или общий объём</li>
-          <li><span>03</span>Необходимость распила и обработки</li>
-          <li><span>04</span>Самовывоз или адрес доставки</li>
-        </ol>
 
         <dl class="contact-requisites">
           <div>
@@ -113,19 +97,6 @@ useSchemaOrg([
           </div>
         </dl>
       </div>
-    </section>
-
-    <section class="contact-next">
-      <div>
-        <span class="section-index">02</span>
-        <p class="technical-label">Перед поездкой</p>
-        <h2>Уточните наличие и готовность партии заранее</h2>
-      </div>
-      <p>
-        Производственная площадка не заменяет розничный магазин с постоянной выкладкой. Перед
-        приездом нужно подтвердить нужный материал и согласовать время получения.
-      </p>
-      <NuxtLink class="text-link" to="/pilomaterialy">Вернуться к каталогу</NuxtLink>
     </section>
   </main>
 </template>

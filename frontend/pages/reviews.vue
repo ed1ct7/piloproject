@@ -7,6 +7,7 @@ definePageMeta({
 
 const ratingOptions = [5, 4, 3, 2, 1]
 const starOptions = [1, 2, 3, 4, 5]
+const ratingSourceUrl = 'https://pilorama-razbegaevo.clients.site/#rating'
 const { listReviews, createReview } = useReviewsApi()
 
 // Отзывы загружаются на этапе генерации (SSG) и попадают в статический HTML,
@@ -184,15 +185,12 @@ function ratingLabel(value: number) {
   <main>
     <section class="reviews-masthead">
       <div class="reviews-masthead__copy">
-        <div class="page-masthead__mark">
-          <span>ОТЗЫВЫ / БАЗА</span>
-          <span>РАЗБЕГАЕВО</span>
-        </div>
-        <p class="technical-label">Опыт покупателей</p>
         <h1>Отзывы о пилораме в Разбегаево</h1>
         <p>
-          Здесь публикуются сообщения покупателей о материале, обслуживании, самовывозе и
-          доставке. Страница получает данные напрямую из базы и не подменяет их примерами.
+          На Яндекс Картах указаны рейтинг 4,6 из 5 и 12 отзывов.
+          <a class="text-link" :href="ratingSourceUrl" target="_blank" rel="noopener">
+            Источник рейтинга
+          </a>
         </p>
       </div>
 
@@ -216,9 +214,7 @@ function ratingLabel(value: number) {
       <section class="reviews-stream" aria-labelledby="reviews-list-title">
         <header class="reviews-stream__head">
           <div>
-            <span class="section-index">01</span>
-            <p class="technical-label">Опубликованные сообщения</p>
-            <h2 id="reviews-list-title">Отзывы покупателей</h2>
+            <h2 id="reviews-list-title">Отзывы посетителей сайта</h2>
           </div>
           <button
             class="button button--outline"
@@ -240,15 +236,15 @@ function ratingLabel(value: number) {
         </p>
 
         <p v-if="isLoading" class="review-status">
-          Данные загружаются из базы отзывов покупателей.
+          Загружаем отзывы.
         </p>
 
         <p v-else-if="hasLoaded && !reviews.length" class="review-status">
-          Опубликованных отзывов пока нет, поэтому здесь не показаны вымышленные примеры.
+          Опубликованных отзывов пока нет.
         </p>
 
         <p v-else-if="!hasLoaded" class="review-status">
-          После восстановления соединения подтверждённые отзывы снова появятся на странице.
+          Отзывы сейчас недоступны.
         </p>
 
         <div v-else class="reviews-list">
@@ -274,11 +270,9 @@ function ratingLabel(value: number) {
 
       <aside class="reviews-side" aria-label="Форма отзыва и сводка">
         <section class="review-form-panel">
-          <p class="technical-label">Новый отзыв</p>
           <h2>Расскажите о своей покупке</h2>
           <p>
-            Опишите материал, получение заказа и важные детали обслуживания. Конкретный опыт
-            помогает следующему покупателю понять условия без рекламных обещаний.
+            Укажите материал и кратко опишите свой опыт покупки.
           </p>
 
           <form class="review-form" @submit.prevent="submitReview">
@@ -334,9 +328,8 @@ function ratingLabel(value: number) {
         </section>
 
         <section v-if="reviews.length" class="review-scoreboard">
-          <p class="technical-label">Сводка базы</p>
           <div class="review-scoreboard__value">{{ averageRating }}</div>
-          <p>{{ reviews.length }} подтверждённых сообщений загружено на страницу.</p>
+          <p>{{ reviews.length }} отзывов опубликовано на сайте.</p>
 
           <div class="rating-bars" aria-label="Распределение оценок">
             <div v-for="bar in ratingBars" :key="bar.rating" class="rating-bar">
@@ -349,16 +342,5 @@ function ratingLabel(value: number) {
       </aside>
     </section>
 
-    <section class="review-policy">
-      <div>
-        <span class="section-index">02</span>
-        <p class="technical-label">Принцип публикации</p>
-        <h2>Только сообщения из действующей базы</h2>
-      </div>
-      <p>
-        Мы не показываем декоративные оценки и не придумываем отзывы для заполнения страницы.
-        Если база временно недоступна, интерфейс сообщает об этом прямо.
-      </p>
-    </section>
   </main>
 </template>

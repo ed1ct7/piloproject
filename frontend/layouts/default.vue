@@ -48,7 +48,12 @@ watch(
         </nav>
 
         <a class="header-phone" :href="businessPhoneHref">{{ businessPhone }}</a>
-        <NuxtLink class="header-action" to="/kontakty">Запросить стоимость</NuxtLink>
+        <a
+          class="header-action"
+          :href="businessWhatsAppUrl"
+          target="_blank"
+          rel="noopener"
+        >WhatsApp</a>
       </div>
     </header>
 
@@ -56,13 +61,8 @@ watch(
 
     <footer class="site-footer">
       <div class="site-footer__brand">
-        <span class="technical-label">ПР / РАЗБЕГАЕВО</span>
-        <strong>Пиломатериалы для стройки и участка</strong>
-        <p>
-          Производство находится в Разбегаево Ломоносовского района. Доска, брус, брусок,
-          рейка и имитация бруса с обработкой огнебиозащитой. Вся продукция регистрируется
-          в ЛесЕГАИС, доставка по Санкт-Петербургу и Ленинградской области.
-        </p>
+        <strong>Пилорама Разбегаево</strong>
+        <p>Производственная площадка в Ломоносовском районе Ленинградской области.</p>
       </div>
 
       <nav class="site-footer__nav" aria-label="Навигация в подвале">
@@ -75,7 +75,7 @@ watch(
       </nav>
 
       <div class="site-footer__contact">
-        <span class="technical-label">Производство</span>
+        <span class="technical-label">Связь</span>
         <address>Разбегаево, Ломоносовский район, Ленинградская область</address>
         <a class="site-footer__phone" :href="businessPhoneHref">{{ businessPhone }}</a>
         <a
@@ -84,7 +84,6 @@ watch(
           target="_blank"
           rel="noopener"
         >Написать в WhatsApp</a>
-        <NuxtLink class="text-link" to="/kontakty">Подготовить данные для расчёта</NuxtLink>
       </div>
 
       <div class="site-footer__bottom">
@@ -92,7 +91,6 @@ watch(
           {{ businessRequisites.fullName }} · ИНН {{ businessRequisites.inn }} ·
           ОГРНИП {{ businessRequisites.ogrnip }}
         </span>
-        <NuxtLink to="/system-status" rel="nofollow">Состояние системы</NuxtLink>
       </div>
     </footer>
   </div>

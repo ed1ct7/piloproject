@@ -91,7 +91,6 @@ watch(
           {{ businessRequisites.fullName }} · ИНН {{ businessRequisites.inn }} ·
           ОГРНИП {{ businessRequisites.ogrnip }}
         </span>
-        <NuxtLink to="/system-status" rel="nofollow">Состояние системы</NuxtLink>
       </div>
     </footer>
   </div>

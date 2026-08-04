@@ -118,12 +118,8 @@ useSchemaOrg([
 <template>
   <main>
     <section class="max-[840px]:grid-cols-1 max-[840px]:min-h-0 max-[560px]:block max-[560px]:px-[18px] max-[560px]:pb-10 max-[560px]:pt-[34px] grid min-h-[310px] grid-cols-[64px_minmax(380px,1.45fr)_minmax(280px,0.75fr)] items-center gap-8 border-b border-[#171916] px-[max(24px,calc((100vw_-_1280px)/2))] pb-10 pt-14 bg-[#d8d2c6]">
-      <div class="max-[840px]:mb-8 max-[560px]:mb-7 font-[Segoe_UI,Arial,sans-serif] uppercase grid self-start gap-1.5 text-[0.8125rem] font-bold leading-[1.4] tracking-[0.035em]">
-        <span>ФОТО / ПЛОЩАДКА</span>
-        <span>РАЗБЕГАЕВО</span>
-      </div>
+      <div aria-hidden="true" />
       <div class="max-w-[760px] [&_h1]:mb-0">
-        <p class="font-[Segoe_UI,Arial,sans-serif] uppercase mb-4 text-[0.8125rem] font-[760] leading-[1.4] tracking-[0.04em]">Производство без постановки</p>
         <h1>Фото пилорамы и склада</h1>
       </div>
       <p class="mb-0 max-w-[480px] text-[1.03rem] leading-[1.65] text-[#393d37]">

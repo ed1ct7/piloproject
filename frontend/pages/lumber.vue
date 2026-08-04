@@ -49,12 +49,8 @@ useSchemaOrg([
 <template>
   <main>
     <section class="max-[840px]:grid-cols-1 max-[840px]:min-h-0 max-[560px]:block max-[560px]:px-[18px] max-[560px]:pb-10 max-[560px]:pt-[34px] grid min-h-[310px] grid-cols-[64px_minmax(380px,1.45fr)_minmax(280px,0.75fr)] items-center gap-8 border-b border-[#171916] px-[max(24px,calc((100vw_-_1280px)/2))] pb-10 pt-14 bg-[#d8d2c6]">
-      <div class="max-[840px]:mb-8 max-[560px]:mb-7 font-[Segoe_UI,Arial,sans-serif] uppercase grid self-start gap-1.5 text-[0.8125rem] font-bold leading-[1.4] tracking-[0.035em]">
-        <span>КАТАЛОГ / 2026</span>
-        <span>РАЗБЕГАЕВО</span>
-      </div>
+      <div aria-hidden="true" />
       <div class="max-w-[760px] [&_h1]:mb-0">
-        <p class="font-[Segoe_UI,Arial,sans-serif] uppercase mb-4 text-[0.8125rem] font-[760] leading-[1.4] tracking-[0.04em]">Пиломатериалы от производителя</p>
         <h1>Каталог с ценами за кубометр</h1>
       </div>
       <p class="mb-0 max-w-[480px] text-[1.03rem] leading-[1.65] text-[#393d37]">
@@ -65,7 +61,6 @@ useSchemaOrg([
     <section class="max-[560px]:px-[18px] bg-[#f5f2eb] px-[max(24px,calc((100vw_-_1280px)/2))] pb-20 pt-0 max-[560px]:pb-14" aria-label="Каталог пиломатериалов с ценами">
       <article v-for="product in priceListProducts" :key="product.number" class="max-[1100px]:grid-cols-[minmax(200px,0.56fr)_minmax(240px,0.58fr)_minmax(260px,1fr)] max-[1100px]:gap-8 max-[840px]:grid-cols-[0.58fr_1fr] max-[560px]:grid-cols-1 max-[560px]:gap-[26px] grid grid-cols-[minmax(210px,0.52fr)_minmax(260px,0.58fr)_minmax(320px,1fr)] gap-10 border-b border-[#171916] py-14 max-[560px]:py-10">
         <header>
-          <span class="max-[560px]:text-[4.5rem] font-[Segoe_UI,Arial,sans-serif] text-[clamp(2.8rem,4.5vw,5.2rem)] font-bold leading-[0.8]">{{ product.number }}</span>
           <h2>{{ product.title }}</h2>
           <p class="whitespace-nowrap font-[Segoe_UI,Arial,sans-serif] font-extrabold text-[#a53e10] mt-[22px] text-[clamp(1.4rem,2vw,1.9rem)] leading-none">{{ formatPricePerCubicMeter(product.price) }}</p>
         </header>

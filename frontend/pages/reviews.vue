@@ -209,17 +209,6 @@ function ratingLabel(value: number) {
       <div
         class="max-[840px]:min-h-[360px] max-[560px]:min-h-0 max-[560px]:px-[18px] max-[560px]:pb-10 max-[560px]:pt-[34px] flex flex-col justify-center p-10"
       >
-        <div
-          class="max-[840px]:mb-8 max-[560px]:mb-7 font-[Segoe_UI,Arial,sans-serif] uppercase grid self-start gap-1.5 text-[0.8125rem] font-bold leading-[1.4] tracking-[0.035em]"
-        >
-          <span>ОТЗЫВЫ / БАЗА</span>
-          <span>РАЗБЕГАЕВО</span>
-        </div>
-        <p
-          class="font-[Segoe_UI,Arial,sans-serif] uppercase mb-3 text-[0.8125rem] font-[760] leading-[1.4] tracking-[0.04em]"
-        >
-          Опыт покупателей
-        </p>
         <h1 class="max-w-[680px] border-l-[6px] border-[#d65a1f] pl-5 !text-[clamp(2.15rem,3vw,3.6rem)] !leading-[1.08]">Отзывы о пилораме в Разбегаево</h1>
         <p class="max-w-[660px]">
           На Яндекс Картах указаны рейтинг 4,6 из 5 и 12 отзывов.
@@ -263,15 +252,6 @@ function ratingLabel(value: number) {
           class="max-[560px]:grid max-[560px]:items-start mb-[42px] flex items-end justify-between gap-7"
         >
           <div>
-            <span
-              class="max-[560px]:mb-[26px] max-[560px]:text-[3.2rem] font-[Segoe_UI,Arial,sans-serif] uppercase mb-[22px] inline-block text-[clamp(2rem,3vw,3.3rem)] font-bold leading-[0.9]"
-              >01</span
-            >
-            <p
-              class="font-[Segoe_UI,Arial,sans-serif] uppercase mb-4 text-[0.8125rem] font-[760] leading-[1.4] tracking-[0.04em]"
-            >
-              Опубликованные сообщения
-            </p>
             <h2 id="reviews-list-title">Отзывы посетителей сайта</h2>
           </div>
           <button

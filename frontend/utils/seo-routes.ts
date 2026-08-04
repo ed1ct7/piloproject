@@ -1,4 +1,4 @@
-export const siteUrl = 'https://pilorama-razbegaevo.clients.site'
+export const siteUrl = 'https://pilorama-razbegaevo.ru'
 
 export const indexableRoutes = [
   { loc: '/', changefreq: 'weekly' as const, priority: 1 as const },

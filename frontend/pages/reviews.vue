@@ -211,7 +211,7 @@ function ratingLabel(value: number) {
   <main>
     <section class="border-b border-[#171916] bg-[#f5f2eb]">
       <div
-        class="mx-auto grid w-[min(1280px,100%)] grid-cols-[minmax(0,1.12fr)_minmax(340px,0.88fr)] max-[900px]:grid-cols-1"
+        class="mx-auto w-[min(1280px,100%)]"
       >
         <div
           class="flex min-h-[350px] min-w-0 flex-col justify-center px-12 py-12 max-[840px]:min-h-0 max-[560px]:px-[18px] max-[560px]:py-9"
@@ -236,10 +236,10 @@ function ratingLabel(value: number) {
           </p>
 
           <dl
-            class="mt-8 grid max-w-[560px] grid-cols-3 border-y border-[#aaa69b] font-[Segoe_UI,Arial,sans-serif] max-[560px]:grid-cols-1"
+            class="mt-8 grid max-w-[560px] grid-cols-3 border-y border-[#aaa69b] font-[Segoe_UI,Arial,sans-serif]"
           >
             <div
-              class="border-r border-[#aaa69b] px-4 py-4 max-[560px]:border-b max-[560px]:border-r-0"
+              class="border-r border-[#aaa69b] px-4 py-4"
             >
               <dt class="mb-2 text-[0.8125rem] font-[760] uppercase leading-[1.35]">
                 Яндекс Карты
@@ -249,7 +249,7 @@ function ratingLabel(value: number) {
               </dd>
             </div>
             <div
-              class="border-r border-[#aaa69b] px-4 py-4 max-[560px]:border-b max-[560px]:border-r-0"
+              class="border-r border-[#aaa69b] px-4 py-4"
             >
               <dt class="mb-2 text-[0.8125rem] font-[760] uppercase leading-[1.35]">
                 Отзывы
@@ -269,26 +269,6 @@ function ratingLabel(value: number) {
           </dl>
 
         </div>
-
-        <figure
-          class="relative min-h-[350px] overflow-hidden border-l border-[#171916] bg-[#13251e] max-[900px]:min-h-[320px] max-[900px]:border-l-0 max-[900px]:border-t max-[560px]:min-h-[280px] [&_figcaption]:absolute [&_figcaption]:inset-x-0 [&_figcaption]:bottom-0 [&_img]:h-full [&_img]:w-full [&_img]:object-cover"
-        >
-          <NuxtImg
-            src="/images/shtabel-suhoi-doski.jpg"
-            alt="Штабели сухой доски в пачках на складе пилорамы"
-            width="960"
-            height="1280"
-            sizes="xs:100vw sm:100vw md:42vw lg:42vw"
-            densities="1"
-            format="webp"
-            loading="eager"
-            preload
-          />
-          <figcaption>
-            <span>Склад сухой доски</span>
-            <span>Разбегаево</span>
-          </figcaption>
-        </figure>
       </div>
     </section>
 

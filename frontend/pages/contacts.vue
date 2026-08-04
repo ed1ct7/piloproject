@@ -44,23 +44,8 @@ useSchemaOrg([
       </address>
     </section>
 
-    <section class="max-[840px]:grid-cols-[0.38fr_0.62fr] max-[560px]:grid-cols-1 mx-auto grid w-[min(1280px,100%)] grid-cols-[minmax(0,0.4fr)_minmax(0,0.6fr)] border-b border-[#171916]" aria-labelledby="contact-data-title">
-      <figure class="relative min-h-[480px] border-r border-[#171916] max-[560px]:min-h-[320px] max-[560px]:border-r-0 max-[560px]:border-b [&_figcaption]:absolute [&_figcaption]:inset-x-0 [&_figcaption]:bottom-0 [&_img]:h-full [&_img]:w-full [&_img]:object-cover">
-        <NuxtImg
-          src="/images/ploshchadka-otgruzka-pilomaterialov.jpg"
-          alt="Производственная площадка пилорамы с партией доски на отгрузке"
-          width="900"
-          height="1600"
-          sizes="xs:100vw sm:48vw md:42vw"
-          densities="1"
-          format="webp"
-          loading="eager"
-          preload
-        />
-        <figcaption>Комплектование партии на площадке</figcaption>
-      </figure>
-
-      <div class="max-[560px]:px-[18px] max-[560px]:py-[52px] p-[56px]">
+    <section class="max-[840px]:grid-cols-1 mx-auto grid w-[min(1280px,100%)] grid-cols-[minmax(0,0.58fr)_minmax(280px,0.42fr)] border-b border-[#171916]" aria-labelledby="contact-data-title">
+      <div class="max-[840px]:border-r-0 max-[840px]:border-b max-[840px]:border-[#171916] max-[560px]:px-[18px] max-[560px]:py-[40px] border-r border-[#171916] p-[56px]">
         <p class="font-[Segoe_UI,Arial,sans-serif] uppercase mb-4 text-[0.8125rem] font-[760] leading-[1.4] tracking-[0.04em]">Связь с производством</p>
         <h2 id="contact-data-title">Позвоните или напишите в WhatsApp</h2>
 
@@ -80,7 +65,10 @@ useSchemaOrg([
         <p>
           При обращении укажите нужный материал, размеры и количество.
         </p>
+      </div>
 
+      <div class="max-[560px]:px-[18px] max-[560px]:py-[40px] p-[56px]">
+        <h2>Реквизиты</h2>
         <dl class="mt-9 border-b border-[#171916] [&_div]:grid [&_div]:grid-cols-[120px_1fr] [&_div]:gap-4 [&_div]:border-t [&_div]:border-[#aaa69b] [&_div]:py-[11px] [&_dd]:m-0 [&_dd]:font-[Segoe_UI,Arial,sans-serif] [&_dd]:text-[0.95rem] [&_dd]:font-semibold [&_dd]:[overflow-wrap:anywhere] [&_dt]:font-[Segoe_UI,Arial,sans-serif] [&_dt]:text-[0.8125rem] [&_dt]:font-[760] [&_dt]:uppercase">
           <div>
             <dt>Организация</dt>

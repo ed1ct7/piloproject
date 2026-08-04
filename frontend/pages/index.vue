@@ -74,12 +74,6 @@ useSchemaOrg([
   <main>
     <section class="max-[1100px]:min-h-0 max-[840px]:grid-cols-1 mx-auto grid min-h-[560px] w-[min(1280px,100%)] grid-cols-12 border-b border-[#171916]">
       <div class="max-[840px]:col-span-full max-[840px]:min-h-[480px] max-[560px]:min-h-[460px] max-[560px]:px-[18px] max-[560px]:pb-[32px] max-[560px]:pt-[30px] col-span-7 flex min-w-0 flex-col justify-center bg-[#e9e5dc] p-10">
-        <div class="max-[1100px]:mb-10 max-[560px]:mb-8 max-[560px]:grid-cols-2 max-[560px]:gap-[7px] font-[Segoe_UI,Arial,sans-serif] uppercase mb-9 grid grid-cols-[repeat(3,max-content)] gap-3 text-[0.8125rem] font-semibold leading-[1.4]">
-          <span>59°45′ с. ш.</span>
-          <span>РАЗБЕГАЕВО / ЛО</span>
-          <span>ПИЛОМАТЕРИАЛЫ</span>
-        </div>
-
         <h1>Пиломатериалы в Разбегаево: доска, брусок, рейка</h1>
         <p class="max-[560px]:text-base max-[560px]:leading-normal mb-[30px] max-w-[660px] text-[clamp(1.05rem,1.55vw,1.32rem)] leading-[1.55] text-[#393d37]">
           Пиломатериалы от производителя оптом и в розницу. Доставка по Санкт-Петербургу
@@ -138,10 +132,7 @@ useSchemaOrg([
 
     <section class="max-[560px]:px-[18px] bg-[#f5f2eb] px-[max(24px,calc((100vw_-_1280px)/2))] py-20 max-[560px]:py-14" aria-labelledby="catalog-title">
       <header class="max-[840px]:grid-cols-[110px_1fr] max-[560px]:block mb-14 grid grid-cols-[72px_minmax(380px,1.45fr)_minmax(280px,0.75fr)] items-start gap-11">
-        <div>
-          <span class="max-[560px]:mb-[26px] max-[560px]:text-[3.2rem] font-[Segoe_UI,Arial,sans-serif] uppercase mb-[22px] inline-block text-[clamp(2rem,3vw,3.3rem)] font-bold leading-[0.9]">01</span>
-          <p class="font-[Segoe_UI,Arial,sans-serif] uppercase mb-4 text-[0.8125rem] font-[760] leading-[1.4] tracking-[0.04em]">Прайс-лист</p>
-        </div>
+        <div aria-hidden="true" />
         <h2 id="catalog-title">Основные позиции с ценами за кубометр</h2>
         <p>
           Сухой строганый материал, доска камерной сушки, имитация бруса и доска
@@ -167,7 +158,7 @@ useSchemaOrg([
               loading="lazy"
             />
           </figure>
-          <span class="max-[560px]:col-start-2 font-[Segoe_UI,Arial,sans-serif] uppercase self-start pt-1.5 text-[0.8125rem] font-bold leading-[1.4]">{{ product.number }} / М³</span>
+          <span class="max-[560px]:col-start-2" aria-hidden="true" />
           <div class="max-[560px]:col-start-2">
             <h3>{{ product.title }}</h3>
             <p>{{ product.description }}</p>
@@ -196,10 +187,7 @@ useSchemaOrg([
 
     <section class="max-[560px]:px-[18px] border-b border-[#171916] bg-[#f5f2eb] px-[max(24px,calc((100vw_-_1280px)/2))] py-20 max-[560px]:py-14" aria-labelledby="photo-band-title">
       <header class="max-[840px]:grid-cols-[90px_minmax(0,1fr)] max-[840px]:items-start max-[560px]:block mb-10 grid grid-cols-[56px_minmax(0,1fr)_auto] items-end gap-8">
-        <div>
-          <span class="max-[560px]:mb-[26px] max-[560px]:text-[3.2rem] font-[Segoe_UI,Arial,sans-serif] uppercase mb-[22px] inline-block text-[clamp(2rem,3vw,3.3rem)] font-bold leading-[0.9]">03</span>
-          <p class="font-[Segoe_UI,Arial,sans-serif] uppercase mb-4 text-[0.8125rem] font-[760] leading-[1.4] tracking-[0.04em]">Фото с производства</p>
-        </div>
+        <div aria-hidden="true" />
         <h2 id="photo-band-title" class="scroll-mt-28">Производство, склад и отгрузка</h2>
         <NuxtLink class="w-max cursor-pointer border-0 border-b-2 border-current bg-transparent px-0 pb-[3px] font-[Segoe_UI,Arial,sans-serif] font-[760] text-[#1f3a2f] no-underline transition-colors duration-150 hover:text-[#d65a1f] disabled:cursor-not-allowed disabled:opacity-50" to="/foto"
           >Смотреть все фотографии</NuxtLink
@@ -225,8 +213,6 @@ useSchemaOrg([
 
     <section class="max-[840px]:grid-cols-1 max-[840px]:gap-10 max-[560px]:px-[18px] grid grid-cols-[minmax(320px,1fr)_minmax(300px,0.62fr)] gap-14 border-b border-[#171916] bg-[#e9e5dc] px-[max(24px,calc((100vw_-_1280px)/2))] py-20 max-[560px]:py-14" aria-labelledby="about-title">
       <div class="min-w-0">
-        <span class="max-[560px]:mb-[26px] max-[560px]:text-[3.2rem] font-[Segoe_UI,Arial,sans-serif] uppercase mb-[22px] inline-block text-[clamp(2rem,3vw,3.3rem)] font-bold leading-[0.9]">05</span>
-        <p class="font-[Segoe_UI,Arial,sans-serif] uppercase mb-4 text-[0.8125rem] font-[760] leading-[1.4] tracking-[0.04em]">О производстве</p>
         <h2 id="about-title">О пилораме</h2>
         <p>
           Доступна обработка доски огнебиозащитным составом. Вся продукция регистрируется
@@ -252,8 +238,6 @@ useSchemaOrg([
 
     <section class="max-[840px]:grid-cols-1 max-[560px]:px-[18px] max-[560px]:gap-[34px] grid grid-cols-[minmax(0,0.42fr)_minmax(0,0.58fr)] items-center gap-12 border-b border-[#171916] bg-[#d8d2c6] px-[max(24px,calc((100vw_-_1280px)/2))] py-20 max-[560px]:py-14" aria-labelledby="video-title">
       <div class="min-w-0">
-        <span class="max-[560px]:mb-[26px] max-[560px]:text-[3.2rem] font-[Segoe_UI,Arial,sans-serif] uppercase mb-[22px] inline-block text-[clamp(2rem,3vw,3.3rem)] font-bold leading-[0.9]">06</span>
-        <p class="font-[Segoe_UI,Arial,sans-serif] uppercase mb-4 text-[0.8125rem] font-[760] leading-[1.4] tracking-[0.04em]">Видео с площадки</p>
         <h2 id="video-title">Работа пилорамы в Разбегаево</h2>
         <p>
           Короткое видео распила бревна на производственной площадке.

@@ -216,18 +216,6 @@ function ratingLabel(value: number) {
         <div
           class="flex min-h-[350px] min-w-0 flex-col justify-center px-12 py-12 max-[840px]:min-h-0 max-[560px]:px-[18px] max-[560px]:py-9"
         >
-          <div
-            class="mb-9 grid self-start gap-1.5 font-[Segoe_UI,Arial,sans-serif] text-[0.8125rem] font-bold uppercase leading-[1.4] tracking-[0.035em] max-[560px]:mb-7"
-          >
-            <span>ОТЗЫВЫ / БАЗА</span>
-            <span>РАЗБЕГАЕВО</span>
-          </div>
-
-          <p
-            class="mb-3 font-[Segoe_UI,Arial,sans-serif] text-[0.8125rem] font-[760] uppercase leading-[1.4] tracking-[0.04em] text-[#a53e10]"
-          >
-            Опыт покупателей
-          </p>
           <h1
             class="mb-5 max-w-[760px] !text-[clamp(2.35rem,4.2vw,4.4rem)] !leading-[1.02]"
           >
@@ -236,7 +224,7 @@ function ratingLabel(value: number) {
           <p
             class="mb-0 max-w-[650px] text-[clamp(1.03rem,1.25vw,1.18rem)] leading-[1.65] text-[#393d37]"
           >
-            Рейтинг и количество отзывов на Яндекс Картах будут добавлены после подключения подтвержденного источника.
+            На Яндекс Картах указаны рейтинг 4,6 из 5 и 12 отзывов.
             <a
               class="ml-1 inline-flex w-max cursor-pointer border-0 border-b-2 border-current bg-transparent px-0 pb-[3px] font-[Segoe_UI,Arial,sans-serif] font-[760] text-[#1f3a2f] no-underline transition-colors duration-150 hover:text-[#d65a1f] disabled:cursor-not-allowed disabled:opacity-50"
               :href="ratingSourceUrl"
@@ -257,7 +245,7 @@ function ratingLabel(value: number) {
                 Яндекс Карты
               </dt>
               <dd class="m-0 text-[2rem] font-[760] leading-none text-[#1f3a2f]">
-                —
+                4,6
               </dd>
             </div>
             <div
@@ -267,7 +255,7 @@ function ratingLabel(value: number) {
                 Отзывы
               </dt>
               <dd class="m-0 text-[2rem] font-[760] leading-none text-[#1f3a2f]">
-                —
+                12
               </dd>
             </div>
             <div class="px-4 py-4">
@@ -280,20 +268,6 @@ function ratingLabel(value: number) {
             </div>
           </dl>
 
-          <div class="mt-8 flex flex-wrap gap-2.5">
-            <a
-              class="inline-flex min-h-11 cursor-pointer items-center justify-center border border-[#d65a1f] bg-[#d65a1f] px-4 py-2.5 text-center font-[Segoe_UI,Arial,sans-serif] font-[760] leading-[1.1] text-[#fffdf7] no-underline transition-colors duration-150 hover:border-[#a53e10] hover:bg-[#a53e10]"
-              href="#review-form"
-            >
-              Оставить отзыв
-            </a>
-            <a
-              class="inline-flex min-h-11 cursor-pointer items-center justify-center border border-[#171916] bg-transparent px-4 py-2.5 text-center font-[Segoe_UI,Arial,sans-serif] font-[760] leading-[1.1] no-underline transition-colors duration-150 hover:bg-[#171916] hover:text-[#fffdf7]"
-              href="#reviews-list-title"
-            >
-              Читать отзывы
-            </a>
-          </div>
         </div>
 
         <figure
@@ -326,11 +300,6 @@ function ratingLabel(value: number) {
           class="mb-8 grid grid-cols-[minmax(0,1fr)_auto] items-end gap-6 border-b border-[#171916] pb-6 max-[560px]:grid-cols-1"
         >
           <div>
-            <p
-              class="mb-3 font-[Segoe_UI,Arial,sans-serif] text-[0.8125rem] font-[760] uppercase leading-[1.4] tracking-[0.04em]"
-            >
-              Опубликованные сообщения
-            </p>
             <h2
               id="reviews-list-title"
               class="mb-0 !text-[clamp(1.7rem,2.2vw,2.55rem)] !leading-[1.1]"

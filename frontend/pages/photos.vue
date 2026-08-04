@@ -117,8 +117,8 @@ useSchemaOrg([
 
 <template>
   <main>
-    <section class="max-[840px]:grid-cols-1 max-[840px]:min-h-0 max-[560px]:block max-[560px]:px-[18px] max-[560px]:pb-12 max-[560px]:pt-[42px] grid min-h-[390px] grid-cols-[72px_minmax(380px,1.45fr)_minmax(280px,0.75fr)] items-end gap-11 border-b border-[#171916] px-[max(24px,calc((100vw_-_1280px)/2))] pb-[52px] pt-[72px] bg-[#d8d2c6]">
-      <div class="max-[840px]:mb-12 max-[560px]:mb-[38px] font-[Segoe_UI,Arial,sans-serif] uppercase grid self-start gap-1.5 text-[0.8125rem] font-bold leading-[1.4] tracking-[0.035em]">
+    <section class="max-[840px]:grid-cols-1 max-[840px]:min-h-0 max-[560px]:block max-[560px]:px-[18px] max-[560px]:pb-10 max-[560px]:pt-[34px] grid min-h-[310px] grid-cols-[64px_minmax(380px,1.45fr)_minmax(280px,0.75fr)] items-center gap-8 border-b border-[#171916] px-[max(24px,calc((100vw_-_1280px)/2))] pb-10 pt-14 bg-[#d8d2c6]">
+      <div class="max-[840px]:mb-8 max-[560px]:mb-7 font-[Segoe_UI,Arial,sans-serif] uppercase grid self-start gap-1.5 text-[0.8125rem] font-bold leading-[1.4] tracking-[0.035em]">
         <span>ФОТО / ПЛОЩАДКА</span>
         <span>РАЗБЕГАЕВО</span>
       </div>
@@ -127,19 +127,18 @@ useSchemaOrg([
         <h1>Фото пилорамы и склада</h1>
       </div>
       <p class="mb-0 max-w-[480px] text-[1.03rem] leading-[1.65] text-[#393d37]">
-        Снимки сделаны на действующей площадке: распил бревна, сушка и строжка, склад
-        готовой доски, обработка огнебиозащитой и отгрузка партий покупателям.
+        Производственная площадка, пилорама, склад, готовые пиломатериалы и отгрузка.
       </p>
     </section>
 
-    <section class="max-[840px]:grid-cols-2 max-[560px]:px-[18px] max-[560px]:grid-cols-1 max-[560px]:gap-[18px] grid grid-cols-3 gap-6 bg-[#f5f2eb] px-[max(24px,calc((100vw_-_1280px)/2))] pb-[88px] pt-[72px]" aria-label="Фотографии производственной площадки">
-      <figure v-for="photo in photos" :key="photo.image" class="overflow-hidden bg-[#d8d2c6] [&_img]:aspect-[4/5] [&_img]:h-full [&_img]:w-full [&_img]:object-cover">
+    <section class="grid grid-cols-4 gap-5 bg-[#f5f2eb] px-[max(24px,calc((100vw_-_1280px)/2))] pb-20 pt-14 max-[1100px]:grid-cols-3 max-[840px]:grid-cols-2 max-[560px]:grid-cols-1 max-[560px]:gap-4 max-[560px]:px-[18px] max-[560px]:pb-14" aria-label="Фотографии производственной площадки">
+      <figure v-for="photo in photos" :key="photo.image" class="border border-[#171916] bg-[#d8d2c6] shadow-[0_14px_30px_rgba(23,25,22,0.08)] [&_img]:aspect-[4/3] [&_img]:w-full [&_img]:object-cover">
         <NuxtImg
           :src="photo.image"
           :alt="photo.alt"
           width="720"
           height="900"
-          sizes="xs:100vw sm:50vw md:33vw"
+          sizes="xs:100vw sm:50vw md:33vw lg:25vw"
           densities="1"
           format="webp"
           loading="lazy"
@@ -148,17 +147,5 @@ useSchemaOrg([
       </figure>
     </section>
 
-    <section class="max-[840px]:grid-cols-1 max-[560px]:px-[18px] max-[560px]:items-start grid grid-cols-[minmax(300px,0.8fr)_minmax(320px,0.7fr)] gap-[72px] border-t border-[#171916] bg-[#d8d2c6] px-[max(24px,calc((100vw_-_1280px)/2))] py-[72px] grid-cols-[minmax(300px,0.7fr)_minmax(300px,0.55fr)_auto] items-end bg-[#f5f2eb]">
-      <div>
-        <span class="max-[560px]:mb-[26px] max-[560px]:text-[3.2rem] font-[Segoe_UI,Arial,sans-serif] uppercase mb-[22px] inline-block text-[clamp(2rem,3vw,3.3rem)] font-bold leading-[0.9]">02</span>
-        <p class="font-[Segoe_UI,Arial,sans-serif] uppercase mb-4 text-[0.8125rem] font-[760] leading-[1.4] tracking-[0.04em]">Следующий шаг</p>
-        <h2>Выберите материал и уточните наличие</h2>
-      </div>
-      <p>
-        В каталоге собраны основные позиции с ценами за кубометр. Наличие и итоговая
-        стоимость подтверждаются перед расчётом партии.
-      </p>
-      <NuxtLink class="inline-flex min-h-12 cursor-pointer items-center justify-center border border-[#171916] px-[18px] py-3 text-center font-[Segoe_UI,Arial,sans-serif] font-[760] leading-[1.1] no-underline transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-50 border-[#d65a1f] bg-[#d65a1f] text-[#fffdf7] hover:border-[#a53e10] hover:bg-[#a53e10]" to="/pilomaterialy">Открыть каталог</NuxtLink>
-    </section>
   </main>
 </template>

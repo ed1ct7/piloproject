@@ -47,6 +47,7 @@ Backend ограничивает JSON-тело запроса 16 КБ, `authorNa
 Публичные операции:
 
 - `POST /api/reviews` — создать отзыв;
+- `GET /api/reviews/public` — получить готовые данные публичной страницы отзывов;
 - `GET /api/reviews` — получить список;
 - `GET /api/reviews/:id` — получить один отзыв.
 
@@ -98,6 +99,41 @@ Backend ограничивает JSON-тело запроса 16 КБ, `authorNa
 `GET /api/reviews`
 
 Успешный ответ: `200 OK`.
+
+### Получить публичную страницу отзывов
+
+`GET /api/reviews/public`
+
+Параметры:
+
+- `rating` — необязательный фильтр по оценке от 1 до 5;
+- `sort` — порядок вывода: `newest`, `highest` или `lowest`.
+
+Backend валидирует параметры, применяет фильтрацию и сортировку через SeaORM, а также возвращает
+сводку для страницы: среднюю оценку, распределение оценок, допустимые значения оценки и лимит
+текста отзыва. Frontend не рассчитывает эти данные сам.
+
+Успешный ответ: `200 OK`.
+
+```json
+{
+  "reviews": [],
+  "summary": {
+    "totalCount": 0,
+    "averageRating": null,
+    "ratingBars": [
+      { "rating": 5, "count": 0, "percent": 0 },
+      { "rating": 4, "count": 0, "percent": 0 }
+    ]
+  },
+  "ratingOptions": [5, 4, 3, 2, 1],
+  "reviewTextLimit": 1000,
+  "selectedRating": null,
+  "sort": "newest"
+}
+```
+
+Некорректные `rating` или `sort` возвращают `422 Unprocessable Entity`.
 
 ### Получить один отзыв
 

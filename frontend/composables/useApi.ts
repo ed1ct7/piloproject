@@ -19,6 +19,46 @@ export interface Review {
 }
 
 /**
+ * Полоса распределения оценок, рассчитанная backend API
+ */
+export interface ReviewRatingBar {
+  rating: number
+  count: number
+  percent: number
+}
+
+/**
+ * Сводка отзывов, рассчитанная backend API
+ */
+export interface ReviewSummary {
+  totalCount: number
+  averageRating: string | null
+  ratingBars: ReviewRatingBar[]
+}
+
+/**
+ * Публичные данные страницы отзывов
+ */
+export interface PublicReviews {
+  reviews: Review[]
+  summary: ReviewSummary
+  ratingOptions: number[]
+  reviewTextLimit: number
+  selectedRating: number | null
+  sort: ReviewSort
+}
+
+export type ReviewSort = 'newest' | 'highest' | 'lowest'
+
+/**
+ * Параметры публичной выборки отзывов
+ */
+export interface PublicReviewsQuery {
+  rating?: number
+  sort?: ReviewSort
+}
+
+/**
  * Данные для создания отзыва
  */
 export interface CreateReviewPayload {
@@ -80,6 +120,11 @@ export function useReviewsApi() {
         headers: adminHeaders(authorization),
       }),
     listReviews: () => $fetch<Review[]>('/api/reviews', { baseURL: apiBase }),
+    listPublicReviews: (query?: PublicReviewsQuery) =>
+      $fetch<PublicReviews>('/api/reviews/public', {
+        baseURL: apiBase,
+        query,
+      }),
     getReview: (id: number) => $fetch<Review>(`/api/reviews/${id}`, { baseURL: apiBase }),
     createReview: (payload: CreateReviewPayload) =>
       $fetch<Review>('/api/reviews', {

@@ -14,6 +14,8 @@ export interface PriceListProduct {
   category: ProductCategory
   /** Название позиции с размерами. */
   title: string
+  /** Короткое название для карточки каталога — размеры выводятся отдельно в характеристиках. */
+  displayTitle: string
   /** Цена в рублях за кубометр. */
   price: number
   /** Единица измерения цены и количества. */
@@ -29,12 +31,12 @@ export interface PriceListProduct {
 }
 
 export const productCategories = [
-  { value: 'brusok-suhoi-stroganyi', label: 'Брусок сухой строганый' },
-  { value: 'doska-estestvennoi-vlazhnosti', label: 'Доска естественной влажности' },
-  { value: 'doska-kamernoi-sushki', label: 'Доска камерной сушки' },
-  { value: 'doska-suhaya', label: 'Доска сухая' },
+  { value: 'brusok-suhoi-stroganyi', label: 'Брусок' },
+  { value: 'reika-suhaya-stroganaya', label: 'Рейка' },
+  { value: 'doska-kamernoi-sushki', label: 'Камерная сушка' },
+  { value: 'doska-suhaya', label: 'Сухая доска' },
+  { value: 'doska-estestvennoi-vlazhnosti', label: 'Естественная влажность' },
   { value: 'imitatsiya-brusa', label: 'Имитация бруса' },
-  { value: 'reika-suhaya-stroganaya', label: 'Рейка сухая строганая' },
 ] as const
 
 export type ProductCategory = (typeof productCategories)[number]['value']
@@ -45,6 +47,7 @@ export const priceListProducts: PriceListProduct[] = [
     number: '01',
     category: 'brusok-suhoi-stroganyi',
     title: 'Сухой строганый брусок 45*45*3000 мм',
+    displayTitle: 'Сухой строганый брусок',
     price: 28000,
     unit: 'м³',
     image: '/images/brusok-suhoi-stroganyi-45x45.jpg',
@@ -62,6 +65,7 @@ export const priceListProducts: PriceListProduct[] = [
     number: '02',
     category: 'reika-suhaya-stroganaya',
     title: 'Сухая строганая рейка 20*45*3000 мм',
+    displayTitle: 'Сухая строганая рейка',
     price: 25000,
     unit: 'м³',
     image: '/images/reika-suhaya-stroganaya-20x45.jpg',
@@ -79,6 +83,7 @@ export const priceListProducts: PriceListProduct[] = [
     number: '03',
     category: 'doska-kamernoi-sushki',
     title: 'Сухая доска камерной сушки 25*100*6000 и 25*125*6000 мм',
+    displayTitle: 'Доска камерной сушки',
     price: 21000,
     unit: 'м³',
     image: '/images/doska-kamernoi-sushki-25x100.jpg',
@@ -96,6 +101,7 @@ export const priceListProducts: PriceListProduct[] = [
     number: '04',
     category: 'imitatsiya-brusa',
     title: 'Имитация бруса 20*145*6000 или 3000 мм',
+    displayTitle: 'Имитация бруса',
     price: 38000,
     unit: 'м³',
     image: '/images/imitatsiya-brusa-20x145.jpg',
@@ -113,6 +119,7 @@ export const priceListProducts: PriceListProduct[] = [
     number: '05',
     category: 'doska-suhaya',
     title: 'Сухая строганая доска 45*95*6000 или 3000 мм',
+    displayTitle: 'Сухая строганая доска',
     price: 30000,
     unit: 'м³',
     image: '/images/doska-suhaya-stroganaya-45x95.jpg',
@@ -130,6 +137,7 @@ export const priceListProducts: PriceListProduct[] = [
     number: '06',
     category: 'imitatsiya-brusa',
     title: 'Имитация бруса АВ 20*145*6000 "Карельский шип"',
+    displayTitle: 'Имитация бруса «Карельский шип»',
     price: 38000,
     unit: 'м³',
     image: '/images/imitatsiya-brusa-av-karelskii-ship.jpg',
@@ -147,6 +155,7 @@ export const priceListProducts: PriceListProduct[] = [
     number: '07',
     category: 'doska-suhaya',
     title: 'Доска сухая, любого сечения, обработанная огнебиозащитным составом',
+    displayTitle: 'Сухая доска с огнебиозащитой',
     price: 25000,
     unit: 'м³',
     image: '/images/doska-suhaya-ognebiozashchita.jpg',
@@ -164,6 +173,7 @@ export const priceListProducts: PriceListProduct[] = [
     number: '08',
     category: 'doska-estestvennoi-vlazhnosti',
     title: 'Доска естественной влажности, любого сечения, обработанная огнебиозащитным составом',
+    displayTitle: 'Доска с огнебиозащитой',
     price: 20500,
     unit: 'м³',
     image: '/images/doska-estestvennoi-vlazhnosti-ognebiozashchita.jpg',

@@ -184,34 +184,20 @@ useSchemaOrg([
       </div>
     </section>
 
-    <section class="max-[840px]:grid-cols-1 max-[840px]:gap-10 max-[560px]:px-[18px] grid grid-cols-[minmax(320px,1fr)_minmax(300px,0.62fr)] gap-14 border-b border-[#171916] bg-[#e9e5dc] px-[max(24px,calc((100vw_-_1280px)/2))] py-20 max-[560px]:py-14" aria-labelledby="about-title">
-      <div class="min-w-0">
-        <h2 id="about-title">О нас</h2>
-        <p>
-          Пилорама ИП Макоев Р.А. предлагает доску естественной влажности, сухую и сухую строганую доску, брус и имитацию бруса в широком ассортименте размеров.
-        </p>
-        <p>
-          Доступны обработка огнебиозащитой и доставка по Санкт-Петербургу и Ленинградской области. Продукция регистрируется в ЛесЕГАИС.
-        </p>
-        <NuxtLink class="w-max cursor-pointer border-0 border-b-2 border-current bg-transparent px-0 pb-[3px] font-[Segoe_UI,Arial,sans-serif] font-[760] text-[#1f3a2f] no-underline transition-colors duration-150 hover:text-[#d65a1f] disabled:cursor-not-allowed disabled:opacity-50" to="/kontakty"
-          >Контакты</NuxtLink
-        >
+    <section class="max-[840px]:grid-cols-1 max-[560px]:px-[18px] grid grid-cols-[minmax(320px,0.78fr)_minmax(340px,1.22fr)] border-b border-[#171916] bg-[#e9e5dc] px-[max(24px,calc((100vw_-_1280px)/2))] max-[560px]:py-14" aria-labelledby="about-title">
+      <div class="max-[840px]:border-r-0 max-[840px]:border-b max-[840px]:py-12 max-[560px]:py-0 max-[560px]:pb-10 flex min-w-0 flex-col justify-center border-r border-[#171916] py-20 pr-[clamp(32px,6vw,88px)]">
+        <p class="font-[Segoe_UI,Arial,sans-serif] uppercase mb-4 text-[0.8125rem] font-[760] leading-[1.4] tracking-[0.04em]">Собственное производство</p>
+        <h2 id="about-title">Пилорама в Разбегаево</h2>
       </div>
 
-      <dl class="m-0 self-center border-b border-[#171916] [&_div]:grid [&_div]:grid-cols-[150px_1fr] [&_div]:gap-4 [&_div]:border-t [&_div]:border-[#aaa69b] [&_div]:py-[12px] [&_dd]:m-0 [&_dd]:font-[Segoe_UI,Arial,sans-serif] [&_dd]:text-[0.95rem] [&_dd]:font-semibold [&_dd]:[overflow-wrap:anywhere] [&_dt]:font-[Segoe_UI,Arial,sans-serif] [&_dt]:text-[0.8125rem] [&_dt]:font-[760] [&_dt]:uppercase">
-        <div>
-          <dt>Организация</dt>
-          <dd>{{ businessRequisites.shortName }}</dd>
-        </div>
-        <div>
-          <dt>ИНН</dt>
-          <dd>{{ businessRequisites.inn }}</dd>
-        </div>
-        <div>
-          <dt>ОГРНИП</dt>
-          <dd>{{ businessRequisites.ogrnip }}</dd>
-        </div>
-      </dl>
+      <div class="max-[840px]:py-12 max-[840px]:pl-0 max-[560px]:pb-0 max-[560px]:pt-10 flex min-w-0 flex-col justify-center py-20 pl-[clamp(32px,6vw,88px)]">
+        <p class="mb-7 max-w-[650px] text-[1.05rem] leading-[1.6] text-[#393d37]">
+          Производим пиломатериалы естественной влажности и камерной сушки, строганую доску, брус и имитацию бруса. Работаем с частными заказчиками и организациями, организуем доставку по Санкт-Петербургу и Ленинградской области.
+        </p>
+        <NuxtLink class="w-max cursor-pointer border-0 border-b-2 border-current bg-transparent px-0 pb-[3px] font-[Segoe_UI,Arial,sans-serif] font-[760] text-[#1f3a2f] no-underline transition-colors duration-150 hover:text-[#d65a1f] disabled:cursor-not-allowed disabled:opacity-50" to="/o-nas"
+          >Подробнее о производстве</NuxtLink
+        >
+      </div>
     </section>
 
     <section class="max-[560px]:px-[18px] border-b border-[#171916] bg-[#f5f2eb] px-[max(24px,calc((100vw_-_1280px)/2))] py-20 max-[560px]:py-14" aria-labelledby="photo-band-title">

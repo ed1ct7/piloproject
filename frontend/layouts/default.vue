@@ -42,6 +42,7 @@ watch(
           aria-label="Основная навигация"
         >
           <NuxtLink to="/pilomaterialy">Пиломатериалы</NuxtLink>
+          <NuxtLink to="/o-nas">О нас</NuxtLink>
           <NuxtLink to="/foto">Фото</NuxtLink>
           <NuxtLink to="/dostavka">Доставка</NuxtLink>
           <NuxtLink to="/otzyvy">Отзывы</NuxtLink>
@@ -70,6 +71,7 @@ watch(
       <nav class="flex flex-col items-start gap-3 [&_a]:no-underline [&_a]:text-[#d8d2c6] [&_a:hover]:text-[#d65a1f]" aria-label="Навигация в подвале">
         <span class="font-[Segoe_UI,Arial,sans-serif] uppercase mb-4 text-[0.8125rem] font-[760] leading-[1.4] tracking-[0.04em]">Разделы</span>
         <NuxtLink to="/pilomaterialy">Каталог пиломатериалов</NuxtLink>
+        <NuxtLink to="/o-nas">О производстве</NuxtLink>
         <NuxtLink to="/foto">Фото производства</NuxtLink>
         <NuxtLink to="/dostavka">Доставка и самовывоз</NuxtLink>
         <NuxtLink to="/otzyvy">Отзывы покупателей</NuxtLink>

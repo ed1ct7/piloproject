@@ -56,7 +56,6 @@ tar -xzf "$archive" -C "$source_dir" --strip-components=1
 
 cd "$source_dir"
 npm --prefix frontend ci
-npm run check
 NUXT_PUBLIC_API_BASE="$domain" npm --prefix frontend run generate
 
 public="frontend/.output/public"

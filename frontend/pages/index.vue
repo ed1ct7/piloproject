@@ -73,26 +73,26 @@ useSchemaOrg([
 <template>
   <main>
     <section class="max-[1100px]:min-h-0 max-[840px]:grid-cols-1 mx-auto grid min-h-[560px] w-[min(1280px,100%)] grid-cols-12 border-b border-[#171916]">
-      <div class="max-[840px]:col-span-full max-[840px]:min-h-[480px] max-[560px]:min-h-[460px] max-[560px]:px-[18px] max-[560px]:pb-[32px] max-[560px]:pt-[30px] col-span-7 flex min-w-0 flex-col justify-center bg-[#e9e5dc] p-10">
-        <h1>Пиломатериалы в Разбегаево: доска, брусок, рейка</h1>
-        <p class="max-[560px]:text-base max-[560px]:leading-normal mb-[30px] max-w-[660px] text-[clamp(1.05rem,1.55vw,1.32rem)] leading-[1.55] text-[#393d37]">
+      <div class="max-[840px]:col-span-full max-[840px]:min-h-[440px] max-[560px]:min-h-0 max-[560px]:px-[18px] max-[560px]:pb-9 max-[560px]:pt-8 col-span-7 flex min-w-0 flex-col justify-center bg-[#e9e5dc] p-10">
+        <h1 class="mb-5 max-w-[720px] text-[clamp(2.5rem,3.35vw,4.1rem)] leading-[1.06] max-[560px]:mb-4 max-[560px]:text-[clamp(2rem,8vw,2.65rem)] max-[560px]:leading-[1.08]">Пиломатериалы в Разбегаево: доска, брусок, рейка</h1>
+        <p class="mb-7 max-w-[640px] text-[clamp(1rem,1.25vw,1.18rem)] leading-[1.55] text-[#393d37] max-[560px]:mb-6 max-[560px]:text-base max-[560px]:leading-[1.5]">
           Пиломатериалы от производителя оптом и в розницу. Доставка по Санкт-Петербургу
           и Ленинградской области. Оплата по факту отгрузки.
         </p>
 
-        <div class="max-[560px]:grid max-[560px]:grid-cols-2 flex flex-wrap gap-2.5">
-          <NuxtLink class="inline-flex min-h-12 cursor-pointer items-center justify-center border border-[#171916] px-[18px] py-3 text-center font-[Segoe_UI,Arial,sans-serif] font-[760] leading-[1.1] no-underline transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-50 border-[#d65a1f] bg-[#d65a1f] text-[#fffdf7] hover:border-[#a53e10] hover:bg-[#a53e10]" to="/pilomaterialy"
+        <div class="flex flex-wrap gap-3 max-[560px]:grid max-[560px]:grid-cols-2 max-[420px]:grid-cols-1">
+          <NuxtLink class="inline-flex min-h-[50px] cursor-pointer items-center justify-center border border-[#171916] px-5 py-3 text-center font-[Segoe_UI,Arial,sans-serif] text-[0.95rem] font-[760] leading-[1.2] no-underline transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-50 border-[#d65a1f] bg-[#d65a1f] text-[#fffdf7] hover:border-[#a53e10] hover:bg-[#a53e10]" to="/pilomaterialy"
             >Каталог и цены</NuxtLink
           >
           <a
-            class="inline-flex min-h-12 cursor-pointer items-center justify-center border border-[#171916] px-[18px] py-3 text-center font-[Segoe_UI,Arial,sans-serif] font-[760] leading-[1.1] no-underline transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-50 bg-transparent text-[#171916] hover:bg-[#171916] hover:text-[#fffdf7]"
+            class="inline-flex min-h-[50px] cursor-pointer items-center justify-center border border-[#171916] px-5 py-3 text-center font-[Segoe_UI,Arial,sans-serif] text-[0.95rem] font-[760] leading-[1.2] no-underline transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-50 bg-transparent text-[#171916] hover:bg-[#171916] hover:text-[#fffdf7]"
             :href="businessWhatsAppUrl"
             target="_blank"
             rel="noopener"
           >Написать в WhatsApp</a>
         </div>
 
-        <dl class="max-[1100px]:grid-cols-1 max-[560px]:hidden mt-[42px] grid grid-cols-3 border-y border-[#aaa69b] [&>div]:border-r [&>div]:border-[#aaa69b] [&>div]:p-4 [&>div:last-child]:border-r-0 [&_dd]:m-0 [&_dd]:text-[0.9rem] [&_dd]:leading-[1.35] [&_dt]:mb-2 [&_dt]:font-[Segoe_UI,Arial,sans-serif] [&_dt]:text-[0.8125rem] [&_dt]:font-[760] [&_dt]:uppercase">
+        <dl class="mt-9 grid grid-cols-3 border-y border-[#aaa69b] max-[560px]:hidden [&>div]:border-r [&>div]:border-[#aaa69b] [&>div]:px-4 [&>div]:py-3.5 [&>div:last-child]:border-r-0 [&_dd]:m-0 [&_dd]:text-[0.94rem] [&_dd]:leading-[1.4] [&_dt]:mb-1.5 [&_dt]:font-[Segoe_UI,Arial,sans-serif] [&_dt]:text-[0.84rem] [&_dt]:font-[760] [&_dt]:uppercase">
           <div>
             <dt>Телефон</dt>
             <dd>
@@ -130,11 +130,10 @@ useSchemaOrg([
       </figure>
     </section>
 
-    <section class="max-[560px]:px-[18px] bg-[#f5f2eb] px-[max(24px,calc((100vw_-_1280px)/2))] py-20 max-[560px]:py-14" aria-labelledby="catalog-title">
-      <header class="max-[840px]:grid-cols-[110px_1fr] max-[560px]:block mb-14 grid grid-cols-[72px_minmax(380px,1.45fr)_minmax(280px,0.75fr)] items-start gap-11">
-        <div aria-hidden="true" />
-        <h2 id="catalog-title">Основные позиции с ценами за кубометр</h2>
-        <p>
+    <section class="bg-[#f5f2eb] px-[max(24px,calc((100vw_-_1280px)/2))] py-[72px] max-[560px]:px-[18px] max-[560px]:py-14" aria-labelledby="catalog-title">
+      <header class="mb-12 grid grid-cols-[minmax(0,1.35fr)_minmax(260px,0.65fr)] items-start gap-[clamp(40px,7vw,104px)] max-[840px]:grid-cols-1 max-[840px]:gap-5 max-[560px]:mb-9">
+        <h2 id="catalog-title" class="mb-0 max-w-[650px]">Основные позиции с ценами за кубометр</h2>
+        <p class="mb-0 max-w-[430px] text-[1.02rem] leading-[1.55] text-[#393d37]">
           Сухой строганый материал, доска камерной сушки, имитация бруса и доска
           с огнебиозащитной обработкой.
         </p>
@@ -241,15 +240,16 @@ useSchemaOrg([
       </div>
     </section>
 
-    <section class="max-[840px]:grid-cols-1 max-[560px]:px-[18px] max-[560px]:gap-[34px] grid grid-cols-[minmax(0,0.42fr)_minmax(0,0.58fr)] items-center gap-12 border-b border-[#171916] bg-[#d8d2c6] px-[max(24px,calc((100vw_-_1280px)/2))] py-20 max-[560px]:py-14" aria-labelledby="video-title">
-      <div class="min-w-0">
-        <h2 id="video-title">Работа пилорамы в Разбегаево</h2>
-        <p>
+    <section class="grid grid-cols-[minmax(280px,420px)_minmax(360px,620px)] items-start justify-center gap-[clamp(48px,7vw,112px)] border-b border-[#171916] bg-[#d8d2c6] px-[max(24px,calc((100vw_-_1280px)/2))] py-[72px] max-[840px]:grid-cols-1 max-[840px]:gap-9 max-[560px]:px-[18px] max-[560px]:py-14" aria-labelledby="video-title">
+      <div class="min-w-0 max-w-[420px] max-[840px]:max-w-[620px]">
+        <h2 id="video-title" class="mb-4 text-[clamp(2rem,2.6vw,2.8rem)] leading-[1.08] max-[560px]:mb-3">Работа пилорамы в Разбегаево</h2>
+        <p class="mb-0 max-w-[390px] text-[1.05rem] leading-[1.55] text-[#393d37]">
           Короткое видео распила бревна на производственной площадке.
         </p>
       </div>
 
       <video
+        class="aspect-[4/3] w-full max-w-[620px] justify-self-end bg-[#171916] object-cover max-[840px]:justify-self-start"
         controls
         preload="metadata"
         playsinline

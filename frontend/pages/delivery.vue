@@ -41,7 +41,7 @@ const deliverySteps = [
       <div class="delivery-hero__content">
         <div class="delivery-hero__intro">
           <p class="eyebrow">Получение заказа</p>
-          <h1 id="delivery-title">Доставка пиломатериалов и самовывоз</h1>
+          <h1 id="delivery-title">Доставка пиломатериалов и&nbsp;самовывоз</h1>
           <p class="delivery-hero__lead">
             Привезём заказ по Санкт-Петербургу и Ленинградской области или подготовим
             его к самовывозу с производства в Разбегаево.
@@ -62,32 +62,12 @@ const deliverySteps = [
             </a>
           </div>
         </div>
-
-        <dl class="delivery-facts" aria-label="Основные условия получения заказа">
-          <div>
-            <dt>География</dt>
-            <dd>СПб и Ленобласть</dd>
-          </div>
-          <div>
-            <dt>Оплата</dt>
-            <dd>По факту отгрузки</dd>
-          </div>
-          <div>
-            <dt>Самовывоз</dt>
-            <dd>Разбегаево</dd>
-          </div>
-        </dl>
       </div>
     </section>
 
     <section class="receiving" aria-labelledby="receiving-title">
       <header class="section-heading">
-        <p class="eyebrow">Два варианта</p>
         <h2 id="receiving-title">Как получить заказ</h2>
-        <p>
-          Выберите удобный способ. В обоих случаях заранее согласуем состав заказа,
-          дату готовности и все условия.
-        </p>
       </header>
 
       <div class="receiving__options">
@@ -97,10 +77,6 @@ const deliverySteps = [
             <span class="receiving-card__label">Самовывоз</span>
           </div>
           <h3>Забрать в Разбегаево</h3>
-          <p>
-            Подготовим заказ к согласованному времени и поможем с погрузкой на
-            производственной площадке.
-          </p>
           <ul>
             <li>Сообщим, когда заказ готов</li>
             <li>Согласуем время приезда</li>
@@ -115,12 +91,8 @@ const deliverySteps = [
             <span class="receiving-card__label">Доставка</span>
           </div>
           <h3>Привезти на объект</h3>
-          <p>
-            Подберём транспорт под объём заказа и рассчитаем маршрут до вашего
-            участка или строительного объекта.
-          </p>
           <ul>
-            <li>СПб и Ленинградская область</li>
+            <li>Подберём транспорт под объём заказа</li>
             <li>Стоимость зависит от адреса и объёма</li>
             <li>Дату и время согласуем заранее</li>
           </ul>
@@ -136,7 +108,6 @@ const deliverySteps = [
 
     <section class="delivery-process" aria-labelledby="process-title">
       <header class="delivery-process__heading">
-        <p class="eyebrow eyebrow--light">Всё просто</p>
         <h2 id="process-title">Как заказать доставку</h2>
       </header>
 
@@ -152,15 +123,8 @@ const deliverySteps = [
     </section>
 
     <section class="delivery-cta" aria-labelledby="delivery-cta-title">
+      <h2 id="delivery-cta-title">Нужен расчёт доставки?</h2>
       <div>
-        <p class="eyebrow">Расчёт без обязательств</p>
-        <h2 id="delivery-cta-title">Скажите, куда везти — посчитаем стоимость</h2>
-      </div>
-      <div class="delivery-cta__contact">
-        <p>
-          Пришлите адрес, список материалов и желаемую дату. Ответим по наличию,
-          срокам и доставке.
-        </p>
         <a
           class="delivery-button delivery-button--primary"
           :href="businessWhatsAppUrl"
@@ -178,7 +142,6 @@ const deliverySteps = [
   --forest: #1f3a2f;
   --paper: #f5f2eb;
   --sand: #e9e5dc;
-  --line: #aaa69b;
   --orange: #d65a1f;
   background: var(--sand);
 }
@@ -195,6 +158,10 @@ const deliverySteps = [
 }
 
 .delivery-hero {
+  display: block;
+  width: 100%;
+  min-height: 0;
+  margin: 0;
   border-bottom: 1px solid var(--ink);
   background: var(--paper);
 }
@@ -202,11 +169,11 @@ const deliverySteps = [
 .delivery-hero__content {
   display: grid;
   grid-template-columns: minmax(0, 1.35fr) minmax(300px, 0.65fr);
+  width: min(1200px, calc(100% - 48px));
   min-width: 0;
   gap: 0 clamp(48px, 7vw, 104px);
-  max-width: 1440px;
   margin: 0 auto;
-  padding: 72px max(24px, calc((100vw - 1280px) / 2));
+  padding: 72px 0;
 }
 
 .delivery-hero h1 {
@@ -241,13 +208,15 @@ const deliverySteps = [
 }
 
 .delivery-actions {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  width: min(100%, 220px);
+  grid-template-columns: 1fr;
   gap: 0.75rem;
 }
 
 .delivery-button {
   display: inline-flex;
+  width: 100%;
   min-height: 52px;
   align-items: center;
   justify-content: center;
@@ -283,75 +252,19 @@ const deliverySteps = [
   color: #fffdf7;
 }
 
-.delivery-facts {
-  display: grid;
-  grid-column: 1 / -1;
-  grid-template-columns: repeat(3, 1fr);
-  margin: 3rem 0 0;
-  border-block: 1px solid var(--line);
-}
-
-.delivery-facts div {
-  padding: 1rem 1.5rem;
-  border-right: 1px solid var(--line);
-}
-
-.delivery-facts div:first-child {
-  padding-left: 0;
-}
-
-.delivery-facts div:last-child {
-  border-right: 0;
-}
-
-.delivery-facts dt {
-  margin-bottom: 0.35rem;
-  font-family: "Segoe UI", Arial, sans-serif;
-  font-size: 0.74rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.delivery-facts dd {
-  margin: 0;
-  color: #393d37;
-  font-size: 0.93rem;
-  line-height: 1.35;
-}
-
 .receiving {
-  padding: 72px max(24px, calc((100vw - 1200px) / 2));
+  padding: 56px 24px;
   border-bottom: 1px solid var(--ink);
   background: var(--paper);
 }
 
 .section-heading {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.72fr);
-  column-gap: clamp(48px, 8vw, 112px);
   max-width: 1200px;
-  margin: 0 auto 2.5rem;
-}
-
-.section-heading .eyebrow {
-  grid-column: 1;
+  margin: 0 auto 2rem;
 }
 
 .section-heading h2 {
-  grid-column: 1;
   margin-bottom: 0;
-}
-
-.section-heading > p:last-child {
-  grid-row: 1 / 3;
-  grid-column: 2;
-  align-self: end;
-  max-width: 390px;
-  margin-bottom: 0;
-  color: #393d37;
-  font-size: 1.04rem;
-  line-height: 1.6;
 }
 
 .receiving__options {
@@ -366,7 +279,7 @@ const deliverySteps = [
   display: flex;
   min-width: 0;
   flex-direction: column;
-  padding: clamp(28px, 3vw, 40px);
+  padding: clamp(24px, 2.4vw, 32px);
 }
 
 .receiving-card + .receiving-card {
@@ -386,7 +299,7 @@ const deliverySteps = [
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
   font-family: "Segoe UI", Arial, sans-serif;
 }
 
@@ -410,16 +323,10 @@ const deliverySteps = [
   font-size: clamp(1.55rem, 2vw, 2.25rem);
 }
 
-.receiving-card > p {
-  margin-bottom: 1.5rem;
-  color: #393d37;
-  line-height: 1.6;
-}
-
 .receiving-card ul {
   display: grid;
-  gap: 0.55rem;
-  margin: 0 0 1.8rem;
+  gap: 0.45rem;
+  margin: 0 0 1.5rem;
   padding: 0;
   list-style: none;
 }
@@ -470,10 +377,6 @@ const deliverySteps = [
   padding-right: clamp(32px, 4vw, 64px);
 }
 
-.eyebrow--light {
-  color: #cbd3ca;
-}
-
 .delivery-process__heading h2 {
   max-width: 430px;
   margin-bottom: 0;
@@ -521,7 +424,7 @@ const deliverySteps = [
 
 .delivery-cta {
   display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   gap: clamp(40px, 6vw, 88px);
   padding: 72px max(24px, calc((100vw - 1200px) / 2));
@@ -535,64 +438,40 @@ const deliverySteps = [
   font-size: clamp(2.1rem, 3.1vw, 3.65rem);
 }
 
-.delivery-cta__contact {
-  max-width: 500px;
-}
-
-.delivery-cta__contact p {
-  margin-bottom: 1.5rem;
-  color: #393d37;
-  font-size: 1.04rem;
-  line-height: 1.6;
-}
-
 @media (max-width: 1100px) {
   .delivery-hero__content {
     grid-template-columns: minmax(0, 1fr) minmax(280px, 0.55fr);
     gap: 0 40px;
-    padding: 56px 32px;
-  }
-
-  .section-heading {
-    grid-template-columns: minmax(0, 1fr) minmax(280px, 0.7fr);
-    column-gap: 3rem;
+    padding-block: 56px;
   }
 }
 
 @media (max-width: 840px) {
   .delivery-hero__content {
     grid-template-columns: 1fr;
-    padding: 64px 24px;
+    padding-block: 64px;
   }
 
   .delivery-hero__contact {
     margin-top: 1.75rem;
   }
 
+  .delivery-actions {
+    display: flex;
+    width: auto;
+    flex-wrap: wrap;
+  }
+
+  .delivery-actions .delivery-button {
+    width: auto;
+  }
+
   .receiving {
-    padding-block: 64px;
-  }
-
-  .section-heading {
-    display: block;
-    margin-bottom: 2rem;
-  }
-
-  .section-heading h2 {
-    margin-bottom: 1rem;
-  }
-
-  .receiving__options {
-    grid-template-columns: 1fr;
-  }
-
-  .receiving-card + .receiving-card {
-    border-top: 1px solid var(--ink);
-    border-left: 0;
+    padding-block: 56px;
   }
 
   .receiving-card__topline {
-    margin-bottom: 1.75rem;
+    margin-bottom: 1.5rem;
   }
 
   .delivery-process {
@@ -615,9 +494,21 @@ const deliverySteps = [
   }
 }
 
+@media (max-width: 720px) {
+  .receiving__options {
+    grid-template-columns: 1fr;
+  }
+
+  .receiving-card + .receiving-card {
+    border-top: 1px solid var(--ink);
+    border-left: 0;
+  }
+}
+
 @media (max-width: 560px) {
   .delivery-hero__content {
-    padding: 42px 18px 48px;
+    width: calc(100% - 36px);
+    padding: 42px 0 48px;
   }
 
   .delivery-hero h1 {
@@ -627,40 +518,38 @@ const deliverySteps = [
   }
 
   .delivery-hero__lead {
-    margin-bottom: 1.6rem;
+    margin-bottom: 0;
     font-size: 1rem;
   }
 
   .delivery-actions {
     display: grid;
+    width: 100%;
     grid-template-columns: 1fr;
   }
 
-  .delivery-facts {
-    grid-template-columns: 1fr;
-    margin-top: 2.25rem;
-    border-bottom: 0;
-  }
-
-  .delivery-facts div,
-  .delivery-facts div:first-child {
-    display: grid;
-    grid-template-columns: 96px 1fr;
-    padding: 0.75rem 0;
-    border-right: 0;
-    border-bottom: 1px solid var(--line);
-  }
-
-  .delivery-facts dt {
-    margin-bottom: 0;
+  .delivery-actions .delivery-button {
+    width: 100%;
   }
 
   .receiving {
-    padding: 56px 18px;
+    padding: 44px 18px;
+  }
+
+  .section-heading {
+    margin-bottom: 1.5rem;
   }
 
   .receiving-card {
-    padding: 26px 22px 30px;
+    padding: 22px 18px 24px;
+  }
+
+  .receiving-card__topline {
+    margin-bottom: 1.25rem;
+  }
+
+  .receiving-card ul {
+    margin-bottom: 1.25rem;
   }
 
   .delivery-process__heading {

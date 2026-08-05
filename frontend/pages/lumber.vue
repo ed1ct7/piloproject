@@ -56,13 +56,10 @@ useSchemaOrg([
 
 <template>
   <main>
-    <section class="max-[840px]:grid-cols-1 max-[840px]:min-h-0 max-[560px]:px-[18px] max-[560px]:pb-9 max-[560px]:pt-8 grid min-h-[280px] grid-cols-[minmax(380px,1.45fr)_minmax(280px,0.75fr)] items-end gap-12 border-b border-[#171916] bg-[#d8d2c6] px-[max(24px,calc((100vw_-_1280px)/2))] pb-12 pt-14">
+    <section class="max-[840px]:min-h-0 max-[560px]:px-[18px] max-[560px]:pb-9 max-[560px]:pt-8 grid min-h-[280px] items-end border-b border-[#171916] bg-[#d8d2c6] px-[max(24px,calc((100vw_-_1280px)/2))] pb-12 pt-14">
       <div class="max-w-[760px] [&_h1]:mb-0">
         <h1>Каталог пиломатериалов</h1>
       </div>
-      <p class="mb-1 max-w-[480px] text-[1.03rem] leading-[1.65] text-[#393d37]">
-        Размеры и характеристики указаны в каждой карточке. Все цены — за 1 м³.
-      </p>
     </section>
 
     <section class="max-[560px]:px-[18px] bg-[#f5f2eb] px-[max(24px,calc((100vw_-_1280px)/2))] pb-20 pt-0 max-[560px]:pb-14" aria-label="Каталог пиломатериалов с ценами">
@@ -105,7 +102,6 @@ useSchemaOrg([
 
           <div class="flex flex-1 flex-col px-5 pb-5 pt-5 max-[560px]:px-4">
             <header class="mb-5">
-              <p class="mb-2 font-[Segoe_UI,Arial,sans-serif] text-[0.72rem] font-[760] uppercase tracking-[0.09em] text-[#6b6e67]">Позиция {{ product.number }}</p>
               <h2 class="mb-0 !text-[clamp(1.35rem,1.8vw,1.75rem)] !leading-[1.12]">{{ product.displayTitle }}</h2>
             </header>
 

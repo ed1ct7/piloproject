@@ -91,23 +91,6 @@ useSchemaOrg([
             rel="noopener"
           >Написать в WhatsApp</a>
         </div>
-
-        <dl class="mt-9 grid grid-cols-3 border-y border-[#aaa69b] max-[560px]:hidden [&>div]:border-r [&>div]:border-[#aaa69b] [&>div]:px-4 [&>div]:py-3.5 [&>div:last-child]:border-r-0 [&_dd]:m-0 [&_dd]:text-[0.94rem] [&_dd]:leading-[1.4] [&_dt]:mb-1.5 [&_dt]:font-[Segoe_UI,Arial,sans-serif] [&_dt]:text-[0.84rem] [&_dt]:font-[760] [&_dt]:uppercase">
-          <div>
-            <dt>Телефон</dt>
-            <dd>
-              <a :href="businessPhoneHref">{{ businessPhone }}</a>
-            </dd>
-          </div>
-          <div>
-            <dt>Цены</dt>
-            <dd>Указаны за кубометр</dd>
-          </div>
-          <div>
-            <dt>Каталог</dt>
-            <dd>8 позиций с ценами</dd>
-          </div>
-        </dl>
       </div>
 
       <figure class="max-[840px]:col-span-full max-[840px]:min-h-[420px] max-[840px]:border-l-0 max-[840px]:border-t max-[840px]:border-[#171916] max-[560px]:min-h-[380px] relative col-span-5 min-w-0 overflow-hidden border-l border-[#171916] bg-[#13251e] [&_figcaption]:absolute [&_figcaption]:inset-x-0 [&_figcaption]:bottom-0 [&_img]:h-full [&_img]:w-full [&_img]:object-cover">
@@ -143,7 +126,7 @@ useSchemaOrg([
         <article
           v-for="product in featuredProducts"
           :key="product.number"
-          class="max-[1100px]:grid-cols-[150px_64px_minmax(220px,1fr)_minmax(230px,0.8fr)] max-[840px]:grid-cols-[140px_58px_minmax(0,1fr)] max-[560px]:grid-cols-[86px_1fr] max-[560px]:items-start max-[560px]:gap-[18px] max-[560px]:py-6 grid grid-cols-[minmax(130px,190px)_80px_minmax(260px,1fr)_minmax(270px,0.7fr)] items-center gap-[clamp(20px,3vw,48px)] border-t border-[#171916] py-[22px] [&_figure]:aspect-[4/3] [&_figure]:overflow-hidden [&_figure]:bg-[#d8d2c6] [&_img]:h-full [&_img]:w-full [&_img]:object-cover [&_img]:transition-transform [&:hover_img]:scale-[1.018] [&_h3]:mb-3 [&_p]:mb-0 [&_p]:max-w-[600px] [&_p]:text-[#393d37] [&_p]:leading-[1.55] max-[560px]:[&_p]:hidden [&_dl]:m-0 max-[840px]:[&_dl]:col-start-3 max-[560px]:[&_dl]:col-span-full [&_dl_div]:grid [&_dl_div]:grid-cols-[74px_1fr] [&_dl_div]:gap-4 [&_dl_div]:border-t [&_dl_div]:border-[#aaa69b] [&_dl_div]:py-[9px] [&_dl_div:last-child]:border-b [&_dl_div:last-child]:border-[#aaa69b] [&_dt]:mb-2 [&_dt]:font-[Segoe_UI,Arial,sans-serif] [&_dt]:text-[0.8125rem] [&_dt]:font-[760] [&_dt]:uppercase [&_dd]:m-0 [&_dd]:text-[0.94rem]"
+          class="max-[1100px]:grid-cols-[150px_minmax(220px,1fr)_minmax(230px,0.8fr)] max-[840px]:grid-cols-[140px_minmax(0,1fr)] max-[560px]:grid-cols-[86px_1fr] max-[560px]:items-start max-[560px]:gap-[18px] max-[560px]:py-6 grid grid-cols-[minmax(130px,190px)_minmax(260px,1fr)_minmax(270px,0.7fr)] items-center gap-[clamp(20px,3vw,48px)] border-t border-[#171916] py-[22px] [&_figure]:aspect-[4/3] [&_figure]:overflow-hidden [&_figure]:bg-[#d8d2c6] [&_img]:h-full [&_img]:w-full [&_img]:object-cover [&_img]:transition-transform [&:hover_img]:scale-[1.018] [&_h3]:mb-0 [&_dl]:m-0 max-[840px]:[&_dl]:col-start-2 max-[560px]:[&_dl]:col-span-full [&_dl_div]:grid [&_dl_div]:grid-cols-[74px_1fr] [&_dl_div]:gap-4 [&_dl_div]:border-t [&_dl_div]:border-[#aaa69b] [&_dl_div]:py-[9px] [&_dl_div:last-child]:border-b [&_dl_div:last-child]:border-[#aaa69b] [&_dt]:mb-2 [&_dt]:font-[Segoe_UI,Arial,sans-serif] [&_dt]:text-[0.8125rem] [&_dt]:font-[760] [&_dt]:uppercase [&_dd]:m-0 [&_dd]:text-[0.94rem]"
         >
           <figure>
             <NuxtImg
@@ -157,10 +140,8 @@ useSchemaOrg([
               loading="lazy"
             />
           </figure>
-          <span class="max-[560px]:col-start-2" aria-hidden="true" />
           <div class="max-[560px]:col-start-2">
-            <h3>{{ product.title }}</h3>
-            <p>{{ product.description }}</p>
+            <h3>{{ product.displayTitle }}</h3>
           </div>
           <dl>
             <div>
@@ -187,7 +168,7 @@ useSchemaOrg([
     <section class="max-[840px]:grid-cols-1 max-[560px]:px-[18px] grid grid-cols-[minmax(320px,0.78fr)_minmax(340px,1.22fr)] border-b border-[#171916] bg-[#e9e5dc] px-[max(24px,calc((100vw_-_1280px)/2))] max-[560px]:py-14" aria-labelledby="about-title">
       <div class="max-[840px]:border-r-0 max-[840px]:border-b max-[840px]:py-12 max-[560px]:py-0 max-[560px]:pb-10 flex min-w-0 flex-col justify-center border-r border-[#171916] py-20 pr-[clamp(32px,6vw,88px)]">
         <p class="font-[Segoe_UI,Arial,sans-serif] uppercase mb-4 text-[0.8125rem] font-[760] leading-[1.4] tracking-[0.04em]">Собственное производство</p>
-        <h2 id="about-title">Пилорама в Разбегаево</h2>
+        <h2 id="about-title">О производстве</h2>
       </div>
 
       <div class="max-[840px]:py-12 max-[840px]:pl-0 max-[560px]:pb-0 max-[560px]:pt-10 flex min-w-0 flex-col justify-center py-20 pl-[clamp(32px,6vw,88px)]">

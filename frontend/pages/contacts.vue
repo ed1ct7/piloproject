@@ -58,7 +58,6 @@ useSchemaOrg([
               target="_blank"
               rel="noopener"
             >Написать в WhatsApp</a>
-            <a class="inline-flex min-h-12 cursor-pointer items-center justify-center border border-[#171916] bg-transparent px-5 py-3 text-center font-[Segoe_UI,Arial,sans-serif] text-base font-[760] leading-[1.2] text-[#171916] no-underline transition-colors duration-150 hover:bg-[#171916] hover:text-[#fffdf7] disabled:cursor-not-allowed disabled:opacity-50" :href="businessPhoneHref">Позвонить</a>
           </div>
         </div>
 

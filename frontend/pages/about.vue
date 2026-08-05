@@ -53,8 +53,8 @@ useSchemaOrg([
       </figure>
     </section>
 
-    <section class="max-[840px]:grid-cols-1 mx-auto grid w-[min(1280px,100%)] grid-cols-[minmax(0,0.62fr)_minmax(320px,0.38fr)] border-b border-[#171916]" aria-labelledby="production-title">
-      <div class="max-[840px]:border-r-0 max-[840px]:border-b max-[560px]:px-[18px] max-[560px]:py-12 border-r border-[#171916] p-[56px]">
+    <section class="mx-auto w-[min(1280px,100%)] border-b border-[#171916]" aria-labelledby="production-title">
+      <div class="max-w-[900px] p-[56px] max-[560px]:px-[18px] max-[560px]:py-12">
         <p class="font-[Segoe_UI,Arial,sans-serif] uppercase mb-4 text-[0.8125rem] font-[760] leading-[1.4] tracking-[0.04em]">Чем занимаемся</p>
         <h2 id="production-title">От распила до готового материала</h2>
         <p>
@@ -66,28 +66,6 @@ useSchemaOrg([
         <p class="mb-0">
           Отгружаем заказы с производственной площадки в Разбегаево и организуем доставку по Санкт-Петербургу и Ленинградской области.
         </p>
-      </div>
-
-      <div class="max-[560px]:px-[18px] max-[560px]:py-12 bg-[#f5f2eb] p-[56px]">
-        <h2>Реквизиты</h2>
-        <dl class="mt-9 border-b border-[#171916] [&_div]:border-t [&_div]:border-[#aaa69b] [&_div]:py-[12px] [&_dd]:m-0 [&_dd]:mt-1 [&_dd]:font-[Segoe_UI,Arial,sans-serif] [&_dd]:text-[0.95rem] [&_dd]:font-semibold [&_dd]:[overflow-wrap:anywhere] [&_dt]:font-[Segoe_UI,Arial,sans-serif] [&_dt]:text-[0.8125rem] [&_dt]:font-[760] [&_dt]:uppercase">
-          <div>
-            <dt>Организация</dt>
-            <dd>{{ businessRequisites.fullName }}</dd>
-          </div>
-          <div>
-            <dt>ИНН</dt>
-            <dd>{{ businessRequisites.inn }}</dd>
-          </div>
-          <div>
-            <dt>ОГРНИП</dt>
-            <dd>{{ businessRequisites.ogrnip }}</dd>
-          </div>
-          <div>
-            <dt>Учёт продукции</dt>
-            <dd>ЛесЕГАИС</dd>
-          </div>
-        </dl>
       </div>
     </section>
 

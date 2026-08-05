@@ -65,7 +65,6 @@ watch(
     <footer class="max-[840px]:grid-cols-2 max-[840px]:gap-10 max-[560px]:grid-cols-1 max-[560px]:px-5 max-[560px]:pt-12 grid grid-cols-[1.6fr_0.8fr_0.8fr] gap-16 bg-[#171916] px-[max(24px,calc((100vw_-_1280px)/2))] pb-6 pt-16 text-[#fffdf7]">
       <div class="max-[840px]:col-span-full max-[560px]:col-auto">
         <strong class="block max-w-[560px] text-[clamp(1.6rem,2.4vw,2.6rem)] leading-[1.03]">Пилорама Разбегаево</strong>
-        <p class="mt-3 max-w-[560px]">Производственная площадка в Ломоносовском районе Ленинградской области.</p>
       </div>
 
       <nav class="flex flex-col items-start gap-3 [&_a]:no-underline [&_a]:text-[#d8d2c6] [&_a:hover]:text-[#d65a1f]" aria-label="Навигация в подвале">

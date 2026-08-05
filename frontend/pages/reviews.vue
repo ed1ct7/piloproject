@@ -234,40 +234,6 @@ function ratingLabel(value: number) {
               Источник рейтинга
             </a>
           </p>
-
-          <dl
-            class="mt-8 grid max-w-[560px] grid-cols-3 border-y border-[#aaa69b] font-[Segoe_UI,Arial,sans-serif]"
-          >
-            <div
-              class="border-r border-[#aaa69b] px-4 py-4"
-            >
-              <dt class="mb-2 text-[0.8125rem] font-[760] uppercase leading-[1.35]">
-                Яндекс Карты
-              </dt>
-              <dd class="m-0 text-[2rem] font-[760] leading-none text-[#1f3a2f]">
-                4,6
-              </dd>
-            </div>
-            <div
-              class="border-r border-[#aaa69b] px-4 py-4"
-            >
-              <dt class="mb-2 text-[0.8125rem] font-[760] uppercase leading-[1.35]">
-                Отзывы
-              </dt>
-              <dd class="m-0 text-[2rem] font-[760] leading-none text-[#1f3a2f]">
-                12
-              </dd>
-            </div>
-            <div class="px-4 py-4">
-              <dt class="mb-2 text-[0.8125rem] font-[760] uppercase leading-[1.35]">
-                На сайте
-              </dt>
-              <dd class="m-0 text-[2rem] font-[760] leading-none text-[#1f3a2f]">
-                {{ reviewSummary.totalCount }}
-              </dd>
-            </div>
-          </dl>
-
         </div>
       </div>
     </section>

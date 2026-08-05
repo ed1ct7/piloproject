@@ -1,6 +1,7 @@
 <script setup lang="ts">
 const route = useRoute()
 const navOpen = ref(false)
+const { totalQuantity } = useCart()
 
 watch(
   () => route.fullPath,
@@ -45,6 +46,7 @@ watch(
           <NuxtLink to="/dostavka">Доставка</NuxtLink>
           <NuxtLink to="/otzyvy">Отзывы</NuxtLink>
           <NuxtLink to="/kontakty">Контакты</NuxtLink>
+          <NuxtLink to="/cart">Корзина ({{ totalQuantity }})</NuxtLink>
         </nav>
 
         <a class="max-[1100px]:hidden ml-[18px] inline-flex items-center whitespace-nowrap font-[Segoe_UI,Arial,sans-serif] text-[0.92rem] font-[760] tracking-[0.01em] no-underline hover:text-[#d65a1f]" :href="businessPhoneHref">{{ businessPhone }}</a>

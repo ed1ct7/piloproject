@@ -48,6 +48,8 @@ export default defineNuxtConfig({
         ...indexableRoutes.map((route) => route.loc),
         '/admin',
         '/system-status',
+        '/cart',
+        '/korzina',
         '/robots.txt',
         '/sitemap.xml',
       ],

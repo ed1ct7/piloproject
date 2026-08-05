@@ -186,6 +186,36 @@ export ALLOWED_ORIGINS=https://pilorama-razbegaevo.clients.site
 Готовый бинарник `backend/target/release/backend` запускается как сервис — например,
 под systemd или в Docker-контейнере.
 
+**Production frontend** — автоматический деплой последнего commit ветки `main`:
+
+```bash
+set -Eeuo pipefail
+
+REPO="ed1ct7/piloproject"
+BRANCH="main"
+
+COMMIT="$(
+  curl -fsSL "https://api.github.com/repos/$REPO/commits/$BRANCH" |
+    python3 -c 'import json, sys; print(json.load(sys.stdin)["sha"])'
+)"
+
+if [[ ! "$COMMIT" =~ ^[0-9a-f]{40}$ ]]; then
+  echo "Не удалось определить последний commit ветки $BRANCH" >&2
+  exit 1
+fi
+
+printf 'Deploying latest commit: %s\n' "$COMMIT"
+
+curl -fsSL "https://raw.githubusercontent.com/$REPO/$COMMIT/scripts/deploy-production.sh" |
+  bash -s -- "$COMMIT"
+```
+
+Команда запускается на production-сервере от `root` после отправки изменений в
+`main` и успешного локального `npm run check`. Она фиксирует актуальный SHA до начала
+деплоя, собирает и атомарно переключает frontend, но не обновляет backend или базу данных.
+Подробности и команда проверки развернутого SHA — в
+[краткой инструкции](docs/deploye-command.md).
+
 ## Разработка
 
 Сводка по hardening и проверкам безопасности: `docs/security.md`.
@@ -267,6 +297,7 @@ piloproject/
 - [Код-стайл](docs/code-style.md) — правила документирующих комментариев и язык проекта.
 - [Backend API](docs/backend-api.md) — контракт API, SeaORM и схема отзывов.
 - [Развертка](docs/deployment.md) — сборка, запуск backend-сервиса и публикация frontend.
+- [Команда production-деплоя](docs/deploye-command.md) — автоматический frontend-деплой последнего commit ветки `main`.
 - [SEO под Яндекс](docs/yandex-seo.md) — техническая база, факторы ранжирования, домены и хостинг.
 - [План запуска](docs/launch-plan.md) — пошаговый вывод сайта в продакшен и в поиск.
 - [Передача бизнесу](docs/handover.md) — реестр активов и процедура передачи владельцу.

@@ -260,7 +260,52 @@ curl -I https://example.com/
 
 ## 9. Обновление версии
 
-Типовой порядок обновления:
+### Автоматический деплой последнего frontend
+
+Сначала отправьте проверенные изменения в ветку `main` на GitHub. Локально из корня
+репозитория выполните `npm run check`, затем запустите на production-сервере от `root`:
+
+```bash
+set -Eeuo pipefail
+
+REPO="ed1ct7/piloproject"
+BRANCH="main"
+
+COMMIT="$(
+  curl -fsSL "https://api.github.com/repos/$REPO/commits/$BRANCH" |
+    python3 -c 'import json, sys; print(json.load(sys.stdin)["sha"])'
+)"
+
+if [[ ! "$COMMIT" =~ ^[0-9a-f]{40}$ ]]; then
+  echo "Не удалось определить последний commit ветки $BRANCH" >&2
+  exit 1
+fi
+
+printf 'Deploying latest commit: %s\n' "$COMMIT"
+
+curl -fsSL "https://raw.githubusercontent.com/$REPO/$COMMIT/scripts/deploy-production.sh" |
+  bash -s -- "$COMMIT"
+```
+
+Для команды нужны `curl` и `python3`. Она получает SHA последнего commit ветки `main`
+через GitHub API, а затем использует этот точный SHA и для deployment-скрипта, и для
+архива исходников. Скрипт собирает frontend, проверяет production API и обязательные
+файлы, атомарно заменяет `/var/www/piloproject`, проверяет маршруты и сервисы и выполняет
+откат при ошибке после переключения.
+
+Проверьте SHA установленной версии:
+
+```bash
+cat /var/www/.piloproject-deployed-commit
+```
+
+Автоматический скрипт обновляет только статический frontend. Он не заменяет backend,
+не применяет схему PostgreSQL и не изменяет Nginx или systemd.
+
+### Полное ручное обновление
+
+Если изменились backend, схема PostgreSQL или серверная конфигурация, используйте
+следующий порядок:
 
 1. Получить свежий код на сервере или в CI.
 2. Выполнить `cargo build --release`.
@@ -284,7 +329,9 @@ curl -I https://example.com/
 - Backend падает при старте: проверьте `DATABASE_URL`, доступность PostgreSQL и наличие
   таблицы `reviews`. Также проверьте, что заданы `ADMIN_USERNAME`, `ADMIN_PASSWORD` и корректный
   `ALLOWED_ORIGINS` без wildcard.
-- После обновления сайт выглядит старым: проверьте, что в `/var/www/piloproject`
+- После автоматического обновления сайт выглядит старым: сравните SHA из
+  `/var/www/.piloproject-deployed-commit` с последним commit ветки `main`, затем проверьте
+  кеш браузера или CDN. При ручном обновлении проверьте, что в `/var/www/piloproject`
   скопирована свежая директория `frontend/.output/public`.
 - HTTPS не работает: проверьте DNS-записи домена, выпуск сертификата и Nginx-конфигурацию.
 

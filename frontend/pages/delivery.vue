@@ -39,23 +39,28 @@ const deliverySteps = [
   <main class="delivery-page">
     <section class="delivery-hero" aria-labelledby="delivery-title">
       <div class="delivery-hero__content">
-        <p class="eyebrow">Получение заказа</p>
-        <h1 id="delivery-title">Доставка пиломатериалов и самовывоз</h1>
-        <p class="delivery-hero__lead">
-          Привезём заказ по Санкт-Петербургу и Ленинградской области или подготовим
-          его к самовывозу с производства в Разбегаево.
-        </p>
+        <div class="delivery-hero__intro">
+          <p class="eyebrow">Получение заказа</p>
+          <h1 id="delivery-title">Доставка пиломатериалов и самовывоз</h1>
+          <p class="delivery-hero__lead">
+            Привезём заказ по Санкт-Петербургу и Ленинградской области или подготовим
+            его к самовывозу с производства в Разбегаево.
+          </p>
+        </div>
 
-        <div class="delivery-actions">
-          <a
-            class="delivery-button delivery-button--primary"
-            :href="businessWhatsAppUrl"
-            target="_blank"
-            rel="noopener"
-          >Рассчитать доставку</a>
-          <a class="delivery-button delivery-button--secondary" :href="businessPhoneHref">
-            {{ businessPhone }}
-          </a>
+        <div class="delivery-hero__contact">
+          <p>Рассчитаем стоимость по адресу и объёму заказа.</p>
+          <div class="delivery-actions">
+            <a
+              class="delivery-button delivery-button--primary"
+              :href="businessWhatsAppUrl"
+              target="_blank"
+              rel="noopener"
+            >Рассчитать доставку</a>
+            <a class="delivery-button delivery-button--secondary" :href="businessPhoneHref">
+              {{ businessPhone }}
+            </a>
+          </div>
         </div>
 
         <dl class="delivery-facts" aria-label="Основные условия получения заказа">
@@ -73,29 +78,6 @@ const deliverySteps = [
           </div>
         </dl>
       </div>
-
-      <figure class="delivery-hero__visual">
-        <NuxtImg
-          src="/images/dostavka-pilomaterialov.jpg"
-          alt="Машина с пиломатериалами на доставке у участка заказчика"
-          width="1200"
-          height="1600"
-          sizes="xs:100vw sm:100vw md:48vw lg:48vw xl:48vw"
-          densities="1"
-          format="webp"
-          loading="eager"
-          preload
-          fetchpriority="high"
-        />
-        <div class="delivery-hero__badge" aria-hidden="true">
-          <strong>От производства</strong>
-          <span>прямо на ваш участок</span>
-        </div>
-        <figcaption class="delivery-hero__caption">
-          <span>Доставка заказа</span>
-          <span>Ленинградская область</span>
-        </figcaption>
-      </figure>
     </section>
 
     <section class="receiving" aria-labelledby="receiving-title">
@@ -155,7 +137,7 @@ const deliverySteps = [
     <section class="delivery-process" aria-labelledby="process-title">
       <header class="delivery-process__heading">
         <p class="eyebrow eyebrow--light">Всё просто</p>
-        <h2 id="process-title">Как оформить доставку</h2>
+        <h2 id="process-title">Как заказать доставку</h2>
       </header>
 
       <ol class="delivery-process__list">
@@ -213,37 +195,48 @@ const deliverySteps = [
 }
 
 .delivery-hero {
-  display: grid;
-  grid-template-columns: minmax(0, 1.08fr) minmax(400px, 0.92fr);
-  min-height: 640px;
-  margin: 0 auto;
   border-bottom: 1px solid var(--ink);
+  background: var(--paper);
 }
 
 .delivery-hero__content {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(300px, 0.65fr);
   min-width: 0;
-  flex-direction: column;
-  justify-content: center;
-  padding: 72px max(48px, calc((100vw - 1280px) / 2));
-  padding-right: clamp(48px, 7vw, 120px);
+  gap: 0 clamp(48px, 7vw, 104px);
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 72px max(24px, calc((100vw - 1280px) / 2));
 }
 
 .delivery-hero h1 {
-  max-width: 760px;
+  max-width: 780px;
   margin-bottom: 1.5rem;
-  font-size: clamp(3rem, 4.45vw, 5.45rem);
-  line-height: 0.98;
-  letter-spacing: -0.035em;
+  font-size: clamp(2.8rem, 4vw, 4.75rem);
+  line-height: 1;
+  letter-spacing: -0.025em;
   overflow-wrap: normal;
   word-break: normal;
 }
 
 .delivery-hero__lead {
-  max-width: 660px;
-  margin-bottom: 2rem;
+  max-width: 640px;
+  margin-bottom: 0;
   color: #393d37;
   font-size: clamp(1.04rem, 1.35vw, 1.25rem);
+  line-height: 1.55;
+}
+
+.delivery-hero__contact {
+  align-self: end;
+  padding-bottom: 0.15rem;
+}
+
+.delivery-hero__contact > p {
+  max-width: 360px;
+  margin-bottom: 1.25rem;
+  color: #393d37;
+  font-size: 1.04rem;
   line-height: 1.55;
 }
 
@@ -292,14 +285,14 @@ const deliverySteps = [
 
 .delivery-facts {
   display: grid;
+  grid-column: 1 / -1;
   grid-template-columns: repeat(3, 1fr);
-  max-width: 700px;
   margin: 3rem 0 0;
   border-block: 1px solid var(--line);
 }
 
 .delivery-facts div {
-  padding: 1rem 1.2rem;
+  padding: 1rem 1.5rem;
   border-right: 1px solid var(--line);
 }
 
@@ -327,71 +320,33 @@ const deliverySteps = [
   line-height: 1.35;
 }
 
-.delivery-hero__visual {
-  position: relative;
-  min-width: 0;
-  min-height: 640px;
-  overflow: hidden;
-  border-left: 1px solid var(--ink);
-  background: #c9c1af;
-}
-
-.delivery-hero__visual img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center 44%;
-}
-
-.delivery-hero__badge {
-  position: absolute;
-  top: 2rem;
-  left: 2rem;
-  display: grid;
-  min-width: 190px;
-  padding: 1rem 1.1rem;
-  background: var(--forest);
-  color: #fffdf7;
-  font-family: "Segoe UI", Arial, sans-serif;
-  line-height: 1.25;
-}
-
-.delivery-hero__badge strong {
-  font-size: 0.9rem;
-  text-transform: uppercase;
-}
-
-.delivery-hero__badge span {
-  margin-top: 0.25rem;
-  color: #d8d2c6;
-  font-size: 0.84rem;
-}
-
-.delivery-hero__caption {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  left: 0;
-}
-
 .receiving {
-  display: grid;
-  grid-template-columns: minmax(300px, 0.76fr) minmax(0, 1.5fr);
-  gap: clamp(48px, 7vw, 112px);
-  padding: 96px max(24px, calc((100vw - 1280px) / 2));
+  padding: 72px max(24px, calc((100vw - 1200px) / 2));
   border-bottom: 1px solid var(--ink);
   background: var(--paper);
 }
 
 .section-heading {
-  max-width: 440px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.72fr);
+  column-gap: clamp(48px, 8vw, 112px);
+  max-width: 1200px;
+  margin: 0 auto 2.5rem;
+}
+
+.section-heading .eyebrow {
+  grid-column: 1;
 }
 
 .section-heading h2 {
-  margin-bottom: 1.25rem;
+  grid-column: 1;
+  margin-bottom: 0;
 }
 
 .section-heading > p:last-child {
+  grid-row: 1 / 3;
+  grid-column: 2;
+  align-self: end;
   max-width: 390px;
   margin-bottom: 0;
   color: #393d37;
@@ -402,6 +357,8 @@ const deliverySteps = [
 .receiving__options {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  max-width: 1200px;
+  margin: 0 auto;
   border: 1px solid var(--ink);
 }
 
@@ -409,7 +366,7 @@ const deliverySteps = [
   display: flex;
   min-width: 0;
   flex-direction: column;
-  padding: clamp(28px, 3vw, 44px);
+  padding: clamp(28px, 3vw, 40px);
 }
 
 .receiving-card + .receiving-card {
@@ -429,7 +386,7 @@ const deliverySteps = [
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  margin-bottom: 3.5rem;
+  margin-bottom: 2rem;
   font-family: "Segoe UI", Arial, sans-serif;
 }
 
@@ -448,7 +405,7 @@ const deliverySteps = [
 }
 
 .receiving-card h3 {
-  max-width: 300px;
+  max-width: 360px;
   margin-bottom: 1rem;
   font-size: clamp(1.55rem, 2vw, 2.25rem);
 }
@@ -462,7 +419,7 @@ const deliverySteps = [
 .receiving-card ul {
   display: grid;
   gap: 0.55rem;
-  margin: 0 0 2.4rem;
+  margin: 0 0 1.8rem;
   padding: 0;
   list-style: none;
 }
@@ -503,14 +460,14 @@ const deliverySteps = [
 
 .delivery-process {
   display: grid;
-  grid-template-columns: minmax(270px, 0.68fr) minmax(0, 1.32fr);
+  grid-template-columns: minmax(360px, 0.82fr) minmax(0, 1.18fr);
   background: var(--forest);
   color: #fffdf7;
 }
 
 .delivery-process__heading {
-  padding: 80px max(48px, calc((100vw - 1280px) / 2));
-  padding-right: clamp(40px, 6vw, 96px);
+  padding: 64px max(24px, calc((100vw - 1200px) / 2));
+  padding-right: clamp(32px, 4vw, 64px);
 }
 
 .eyebrow--light {
@@ -520,6 +477,8 @@ const deliverySteps = [
 .delivery-process__heading h2 {
   max-width: 430px;
   margin-bottom: 0;
+  overflow-wrap: normal;
+  word-break: normal;
 }
 
 .delivery-process__list {
@@ -531,9 +490,9 @@ const deliverySteps = [
 
 .delivery-process__list li {
   display: grid;
-  grid-template-columns: 72px minmax(0, 1fr);
-  gap: clamp(24px, 4vw, 64px);
-  padding: 2rem clamp(32px, 5vw, 80px);
+  grid-template-columns: 48px minmax(0, 1fr);
+  gap: clamp(20px, 3vw, 48px);
+  padding: 1.75rem clamp(28px, 4vw, 64px);
   border-bottom: 1px solid #68766e;
 }
 
@@ -564,8 +523,8 @@ const deliverySteps = [
   display: grid;
   grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
   align-items: center;
-  gap: clamp(48px, 8vw, 128px);
-  padding: 88px max(24px, calc((100vw - 1280px) / 2));
+  gap: clamp(40px, 6vw, 88px);
+  padding: 72px max(24px, calc((100vw - 1200px) / 2));
   border-bottom: 1px solid var(--ink);
   background: #d8d2c6;
 }
@@ -573,7 +532,7 @@ const deliverySteps = [
 .delivery-cta h2 {
   max-width: 720px;
   margin-bottom: 0;
-  font-size: clamp(2.2rem, 3.4vw, 4.2rem);
+  font-size: clamp(2.1rem, 3.1vw, 3.65rem);
 }
 
 .delivery-cta__contact {
@@ -588,57 +547,35 @@ const deliverySteps = [
 }
 
 @media (max-width: 1100px) {
-  .delivery-hero {
-    grid-template-columns: minmax(0, 1.12fr) minmax(360px, 0.88fr);
-  }
-
   .delivery-hero__content {
-    padding-left: 32px;
-  }
-
-  .receiving {
-    grid-template-columns: 1fr;
-    gap: 2.5rem;
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 0.55fr);
+    gap: 0 40px;
+    padding: 56px 32px;
   }
 
   .section-heading {
-    display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(280px, 0.7fr);
-    max-width: none;
     column-gap: 3rem;
-  }
-
-  .section-heading .eyebrow {
-    grid-column: 1 / -1;
-  }
-
-  .section-heading h2,
-  .section-heading > p:last-child {
-    margin-bottom: 0;
   }
 }
 
 @media (max-width: 840px) {
-  .delivery-hero {
-    grid-template-columns: 1fr;
-  }
-
   .delivery-hero__content {
+    grid-template-columns: 1fr;
     padding: 64px 24px;
   }
 
-  .delivery-hero__visual {
-    min-height: 540px;
-    border-top: 1px solid var(--ink);
-    border-left: 0;
+  .delivery-hero__contact {
+    margin-top: 1.75rem;
   }
 
   .receiving {
-    padding-block: 72px;
+    padding-block: 64px;
   }
 
   .section-heading {
     display: block;
+    margin-bottom: 2rem;
   }
 
   .section-heading h2 {
@@ -655,7 +592,7 @@ const deliverySteps = [
   }
 
   .receiving-card__topline {
-    margin-bottom: 2.5rem;
+    margin-bottom: 1.75rem;
   }
 
   .delivery-process {
@@ -716,19 +653,6 @@ const deliverySteps = [
 
   .delivery-facts dt {
     margin-bottom: 0;
-  }
-
-  .delivery-hero__visual {
-    min-height: 440px;
-  }
-
-  .delivery-hero__badge {
-    top: 1rem;
-    left: 1rem;
-  }
-
-  .delivery-hero__caption span:last-child {
-    display: none;
   }
 
   .receiving {

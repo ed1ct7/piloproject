@@ -19,8 +19,8 @@ useHead({
 const deliverySteps = [
   {
     number: '01',
-    title: 'Отправьте список',
-    text: 'Напишите, какие материалы и в каком объёме нужны. Можно отправить готовую смету или фото списка.',
+    title: 'Сообщите состав заказа',
+    text: 'Позвоните и назовите материалы, размеры и необходимый объём. Если у вас есть готовая смета, согласуем способ её передачи.',
   },
   {
     number: '02',
@@ -53,12 +53,10 @@ const deliverySteps = [
           <div class="delivery-actions">
             <a
               class="delivery-button delivery-button--primary"
-              :href="businessWhatsAppUrl"
-              target="_blank"
-              rel="noopener"
-            >Рассчитать доставку</a>
-            <a class="delivery-button delivery-button--secondary" :href="businessPhoneHref">
-              {{ businessPhone }}
+              :href="businessPhoneHref"
+            >Позвонить {{ businessPhone }}</a>
+            <a class="delivery-button delivery-button--secondary" :href="businessSecondaryPhoneHref">
+              {{ businessSecondaryPhone }}
             </a>
           </div>
         </div>
@@ -98,10 +96,8 @@ const deliverySteps = [
           </ul>
           <a
             class="text-link"
-            :href="businessWhatsAppUrl"
-            target="_blank"
-            rel="noopener"
-          >Узнать стоимость</a>
+            :href="businessPhoneHref"
+          >Позвонить и узнать стоимость</a>
         </article>
       </div>
     </section>
@@ -127,10 +123,8 @@ const deliverySteps = [
       <div>
         <a
           class="delivery-button delivery-button--primary"
-          :href="businessWhatsAppUrl"
-          target="_blank"
-          rel="noopener"
-        >Написать в WhatsApp</a>
+          :href="businessPhoneHref"
+        >Позвонить для расчёта</a>
       </div>
     </section>
   </main>

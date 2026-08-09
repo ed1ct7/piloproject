@@ -10,7 +10,11 @@ export interface CartProductItem extends CartItem {
 }
 
 const cartStorageKey = 'pilorama-cart-v1'
-const productIds = new Set(priceListProducts.map((product) => product.id))
+const purchasableProductIds = new Set(
+  priceListProducts
+    .filter((product) => product.price !== null)
+    .map((product) => product.id),
+)
 
 function normalizeCart(value: unknown): CartItem[] {
   if (!Array.isArray(value)) {
@@ -27,7 +31,7 @@ function normalizeCart(value: unknown): CartItem[] {
     const productId = 'productId' in item ? item.productId : undefined
     const quantity = 'quantity' in item ? item.quantity : undefined
 
-    if (typeof productId !== 'string' || !productIds.has(productId) || typeof quantity !== 'number' || !Number.isFinite(quantity)) {
+    if (typeof productId !== 'string' || !purchasableProductIds.has(productId) || typeof quantity !== 'number' || !Number.isFinite(quantity)) {
       continue
     }
 
@@ -91,11 +95,14 @@ export function useCart() {
   )
 
   const subtotal = computed(() =>
-    detailedItems.value.reduce((total: number, item: CartProductItem) => total + item.product.price * item.quantity, 0),
+    detailedItems.value.reduce(
+      (total: number, item: CartProductItem) => total + (item.product.price ?? 0) * item.quantity,
+      0,
+    ),
   )
 
   function addProduct(productId: string) {
-    if (!productIds.has(productId)) {
+    if (!purchasableProductIds.has(productId)) {
       return
     }
 

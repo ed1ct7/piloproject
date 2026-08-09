@@ -1,6 +1,13 @@
 <script setup lang="ts">
-// Первые четыре позиции прайса показываются в витрине на главной.
-const featuredProducts = priceListProducts.slice(0, 4);
+const featuredProductIds = new Set([
+  "doska-ev-sort-1",
+  "doska-suhaya-kamernoi-sushki",
+  "doska-suhaya-stroganaya",
+  "imitatsiya-brusa-20x145",
+]);
+const featuredProducts = priceListProducts.filter((product) =>
+  featuredProductIds.has(product.id),
+);
 
 const galleryPreview = [
   {
@@ -26,12 +33,12 @@ const galleryPreview = [
 ];
 
 useSeoMeta({
-  title: "Пилорама Разбегаево – доска, брус и пиломатериалы с доставкой",
+  title: "Пилорама Разбегаево – доска, вагонка и пиломатериалы",
   description:
-    "Пиломатериалы от производителя в Разбегаево: сухая строганая доска, брусок, рейка, имитация бруса, огнебиозащитная обработка. Цены за м³, доставка по Санкт-Петербургу и Ленинградской области.",
+    "Пиломатериалы от производителя в Разбегаево: доска естественной влажности, сухая и строганая доска, имитация бруса, вагонка и огнебиозащита.",
   ogTitle: "Пилорама Разбегаево",
   ogDescription:
-    "Доска, брусок, рейка и имитация бруса с производственной площадки в Разбегаево. Цены и фото производства.",
+    "Доска, имитация бруса и вагонка с производственной площадки в Разбегаево. Актуальные минимальные цены и фото производства.",
   ogImage: `${siteUrl}/images/lentochnaya-pilorama-raspil.jpg`,
   ogType: "website",
 });
@@ -47,17 +54,18 @@ useSchemaOrg([
     "@type": "HomeAndConstructionBusiness",
     name: "Пилорама Разбегаево",
     url: `${siteUrl}/`,
-    telephone: businessPhone,
+    telephone: businessPhoneInternational,
     image: `${siteUrl}/images/lentochnaya-pilorama-raspil.jpg`,
     address: {
       "@type": "PostalAddress",
-      addressLocality: "Разбегаево",
+      streetAddress: "промзона Большевик, зона 2-й микрорайон",
+      addressLocality: "деревня Разбегаево",
       addressRegion: "Ленинградская область",
       addressCountry: "RU",
     },
-    makesOffer: priceListProducts.map((product) =>
+    makesOffer: priceListProducts.filter((product) => product.price !== null).map((product) =>
       defineOffer({
-        price: product.price,
+        price: product.price ?? undefined,
         priceCurrency: "RUB",
         itemOffered: defineProduct({
           name: product.title,
@@ -74,7 +82,7 @@ useSchemaOrg([
   <main>
     <section class="max-[1100px]:min-h-0 max-[840px]:grid-cols-1 mx-auto grid min-h-[560px] w-[min(1280px,100%)] grid-cols-12 border-b border-[#171916]">
       <div class="max-[840px]:col-span-full max-[840px]:min-h-[440px] max-[560px]:min-h-0 max-[560px]:px-[18px] max-[560px]:pb-9 max-[560px]:pt-8 col-span-7 flex min-w-0 flex-col justify-center bg-[#e9e5dc] p-10">
-        <h1 class="mb-5 max-w-[720px] text-[clamp(2.5rem,3.35vw,4.1rem)] leading-[1.06] max-[560px]:mb-4 max-[560px]:text-[clamp(2rem,8vw,2.65rem)] max-[560px]:leading-[1.08]">Пиломатериалы в Разбегаево: доска, брусок, рейка</h1>
+        <h1 class="mb-5 max-w-[720px] text-[clamp(2.5rem,3.35vw,4.1rem)] leading-[1.06] max-[560px]:mb-4 max-[560px]:text-[clamp(2rem,8vw,2.65rem)] max-[560px]:leading-[1.08]">Пиломатериалы в Разбегаево: доска, вагонка, имитация бруса</h1>
         <p class="mb-7 max-w-[640px] text-[clamp(1rem,1.25vw,1.18rem)] leading-[1.55] text-[#393d37] max-[560px]:mb-6 max-[560px]:text-base max-[560px]:leading-[1.5]">
           Пиломатериалы от производителя оптом и в розницу. Доставка по Санкт-Петербургу
           и Ленинградской области. Оплата по факту отгрузки.
@@ -86,10 +94,8 @@ useSchemaOrg([
           >
           <a
             class="inline-flex min-h-[50px] cursor-pointer items-center justify-center border border-[#171916] px-5 py-3 text-center font-[Segoe_UI,Arial,sans-serif] text-[0.95rem] font-[760] leading-[1.2] no-underline transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-50 bg-transparent text-[#171916] hover:bg-[#171916] hover:text-[#fffdf7]"
-            :href="businessWhatsAppUrl"
-            target="_blank"
-            rel="noopener"
-          >Написать в WhatsApp</a>
+            :href="businessPhoneHref"
+          >Позвонить: {{ businessPhone }}</a>
         </div>
       </div>
 
@@ -115,10 +121,10 @@ useSchemaOrg([
 
     <section class="bg-[#f5f2eb] px-[max(24px,calc((100vw_-_1280px)/2))] py-[72px] max-[560px]:px-[18px] max-[560px]:py-14" aria-labelledby="catalog-title">
       <header class="mb-12 grid grid-cols-[minmax(0,1.35fr)_minmax(260px,0.65fr)] items-start gap-[clamp(40px,7vw,104px)] max-[840px]:grid-cols-1 max-[840px]:gap-5 max-[560px]:mb-9">
-        <h2 id="catalog-title" class="mb-0 max-w-[650px]">Основные позиции с ценами за кубометр</h2>
+        <h2 id="catalog-title" class="mb-0 max-w-[650px]">Основные позиции с актуальными ценами</h2>
         <p class="mb-0 max-w-[430px] text-[1.02rem] leading-[1.55] text-[#393d37]">
-          Сухой строганый материал, доска камерной сушки, имитация бруса и доска
-          с огнебиозащитной обработкой.
+          Доска естественной влажности, камерной сушки и строганая, имитация бруса,
+          вагонка и огнебиозащитная обработка.
         </p>
       </header>
 
@@ -151,7 +157,7 @@ useSchemaOrg([
             <div>
               <dt>Цена</dt>
               <dd class="whitespace-nowrap font-[Segoe_UI,Arial,sans-serif] font-extrabold text-[#a53e10] text-[1.05rem]">
-                {{ formatPricePerCubicMeter(product.price) }}
+                {{ formatProductPrice(product) }}
               </dd>
             </div>
           </dl>
@@ -173,7 +179,7 @@ useSchemaOrg([
 
       <div class="max-[840px]:py-12 max-[840px]:pl-0 max-[560px]:pb-0 max-[560px]:pt-10 flex min-w-0 flex-col justify-center py-20 pl-[clamp(32px,6vw,88px)]">
         <p class="mb-7 max-w-[650px] text-[1.05rem] leading-[1.6] text-[#393d37]">
-          Производим пиломатериалы естественной влажности и камерной сушки, строганую доску, брус и имитацию бруса. Работаем с частными заказчиками и организациями, организуем доставку по Санкт-Петербургу и Ленинградской области.
+          Производим пиломатериалы естественной влажности и камерной сушки, строганую доску, имитацию бруса и вагонку. Работаем с частными заказчиками и организациями, организуем доставку по Санкт-Петербургу и Ленинградской области.
         </p>
         <NuxtLink class="w-max cursor-pointer border-0 border-b-2 border-current bg-transparent px-0 pb-[3px] font-[Segoe_UI,Arial,sans-serif] font-[760] text-[#1f3a2f] no-underline transition-colors duration-150 hover:text-[#d65a1f] disabled:cursor-not-allowed disabled:opacity-50" to="/o-nas"
           >Подробнее о производстве</NuxtLink

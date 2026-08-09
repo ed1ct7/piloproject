@@ -65,6 +65,7 @@ export interface CreateReviewPayload {
   authorName: string
   text: string
   rating: number
+  consent: boolean
 }
 
 /**

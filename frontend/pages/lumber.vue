@@ -12,11 +12,11 @@ const filteredProducts = computed(() => selectedCategory.value === 'all'
 const { addProduct } = useCart()
 
 useSeoMeta({
-  title: 'Пиломатериалы в Разбегаево – цены на доску, брусок, рейку за м³',
-  description: 'Каталог пилорамы в Разбегаево с ценами за кубометр: сухой строганый брусок, рейка, доска камерной сушки, имитация бруса, огнебиозащитная обработка. Брус и заборная доска под заказ.',
+  title: 'Пиломатериалы в Разбегаево – доска, вагонка и цены',
+  description: 'Каталог пилорамы в Разбегаево: доска естественной влажности по сортам, сухая и строганая доска, огнебиозащита, имитация бруса и вагонка.',
   ogTitle: 'Пиломатериалы в Разбегаево — каталог с ценами',
-  ogDescription: 'Сухая строганая доска, брусок, рейка и имитация бруса с ценами за м³ от производителя.',
-  ogImage: `${siteUrl}/images/brusok-suhoi-stroganyi-45x45.jpg`,
+  ogDescription: 'Актуальные группы пиломатериалов с минимальными ценами за м³ и штуку от производителя.',
+  ogImage: `${siteUrl}/images/sawn-board-stack-2025-04-02.jpg`,
   ogType: 'website',
 })
 
@@ -42,12 +42,15 @@ useSchemaOrg([
         name: product.title,
         description: product.description,
         image: `${siteUrl}${product.image}`,
-        offers: {
-          '@type': 'Offer',
-          price: product.price,
-          priceCurrency: 'RUB',
-          url: `${siteUrl}/pilomaterialy`,
-        },
+        offers: product.price === null
+          ? undefined
+          : {
+              '@type': 'AggregateOffer',
+              lowPrice: product.price,
+              priceCurrency: 'RUB',
+              offerCount: 1,
+              url: `${siteUrl}/pilomaterialy`,
+            },
       },
     })),
   }),
@@ -114,15 +117,21 @@ useSchemaOrg([
 
             <div class="mt-auto flex items-end justify-between gap-4 border-t-2 border-[#171916] pt-5">
               <div>
-                <p class="mb-1 font-[Segoe_UI,Arial,sans-serif] text-[0.72rem] font-[760] uppercase tracking-[0.06em] text-[#5e625c]">Цена за 1 м³</p>
-                <p class="mb-0 whitespace-nowrap font-[Segoe_UI,Arial,sans-serif] text-[clamp(1.45rem,2vw,1.8rem)] font-extrabold leading-none text-[#a53e10]">{{ product.price.toLocaleString('ru-RU') }} ₽</p>
+                <p class="mb-1 font-[Segoe_UI,Arial,sans-serif] text-[0.72rem] font-[760] uppercase tracking-[0.06em] text-[#5e625c]">Цена за 1 {{ product.unit }}</p>
+                <p class="mb-0 whitespace-nowrap font-[Segoe_UI,Arial,sans-serif] text-[clamp(1.3rem,1.8vw,1.7rem)] font-extrabold leading-none text-[#a53e10]">{{ formatProductPrice(product) }}</p>
               </div>
               <button
+                v-if="product.price !== null"
                 class="min-h-11 shrink-0 cursor-pointer border-0 bg-[#d65a1f] px-5 py-3 font-[Segoe_UI,Arial,sans-serif] font-[760] text-[#fffdf7] transition-colors duration-150 hover:bg-[#a53e10]"
                 type="button"
                 :aria-label="`Добавить в корзину: ${product.title}`"
                 @click="addProduct(product.id)"
               >В корзину</button>
+              <NuxtLink
+                v-else
+                class="inline-flex min-h-11 shrink-0 items-center bg-[#d65a1f] px-5 py-3 font-[Segoe_UI,Arial,sans-serif] font-[760] text-[#fffdf7] no-underline transition-colors duration-150 hover:bg-[#a53e10]"
+                to="/kontakty"
+              >Уточнить цену</NuxtLink>
             </div>
           </div>
         </article>

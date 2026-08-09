@@ -11,7 +11,6 @@ definePageMeta({
 });
 
 const starOptions = [1, 2, 3, 4, 5];
-const ratingSourceUrl = "https://pilorama-razbegaevo.clients.site/#rating";
 const { listPublicReviews, createReview } = useReviewsApi();
 const fallbackReviewTextLimit = 1000;
 const fallbackRatingOptions = [5, 4, 3, 2, 1];
@@ -27,6 +26,7 @@ const form = reactive<CreateReviewPayload>({
   authorName: "",
   text: "",
   rating: 5,
+  consent: false,
 });
 
 // Отзывы загружаются на этапе генерации (SSG) и попадают в статический HTML,
@@ -68,7 +68,8 @@ const canSubmitReview = computed(
   () =>
     Boolean(form.authorName.trim()) &&
     Boolean(form.text.trim()) &&
-    ratingOptions.value.includes(form.rating),
+    ratingOptions.value.includes(form.rating) &&
+    form.consent,
 );
 const reviewTextLength = computed(() => form.text.length);
 
@@ -136,7 +137,12 @@ async function loadReviews() {
 
 async function submitReview() {
   if (!canSubmitReview.value) {
-    setFeedback("error", "Заполните имя, текст и выберите оценку.");
+    setFeedback(
+      "error",
+      form.consent
+        ? "Заполните имя, текст и выберите оценку."
+        : "Подтвердите согласие на обработку и публикацию данных отзыва.",
+    );
     return;
   }
 
@@ -147,6 +153,7 @@ async function submitReview() {
       authorName: form.authorName,
       text: form.text,
       rating: form.rating,
+      consent: form.consent,
     });
     selectedRatingFilter.value = null;
     reviewsError.value = null;
@@ -167,6 +174,7 @@ function resetForm() {
   form.authorName = "";
   form.text = "";
   form.rating = 5;
+  form.consent = false;
 }
 
 function setFeedback(type: "success" | "error", message: string) {
@@ -227,7 +235,7 @@ function ratingLabel(value: number) {
             На Яндекс Картах указаны рейтинг 4,6 из 5 и 12 отзывов.
             <a
               class="ml-1 inline-flex w-max cursor-pointer border-0 border-b-2 border-current bg-transparent px-0 pb-[3px] font-[Segoe_UI,Arial,sans-serif] font-[760] text-[#1f3a2f] no-underline transition-colors duration-150 hover:text-[#d65a1f] disabled:cursor-not-allowed disabled:opacity-50"
-              :href="ratingSourceUrl"
+              :href="businessMapsUrl"
               target="_blank"
               rel="noopener"
             >
@@ -459,7 +467,7 @@ function ratingLabel(value: number) {
 
           <form class="mt-6 grid gap-4" @submit.prevent="submitReview">
             <label class="grid gap-2 font-[Segoe_UI,Arial,sans-serif] font-bold">
-              <span>Имя</span>
+              <span>Имя или псевдоним</span>
               <input
                 v-model="form.authorName"
                 class="min-h-12 w-full min-w-0 border border-[#171916] bg-[#fffdf7] px-3 py-[11px] text-[#171916] focus:border-[#d65a1f] focus:outline focus:outline-[3px] focus:outline-offset-2 focus:outline-[#d65a1f]"
@@ -520,6 +528,30 @@ function ratingLabel(value: number) {
                 </label>
               </div>
             </fieldset>
+
+            <label
+              class="grid cursor-pointer grid-cols-[20px_minmax(0,1fr)] items-start gap-3 font-[Segoe_UI,Arial,sans-serif] text-[0.9rem] font-normal leading-[1.5] text-[#393d37]"
+            >
+              <input
+                v-model="form.consent"
+                class="mt-0.5 size-5 accent-[#1f3a2f]"
+                type="checkbox"
+                name="consent"
+                required
+              />
+              <span>
+                Я даю согласие на обработку и публикацию указанных имени или
+                псевдонима и текста отзыва в соответствии с
+                <NuxtLink
+                  class="font-bold text-[#1f3a2f] underline decoration-1 underline-offset-2 hover:text-[#d65a1f]"
+                  to="/politika-konfidencialnosti"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  политикой обработки персональных данных
+                </NuxtLink>.
+              </span>
+            </label>
 
             <button
               class="inline-flex min-h-12 cursor-pointer items-center justify-center border border-[#d65a1f] bg-[#d65a1f] px-[18px] py-3 text-center font-[Segoe_UI,Arial,sans-serif] font-[760] leading-[1.1] text-[#fffdf7] no-underline transition-colors duration-150 hover:border-[#a53e10] hover:bg-[#a53e10] disabled:cursor-not-allowed disabled:opacity-50"

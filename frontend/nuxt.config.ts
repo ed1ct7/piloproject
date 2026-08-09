@@ -1,6 +1,10 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import tailwindcss from '@tailwindcss/vite'
-import { businessPhone } from './utils/business'
+import {
+  businessAddress,
+  businessPhoneInternational,
+  businessRequisites,
+} from './utils/business'
 import { indexableRoutes, siteUrl } from './utils/seo-routes'
 
 const securityHeaders = {
@@ -10,6 +14,7 @@ const securityHeaders = {
     `connect-src 'self' http://localhost:8080 http://127.0.0.1:8080 ${siteUrl}`,
     "font-src 'self' data:",
     "form-action 'self'",
+    "frame-src 'self' https://yandex.ru https://yandex.com",
     "frame-ancestors 'none'",
     "img-src 'self' data: https:",
     "media-src 'self'",
@@ -101,12 +106,14 @@ export default defineNuxtConfig({
       '@id': `${siteUrl}/#localbusiness`,
       '@type': 'HomeAndConstructionBusiness',
       name: 'Пилорама Разбегаево',
+      legalName: businessRequisites.fullName,
       url: siteUrl,
-      telephone: businessPhone,
+      telephone: businessPhoneInternational,
       image: `${siteUrl}/images/lentochnaya-pilorama-raspil.jpg`,
       address: {
         '@type': 'PostalAddress',
-        addressLocality: 'Разбегаево',
+        streetAddress: businessAddress,
+        addressLocality: 'деревня Разбегаево',
         addressRegion: 'Ленинградская область',
         addressCountry: 'RU',
       },

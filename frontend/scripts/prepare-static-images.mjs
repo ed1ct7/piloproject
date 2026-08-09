@@ -15,6 +15,7 @@ const requiredSources = [
   'images/doska-suhaya-ognebiozashchita.jpg',
   'images/doska-suhaya-stroganaya-45x95.jpg',
   'images/dostavka-pilomaterialov.jpg',
+  'images/evrovagonka-12-5x95x3000.png',
   'images/imitatsiya-brusa-20x145.jpg',
   'images/imitatsiya-brusa-av-karelskii-ship.jpg',
   'images/imitatsiya-brusa-upakovka.jpg',
@@ -30,6 +31,7 @@ const requiredSources = [
   'images/shtabel-suhoi-doski.jpg',
   'images/sklad-obrabotannoi-doski.jpg',
   'images/timber-order-2025-05-16.jpg',
+  'images/vagonka-shtil-12-5x120x3000.png',
   'mp4/short-sawmill-video.mp4',
 ]
 

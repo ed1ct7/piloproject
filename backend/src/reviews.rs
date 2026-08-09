@@ -359,6 +359,7 @@ struct CreateReviewRequest {
     author_name: String,
     text: String,
     rating: i32,
+    consent: Option<bool>,
 }
 
 #[derive(Deserialize)]
@@ -457,6 +458,7 @@ impl ReviewField {
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum ReviewValidationError {
     EmptyPatch,
+    ConsentRequired,
     EmptyField(ReviewField),
     TooLongField {
         field: ReviewField,
@@ -473,6 +475,9 @@ impl ReviewValidationError {
     fn message(self) -> String {
         match self {
             Self::EmptyPatch => "Передайте хотя бы одно поле для изменения".to_owned(),
+            Self::ConsentRequired => {
+                "Для публикации отзыва необходимо согласие на обработку данных".to_owned()
+            }
             Self::EmptyField(field) => {
                 format!("Поле `{}` не должно быть пустым", field.api_name())
             }
@@ -708,6 +713,12 @@ impl PublicReviewsQuery {
 
 impl CreateReviewRequest {
     fn into_new_review(self) -> Result<NewReview, ApiError> {
+        if self.consent != Some(true) {
+            return Err(ApiError::Validation(
+                ReviewValidationError::ConsentRequired,
+            ));
+        }
+
         Ok(NewReview {
             author_name: validate_text(
                 self.author_name,
@@ -1301,6 +1312,7 @@ mod tests {
             "authorName": author_name,
             "text": text,
             "rating": rating,
+            "consent": true,
         });
         let response = app
             .oneshot(
@@ -1347,7 +1359,7 @@ mod tests {
                     .uri("/api/reviews")
                     .header("content-type", "application/json")
                     .body(Body::from(
-                        r#"{"authorName":" Анна ","text":" Хороший брус ","rating":5}"#,
+                        r#"{"authorName":" Анна ","text":" Хороший брус ","rating":5,"consent":true}"#,
                     ))
                     .unwrap(),
             )
@@ -1364,6 +1376,58 @@ mod tests {
     }
 
     #[tokio::test]
+    async fn create_review_rejects_missing_consent() {
+        let app = test_app(MemoryReviewRepository::default());
+        let response = app
+            .oneshot(
+                Request::builder()
+                    .method("POST")
+                    .uri("/api/reviews")
+                    .header("content-type", "application/json")
+                    .body(Body::from(
+                        r#"{"authorName":"Анна","text":"Хороший брус","rating":5}"#,
+                    ))
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        assert_eq!(response.status(), StatusCode::UNPROCESSABLE_ENTITY);
+
+        let body = response_json(response).await;
+        assert_eq!(
+            body["message"],
+            "Для публикации отзыва необходимо согласие на обработку данных"
+        );
+    }
+
+    #[tokio::test]
+    async fn create_review_rejects_declined_consent() {
+        let app = test_app(MemoryReviewRepository::default());
+        let response = app
+            .oneshot(
+                Request::builder()
+                    .method("POST")
+                    .uri("/api/reviews")
+                    .header("content-type", "application/json")
+                    .body(Body::from(
+                        r#"{"authorName":"Анна","text":"Хороший брус","rating":5,"consent":false}"#,
+                    ))
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        assert_eq!(response.status(), StatusCode::UNPROCESSABLE_ENTITY);
+
+        let body = response_json(response).await;
+        assert_eq!(
+            body["message"],
+            "Для публикации отзыва необходимо согласие на обработку данных"
+        );
+    }
+
+    #[tokio::test]
     async fn create_review_rejects_invalid_rating() {
         let app = test_app(MemoryReviewRepository::default());
         let response = app
@@ -1373,7 +1437,7 @@ mod tests {
                     .uri("/api/reviews")
                     .header("content-type", "application/json")
                     .body(Body::from(
-                        r#"{"authorName":"Анна","text":"Текст","rating":6}"#,
+                        r#"{"authorName":"Анна","text":"Текст","rating":6,"consent":true}"#,
                     ))
                     .unwrap(),
             )
@@ -1396,7 +1460,7 @@ mod tests {
                     .uri("/api/reviews")
                     .header("content-type", "application/json")
                     .body(Body::from(
-                        r#"{"authorName":"   ","text":"Текст","rating":5}"#,
+                        r#"{"authorName":"   ","text":"Текст","rating":5,"consent":true}"#,
                     ))
                     .unwrap(),
             )
@@ -1419,7 +1483,7 @@ mod tests {
                     .uri("/api/reviews")
                     .header("content-type", "application/json")
                     .body(Body::from(
-                        r#"{"authorName":"Анна","text":"   ","rating":5}"#,
+                        r#"{"authorName":"Анна","text":"   ","rating":5,"consent":true}"#,
                     ))
                     .unwrap(),
             )
@@ -1439,6 +1503,7 @@ mod tests {
             "authorName": "a".repeat(MAX_AUTHOR_NAME_CHARS + 1),
             "text": "Текст",
             "rating": 5,
+            "consent": true,
         });
         let response = app
             .oneshot(
@@ -1465,6 +1530,7 @@ mod tests {
             "authorName": "Анна",
             "text": "a".repeat(MAX_REVIEW_TEXT_CHARS + 1),
             "rating": 5,
+            "consent": true,
         });
         let response = app
             .oneshot(

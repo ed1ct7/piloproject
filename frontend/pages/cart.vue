@@ -26,12 +26,13 @@ const {
 } = useCart()
 
 const formattedSubtotal = computed(() => `${subtotal.value.toLocaleString('ru-RU')} ₽`)
-const whatsappOrderUrl = computed(() => {
+const copyFeedback = ref('')
+const orderText = computed(() => {
   const lines = detailedItems.value.map((item: CartProductItem, index: number) => {
     const { product, quantity } = item
-    return `${index + 1}. ${product.title} — ${quantity} ${product.unit} × ${product.price.toLocaleString('ru-RU')} ₽/${product.unit}`
+    return `${index + 1}. ${product.title} — ${quantity} ${product.unit} × ${(product.price ?? 0).toLocaleString('ru-RU')} ₽/${product.unit}`
   })
-  const message = [
+  return [
     'Здравствуйте! Хочу заказать пиломатериалы:',
     '',
     ...lines,
@@ -39,9 +40,17 @@ const whatsappOrderUrl = computed(() => {
     `Предварительная сумма: ${formattedSubtotal.value}`,
     'Пожалуйста, подтвердите наличие, итоговую стоимость и условия доставки.',
   ].join('\n')
-
-  return `${businessWhatsAppUrl}?text=${encodeURIComponent(message)}`
 })
+
+async function copyOrderText() {
+  try {
+    await navigator.clipboard.writeText(orderText.value)
+    copyFeedback.value = 'Состав заказа скопирован. Его можно отправить менеджеру в любом мессенджере.'
+  }
+  catch {
+    copyFeedback.value = 'Не удалось скопировать автоматически. Позвоните менеджеру — корзина сохранится в браузере.'
+  }
+}
 </script>
 
 <template>
@@ -61,7 +70,7 @@ const whatsappOrderUrl = computed(() => {
         <article v-for="item in detailedItems" :key="item.productId" class="max-[840px]:grid-cols-1 grid grid-cols-[minmax(280px,1fr)_auto_auto] items-center gap-8 border-b border-[#171916] py-8">
           <div>
             <h2 class="mb-3">{{ item.product.title }}</h2>
-            <p class="mb-0 font-[Segoe_UI,Arial,sans-serif] font-extrabold text-[#a53e10]">{{ formatPricePerCubicMeter(item.product.price) }}</p>
+            <p class="mb-0 font-[Segoe_UI,Arial,sans-serif] font-extrabold text-[#a53e10]">{{ formatProductPrice(item.product) }}</p>
           </div>
 
           <div class="flex items-center gap-3" :aria-label="`Количество: ${item.product.title}`">
@@ -79,12 +88,22 @@ const whatsappOrderUrl = computed(() => {
             <p class="mb-3 font-[Segoe_UI,Arial,sans-serif] text-[0.8125rem] font-[760] uppercase">Предварительная сумма</p>
             <p class="text-[clamp(1.8rem,3vw,2.8rem)] font-[750] leading-none">{{ formattedSubtotal }}</p>
             <p>Наличие, итоговую стоимость и условия доставки подтверждает менеджер.</p>
+            <div class="flex flex-wrap gap-3">
+              <button
+                class="inline-flex min-h-11 cursor-pointer items-center border-0 bg-[#d65a1f] px-5 py-3 font-[Segoe_UI,Arial,sans-serif] font-[760] text-[#fffdf7] transition-colors duration-150 hover:bg-[#a53e10]"
+                type="button"
+                @click="copyOrderText"
+              >Скопировать заказ</button>
+              <a
+                class="inline-flex min-h-11 items-center border border-[#171916] px-5 py-3 font-[Segoe_UI,Arial,sans-serif] font-[760] no-underline transition-colors duration-150 hover:bg-[#171916] hover:text-[#fffdf7]"
+                :href="businessPhoneHref"
+              >Позвонить: {{ businessPhone }}</a>
+            </div>
+            <p v-if="copyFeedback" class="mt-4 text-sm" role="status">{{ copyFeedback }}</p>
             <a
-              class="inline-flex min-h-11 items-center bg-[#d65a1f] px-5 py-3 font-[Segoe_UI,Arial,sans-serif] font-[760] text-[#fffdf7] no-underline transition-colors duration-150 hover:bg-[#a53e10]"
-              :href="whatsappOrderUrl"
-              target="_blank"
-              rel="noopener"
-            >Отправить заказ в WhatsApp</a>
+              class="mt-3 inline-flex border-b-2 border-current pb-1 font-[Segoe_UI,Arial,sans-serif] font-[760] no-underline hover:text-[#d65a1f]"
+              :href="businessSecondaryPhoneHref"
+            >Дополнительный телефон: {{ businessSecondaryPhone }}</a>
           </div>
         </div>
       </template>

@@ -53,10 +53,9 @@ watch(
         <a class="max-[1100px]:hidden ml-[18px] inline-flex items-center whitespace-nowrap font-[Segoe_UI,Arial,sans-serif] text-base font-[760] tracking-[0.01em] no-underline hover:text-[#d65a1f]" :href="businessPhoneHref">{{ businessPhone }}</a>
         <a
           class="max-[1100px]:col-start-2 max-[1100px]:row-start-1 max-[840px]:col-start-3 max-[840px]:ml-2.5 max-[840px]:min-h-11 max-[840px]:px-3 max-[560px]:hidden ml-[18px] inline-flex min-h-11 items-center bg-[#d65a1f] px-4 font-[Segoe_UI,Arial,sans-serif] text-[0.9375rem] font-[760] text-[#fffdf7] no-underline transition-colors duration-150 hover:bg-[#a53e10]"
-          :href="businessWhatsAppUrl"
-          target="_blank"
-          rel="noopener"
-        >WhatsApp</a>
+          :href="businessPhoneHref"
+          aria-label="Позвонить на основной номер"
+        >Позвонить</a>
       </div>
     </header>
 
@@ -79,21 +78,26 @@ watch(
 
       <div class="flex flex-col items-start gap-3 text-[#d8d2c6]">
         <span class="mb-3 font-[Segoe_UI,Arial,sans-serif] text-sm font-[760] uppercase leading-[1.4] tracking-[0.04em]">Связь</span>
-        <address>Разбегаево, Ломоносовский район, Ленинградская область</address>
+        <address>{{ businessAddress }}</address>
         <a class="font-[Segoe_UI,Arial,sans-serif] text-[1.15rem] font-[760] text-[#fffdf7] no-underline hover:text-[#d65a1f]" :href="businessPhoneHref">{{ businessPhone }}</a>
         <a
-          class="w-max cursor-pointer border-0 border-b-2 border-current bg-transparent px-0 pb-[3px] font-[Segoe_UI,Arial,sans-serif] font-[760] text-[#fffdf7] no-underline transition-colors duration-150 hover:text-[#d65a1f] disabled:cursor-not-allowed disabled:opacity-50"
-          :href="businessWhatsAppUrl"
+          class="font-[Segoe_UI,Arial,sans-serif] text-[1.15rem] font-[760] text-[#fffdf7] no-underline hover:text-[#d65a1f]"
+          :href="businessSecondaryPhoneHref"
+        >{{ businessSecondaryPhone }}</a>
+        <a
+          class="w-max border-b-2 border-current pb-[3px] font-[Segoe_UI,Arial,sans-serif] font-[760] text-[#fffdf7] no-underline transition-colors duration-150 hover:text-[#d65a1f]"
+          :href="businessMapsUrl"
           target="_blank"
           rel="noopener"
-        >Написать в WhatsApp</a>
+        >Открыть в Яндекс Картах</a>
       </div>
 
-      <div class="max-[560px]:grid col-span-full mt-6 flex justify-between gap-6 border-t border-[#555852] pt-5 font-[Segoe_UI,Arial,sans-serif] text-sm leading-[1.5] text-[#b8b8b2]">
+      <div class="max-[840px]:flex-col max-[840px]:items-start col-span-full mt-6 flex justify-between gap-4 border-t border-[#555852] pt-5 font-[Segoe_UI,Arial,sans-serif] text-sm leading-[1.5] text-[#b8b8b2]">
         <span>
           {{ businessRequisites.fullName }} · ИНН {{ businessRequisites.inn }} ·
           ОГРНИП {{ businessRequisites.ogrnip }}
         </span>
+        <NuxtLink class="shrink-0 underline underline-offset-4 hover:text-[#fffdf7]" to="/politika-konfidencialnosti">Политика конфиденциальности</NuxtLink>
       </div>
     </footer>
   </div>

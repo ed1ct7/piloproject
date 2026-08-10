@@ -53,8 +53,10 @@ const deliverySteps = [
           <div class="delivery-actions">
             <a
               class="delivery-button delivery-button--primary"
-              :href="businessPhoneHref"
-            >Позвонить {{ businessPhone }}</a>
+              :href="businessMaxUrl"
+              target="_blank"
+              rel="noopener"
+            >Написать в MAX</a>
             <a class="delivery-button delivery-button--secondary" :href="businessSecondaryPhoneHref">
               {{ businessSecondaryPhone }}
             </a>
@@ -123,8 +125,10 @@ const deliverySteps = [
       <div>
         <a
           class="delivery-button delivery-button--primary"
-          :href="businessPhoneHref"
-        >Позвонить для расчёта</a>
+          :href="businessMaxUrl"
+          target="_blank"
+          rel="noopener"
+        >Написать в MAX для расчёта</a>
       </div>
     </section>
   </main>

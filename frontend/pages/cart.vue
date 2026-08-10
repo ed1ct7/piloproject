@@ -45,7 +45,7 @@ const orderText = computed(() => {
 async function copyOrderText() {
   try {
     await navigator.clipboard.writeText(orderText.value)
-    copyFeedback.value = 'Состав заказа скопирован. Его можно отправить менеджеру в любом мессенджере.'
+    copyFeedback.value = 'Состав заказа скопирован. Откройте MAX и отправьте его менеджеру.'
   }
   catch {
     copyFeedback.value = 'Не удалось скопировать автоматически. Позвоните менеджеру — корзина сохранится в браузере.'
@@ -94,6 +94,12 @@ async function copyOrderText() {
                 type="button"
                 @click="copyOrderText"
               >Скопировать заказ</button>
+              <a
+                class="inline-flex min-h-11 items-center border border-[#d65a1f] bg-[#d65a1f] px-5 py-3 font-[Segoe_UI,Arial,sans-serif] font-[760] text-[#fffdf7] no-underline transition-colors duration-150 hover:border-[#a53e10] hover:bg-[#a53e10]"
+                :href="businessMaxUrl"
+                target="_blank"
+                rel="noopener"
+              >Открыть MAX</a>
               <a
                 class="inline-flex min-h-11 items-center border border-[#171916] px-5 py-3 font-[Segoe_UI,Arial,sans-serif] font-[760] no-underline transition-colors duration-150 hover:bg-[#171916] hover:text-[#fffdf7]"
                 :href="businessPhoneHref"

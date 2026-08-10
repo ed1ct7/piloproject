@@ -46,17 +46,23 @@ useSchemaOrg([
     <section class="max-[840px]:grid-cols-1 mx-auto grid w-[min(1280px,100%)] grid-cols-[minmax(0,0.58fr)_minmax(280px,0.42fr)] border-b border-[#171916]" aria-labelledby="contact-data-title">
       <div class="max-[840px]:border-r-0 max-[840px]:border-b max-[840px]:border-[#171916] max-[560px]:px-5 max-[560px]:py-10 border-r border-[#171916] p-[56px]">
         <p class="mb-4 font-[Segoe_UI,Arial,sans-serif] text-sm font-[760] uppercase leading-[1.4] tracking-[0.04em]">Связь с производством</p>
-        <h2 id="contact-data-title">Позвоните нам</h2>
+        <h2 id="contact-data-title">Позвоните или напишите</h2>
 
         <div class="mb-8 mt-5 max-w-[620px] border border-l-[5px] border-[#171916] border-l-[#d65a1f] bg-[#f5f2eb] px-7 py-7 max-[560px]:px-6 max-[560px]:py-6">
           <div class="grid gap-2">
             <a class="font-[Segoe_UI,Arial,sans-serif] text-[clamp(1.75rem,2.6vw,2.4rem)] font-[780] tracking-normal no-underline hover:text-[#d65a1f]" :href="businessPhoneHref">{{ businessPhone }}</a>
             <a class="font-[Segoe_UI,Arial,sans-serif] text-[clamp(1.35rem,2vw,1.85rem)] font-[760] tracking-normal no-underline hover:text-[#d65a1f]" :href="businessSecondaryPhoneHref">{{ businessSecondaryPhone }}</a>
           </div>
+          <a
+            class="mt-5 inline-flex min-h-12 w-max items-center justify-center bg-[#d65a1f] px-5 py-3 font-[Segoe_UI,Arial,sans-serif] font-[760] text-[#fffdf7] no-underline transition-colors duration-150 hover:bg-[#a53e10]"
+            :href="businessMaxUrl"
+            target="_blank"
+            rel="noopener"
+          >Написать в MAX</a>
         </div>
 
         <p>
-          При звонке укажите нужный материал, размеры и количество.
+          При звонке или в сообщении укажите нужный материал, размеры и количество.
         </p>
       </div>
 

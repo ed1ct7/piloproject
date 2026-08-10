@@ -12,6 +12,9 @@ export const businessPhoneInternational = '+7 921 984-91-01'
 /** Телефон для ссылки `tel:` — только цифры с кодом страны. */
 export const businessPhoneHref = 'tel:+79219849101'
 
+/** Публичная ссылка на профиль основного контакта в MAX. */
+export const businessMaxUrl = 'https://web.max.ru/100742329'
+
 /** Дополнительный телефон организации. */
 export const businessSecondaryPhone = '+7 965 081-00-07'
 

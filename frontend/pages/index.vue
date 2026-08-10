@@ -55,6 +55,7 @@ useSchemaOrg([
     name: "Пилорама Разбегаево",
     url: `${siteUrl}/`,
     telephone: businessPhoneInternational,
+    sameAs: [businessMapsUrl, businessMaxUrl],
     image: `${siteUrl}/images/lentochnaya-pilorama-raspil.jpg`,
     address: {
       "@type": "PostalAddress",
@@ -94,8 +95,10 @@ useSchemaOrg([
           >
           <a
             class="inline-flex min-h-[50px] cursor-pointer items-center justify-center border border-[#171916] px-5 py-3 text-center font-[Segoe_UI,Arial,sans-serif] text-[0.95rem] font-[760] leading-[1.2] no-underline transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-50 bg-transparent text-[#171916] hover:bg-[#171916] hover:text-[#fffdf7]"
-            :href="businessPhoneHref"
-          >Позвонить: {{ businessPhone }}</a>
+            :href="businessMaxUrl"
+            target="_blank"
+            rel="noopener"
+          >Написать в MAX</a>
         </div>
       </div>
 

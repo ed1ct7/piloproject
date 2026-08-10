@@ -2,6 +2,8 @@
 import tailwindcss from '@tailwindcss/vite'
 import {
   businessAddress,
+  businessMapsUrl,
+  businessMaxUrl,
   businessPhoneInternational,
   businessRequisites,
 } from './utils/business'
@@ -109,6 +111,7 @@ export default defineNuxtConfig({
       legalName: businessRequisites.fullName,
       url: siteUrl,
       telephone: businessPhoneInternational,
+      sameAs: [businessMapsUrl, businessMaxUrl],
       image: `${siteUrl}/images/lentochnaya-pilorama-raspil.jpg`,
       address: {
         '@type': 'PostalAddress',

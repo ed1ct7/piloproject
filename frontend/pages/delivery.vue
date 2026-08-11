@@ -138,9 +138,9 @@ const deliverySteps = [
 .delivery-page {
   --ink: #171916;
   --forest: #1f3a2f;
-  --paper: #f5f2eb;
-  --sand: #e9e5dc;
-  --orange: #d65a1f;
+  --paper: #fff8eb;
+  --sand: #efe6d7;
+  --orange: #a8461e;
   background: var(--sand);
 }
 
@@ -179,7 +179,7 @@ const deliverySteps = [
   margin-bottom: 1.5rem;
   font-size: clamp(2.8rem, 4vw, 4.75rem);
   line-height: 1;
-  letter-spacing: -0.025em;
+  letter-spacing: 0;
   overflow-wrap: normal;
   word-break: normal;
 }
@@ -236,13 +236,15 @@ const deliverySteps = [
 }
 
 .delivery-button--primary:hover {
-  border-color: #a53e10;
-  background: #a53e10;
+  border-color: #7a451e;
+  background: #7a451e;
 }
 
 .delivery-button--secondary {
-  background: transparent;
-  color: var(--ink);
+  border-color: var(--forest);
+  background: var(--forest);
+  color: #fffdf7;
+  box-shadow: 0 10px 22px rgb(23 25 22 / 16%);
 }
 
 .delivery-button--secondary:hover {
@@ -278,6 +280,13 @@ const deliverySteps = [
   min-width: 0;
   flex-direction: column;
   padding: clamp(24px, 2.4vw, 32px);
+  box-shadow: 0 18px 42px rgb(23 25 22 / 12%);
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.receiving-card:hover {
+  box-shadow: 0 28px 62px rgb(23 25 22 / 20%);
+  transform: translateY(-4px);
 }
 
 .receiving-card + .receiving-card {
@@ -289,7 +298,7 @@ const deliverySteps = [
 }
 
 .receiving-card--delivery {
-  background: #dfe4da;
+  background: #d6ded0;
 }
 
 .receiving-card__topline {
@@ -385,7 +394,7 @@ const deliverySteps = [
 .delivery-process__list {
   margin: 0;
   padding: 0;
-  border-left: 1px solid #68766e;
+  border-left: 1px solid #365f68;
   list-style: none;
 }
 
@@ -394,7 +403,7 @@ const deliverySteps = [
   grid-template-columns: 48px minmax(0, 1fr);
   gap: clamp(20px, 3vw, 48px);
   padding: 1.75rem clamp(28px, 4vw, 64px);
-  border-bottom: 1px solid #68766e;
+  border-bottom: 1px solid #365f68;
 }
 
 .delivery-process__list li:last-child {
@@ -402,7 +411,7 @@ const deliverySteps = [
 }
 
 .delivery-process__list > li > span {
-  color: #aeb9b1;
+  color: #d6ded0;
   font-family: "Segoe UI", Arial, sans-serif;
   font-size: 0.82rem;
   font-weight: 800;
@@ -416,7 +425,7 @@ const deliverySteps = [
 .delivery-process__list p {
   max-width: 640px;
   margin-bottom: 0;
-  color: #cbd3ca;
+  color: #d6ded0;
   line-height: 1.55;
 }
 
@@ -427,7 +436,8 @@ const deliverySteps = [
   gap: clamp(40px, 6vw, 88px);
   padding: 72px max(24px, calc((100vw - 1200px) / 2));
   border-bottom: 1px solid var(--ink);
-  background: #d8d2c6;
+  background: #d6ded0;
+  box-shadow: inset 0 18px 42px rgb(23 25 22 / 8%);
 }
 
 .delivery-cta h2 {
@@ -481,7 +491,7 @@ const deliverySteps = [
   }
 
   .delivery-process__list {
-    border-top: 1px solid #68766e;
+    border-top: 1px solid #365f68;
     border-left: 0;
   }
 

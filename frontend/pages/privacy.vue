@@ -17,7 +17,7 @@ useHead({
 
 <template>
   <main>
-    <section class="border-b border-[#171916] bg-[#e9e5dc]">
+    <section class="border-b border-[#171916] bg-[#efe6d7]">
       <div class="mx-auto w-[min(980px,100%)] px-8 py-16 max-[560px]:px-[18px] max-[560px]:py-11">
         <p class="mb-4 font-[Segoe_UI,Arial,sans-serif] text-[0.8125rem] font-[760] uppercase tracking-[0.04em]">Редакция от 11 августа 2026 года</p>
         <h1 class="mb-5 !text-[clamp(2.2rem,4.2vw,4rem)]">Политика конфиденциальности сайта</h1>
@@ -54,9 +54,8 @@ useHead({
       <h2>6. Изменения</h2>
       <p>Политика обновляется при изменении функций сайта или требований законодательства. Актуальная редакция публикуется на этой странице.</p>
 
-      <div class="mt-12 flex flex-wrap gap-5 border-t border-[#aaa69b] pt-7">
+      <div class="mt-12 flex flex-wrap gap-5 border-t border-[#cbb99d] pt-7">
         <NuxtLink to="/kontakty">Контакты</NuxtLink>
-        <NuxtLink to="/otzyvy">Отзывы на внешней площадке</NuxtLink>
       </div>
     </article>
   </main>

@@ -38,7 +38,6 @@ systemctl disable --now piloproject-backend
 
 ```bash
 curl -I https://pilorama-razbegaevo.ru/
-curl -I https://pilorama-razbegaevo.ru/otzyvy
 curl https://pilorama-razbegaevo.ru/robots.txt
 curl https://pilorama-razbegaevo.ru/sitemap.xml
 ```

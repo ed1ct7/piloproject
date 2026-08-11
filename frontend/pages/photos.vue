@@ -117,15 +117,15 @@ useSchemaOrg([
 
 <template>
   <main>
-    <section class="max-[840px]:min-h-0 max-[560px]:block max-[560px]:px-[18px] max-[560px]:pb-10 max-[560px]:pt-[34px] grid min-h-[310px] grid-cols-[64px_minmax(0,1fr)] items-center gap-8 border-b border-[#171916] bg-[#d8d2c6] px-[max(24px,calc((100vw_-_1280px)/2))] pb-10 pt-14">
+    <section class="max-[840px]:min-h-0 max-[560px]:block max-[560px]:px-[18px] max-[560px]:pb-10 max-[560px]:pt-[34px] grid min-h-[310px] grid-cols-[64px_minmax(0,1fr)] items-center gap-8 border-b border-[#171916] bg-[#d6ded0] px-[max(24px,calc((100vw_-_1280px)/2))] pb-10 pt-14">
       <div aria-hidden="true" />
       <div class="max-w-[760px] [&_h1]:mb-0">
         <h1>Фото пилорамы и склада</h1>
       </div>
     </section>
 
-    <section class="grid grid-cols-4 gap-5 bg-[#f5f2eb] px-[max(24px,calc((100vw_-_1280px)/2))] pb-20 pt-14 max-[1100px]:grid-cols-3 max-[840px]:grid-cols-2 max-[560px]:grid-cols-1 max-[560px]:gap-4 max-[560px]:px-[18px] max-[560px]:pb-14" aria-label="Фотографии производственной площадки">
-      <figure v-for="photo in photos" :key="photo.image" class="border border-[#171916] bg-[#d8d2c6] shadow-[0_14px_30px_rgba(23,25,22,0.08)] [&_img]:aspect-[4/3] [&_img]:w-full [&_img]:object-cover">
+    <section class="grid grid-cols-4 gap-5 bg-[#efe6d7] px-[max(24px,calc((100vw_-_1280px)/2))] pb-20 pt-14 max-[1100px]:grid-cols-3 max-[840px]:grid-cols-2 max-[560px]:grid-cols-1 max-[560px]:gap-4 max-[560px]:px-[18px] max-[560px]:pb-14" aria-label="Фотографии производственной площадки">
+      <figure v-for="photo in photos" :key="photo.image" data-parallax="10" class="overflow-hidden border border-[#171916] bg-[#ded5c4] shadow-[0_18px_42px_rgba(23,25,22,0.14)] transition duration-200 hover:-translate-y-1 hover:shadow-[0_28px_62px_rgba(23,25,22,0.22)] [&_img]:aspect-[4/3] [&_img]:w-full [&_img]:object-cover">
         <NuxtImg
           :src="photo.image"
           :alt="photo.alt"

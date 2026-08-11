@@ -143,7 +143,7 @@ check_200() {
   printf '%s: %s\n' "$label" "$code"
 }
 
-for route in / /pilomaterialy /foto /dostavka /kontakty /otzyvy /cart /korzina /sitemap.xml /robots.txt; do
+for route in / /pilomaterialy /foto /dostavka /kontakty /cart /korzina /sitemap.xml /robots.txt; do
   check_200 "$route" "$domain$route"
 done
 

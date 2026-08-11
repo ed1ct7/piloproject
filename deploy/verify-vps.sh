@@ -2,11 +2,11 @@
 set -euo pipefail
 
 test "$(systemctl is-active nginx)" = active
-for route in / /pilomaterialy /foto /dostavka /kontakty /otzyvy /sitemap.xml /robots.txt; do
+for route in / /pilomaterialy /foto /dostavka /kontakty /sitemap.xml /robots.txt; do
   curl --fail --silent "https://pilorama-razbegaevo.ru$route" >/dev/null
 done
 
-for removed_route in /api/health /api/reviews /admin /system-status /missing-page-check; do
+for removed_route in /api/health /api/reviews /admin /system-status /otzyvy /missing-page-check; do
   test "$(curl --silent --output /dev/null --write-out '%{http_code}' \
     "https://pilorama-razbegaevo.ru$removed_route")" = 404
 done

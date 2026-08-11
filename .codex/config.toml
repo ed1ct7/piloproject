@@ -1,3 +1,6 @@
 [agents]
-enabled = true
-max_concurrent_threads_per_session = 3
+max_threads = 3
+
+[agents.default]
+model = "o1"
+description = "Максимально умный ассистент с глубоким мышлением"

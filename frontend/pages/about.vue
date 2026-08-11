@@ -30,7 +30,7 @@ useSchemaOrg([
 <template>
   <main>
     <section class="max-[840px]:grid-cols-1 mx-auto grid min-h-[500px] w-[min(1280px,100%)] grid-cols-[minmax(0,0.58fr)_minmax(340px,0.42fr)] border-b border-[#171916]">
-      <div class="max-[560px]:px-[18px] max-[560px]:py-12 flex flex-col justify-center bg-[#e9e5dc] p-10">
+      <div class="max-[560px]:px-[18px] max-[560px]:py-12 flex flex-col justify-center bg-[#efe6d7] p-10">
         <p class="font-[Segoe_UI,Arial,sans-serif] uppercase mb-4 text-[0.8125rem] font-[760] leading-[1.4] tracking-[0.04em]">Собственное производство</p>
         <h1 class="max-w-[700px]">О пилораме в Разбегаево</h1>
         <p class="mb-0 max-w-[650px] text-[1.08rem] leading-[1.6] text-[#393d37]">
@@ -38,7 +38,7 @@ useSchemaOrg([
         </p>
       </div>
 
-      <figure class="max-[840px]:min-h-[420px] max-[840px]:border-l-0 max-[840px]:border-t max-[560px]:min-h-[340px] min-w-0 overflow-hidden border-l border-[#171916] bg-[#13251e] [&_img]:h-full [&_img]:w-full [&_img]:object-cover">
+      <figure class="max-[840px]:min-h-[420px] max-[840px]:border-l-0 max-[840px]:border-t max-[560px]:min-h-[340px] min-w-0 overflow-hidden border-l border-[#171916] bg-[#14251e] [&_img]:h-full [&_img]:w-full [&_img]:object-cover">
         <NuxtImg
           src="/images/pilorama-stanok-brevno.jpg"
           alt="Пилорамный станок с бревном на производственной площадке в Разбегаево"
@@ -69,7 +69,7 @@ useSchemaOrg([
       </div>
     </section>
 
-    <section class="max-[840px]:grid-cols-1 max-[560px]:px-[18px] grid grid-cols-[minmax(300px,0.82fr)_minmax(360px,1.18fr)] gap-[clamp(40px,7vw,104px)] border-b border-[#171916] bg-[#d8d2c6] px-[max(24px,calc((100vw_-_1280px)/2))] py-[72px] max-[560px]:py-14" aria-labelledby="next-step-title">
+    <section class="max-[840px]:grid-cols-1 max-[560px]:px-[18px] grid grid-cols-[minmax(300px,0.82fr)_minmax(360px,1.18fr)] gap-[clamp(40px,7vw,104px)] border-b border-[#171916] bg-[#d6ded0] px-[max(24px,calc((100vw_-_1280px)/2))] py-[72px] max-[560px]:py-14" aria-labelledby="next-step-title">
       <div>
         <p class="font-[Segoe_UI,Arial,sans-serif] uppercase mb-4 text-[0.8125rem] font-[760] leading-[1.4] tracking-[0.04em]">Увидеть производство</p>
         <h2 id="next-step-title">Станки, склад и отгрузка</h2>
@@ -79,8 +79,8 @@ useSchemaOrg([
           В фотогалерее собраны реальные кадры производственной площадки, готовой продукции и погрузки заказов.
         </p>
         <div class="flex flex-wrap gap-5">
-          <NuxtLink class="w-max cursor-pointer border-0 border-b-2 border-current bg-transparent px-0 pb-[3px] font-[Segoe_UI,Arial,sans-serif] font-[760] text-[#1f3a2f] no-underline transition-colors duration-150 hover:text-[#d65a1f]" to="/foto">Смотреть фотографии</NuxtLink>
-          <NuxtLink class="w-max cursor-pointer border-0 border-b-2 border-current bg-transparent px-0 pb-[3px] font-[Segoe_UI,Arial,sans-serif] font-[760] text-[#1f3a2f] no-underline transition-colors duration-150 hover:text-[#d65a1f]" to="/kontakty">Связаться с нами</NuxtLink>
+          <NuxtLink class="w-max cursor-pointer border-0 border-b-2 border-current bg-transparent px-0 pb-[3px] font-[Segoe_UI,Arial,sans-serif] font-[760] text-[#1f3a2f] no-underline transition-colors duration-150 hover:text-[#a8461e]" to="/foto">Смотреть фотографии</NuxtLink>
+          <NuxtLink class="w-max cursor-pointer border-0 border-b-2 border-current bg-transparent px-0 pb-[3px] font-[Segoe_UI,Arial,sans-serif] font-[760] text-[#1f3a2f] no-underline transition-colors duration-150 hover:text-[#a8461e]" to="/kontakty">Связаться с нами</NuxtLink>
         </div>
       </div>
     </section>

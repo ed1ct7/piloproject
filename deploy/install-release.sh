@@ -1,30 +1,38 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-install -o root -g root -m 0755 /root/backend /opt/piloproject/backend
-install -o root -g root -m 0644 /root/schema.sql /opt/piloproject/schema.sql
-install -o root -g root -m 0644 /root/piloproject-backend.service /etc/systemd/system/piloproject-backend.service
+domain="pilorama-razbegaevo.ru"
+www_domain="www.pilorama-razbegaevo.ru"
+certbot_email="${CERTBOT_EMAIL:-shidov_roman@mail.ru}"
+site="/var/www/piloproject"
+
+cat > "$site/index.html" <<'HTML'
+<!doctype html>
+<html lang="ru"><meta charset="utf-8"><title>Установка сайта</title><p>Сайт устанавливается.</p>
+HTML
+chown -R www-data:www-data "$site"
+
+if [ ! -s "/etc/letsencrypt/live/$domain/fullchain.pem" ]; then
+  cat > /etc/nginx/sites-available/piloproject <<EOF
+server {
+    listen 80;
+    listen [::]:80;
+    server_name $domain $www_domain;
+    root $site;
+    access_log off;
+    location / { try_files \$uri \$uri/ =404; }
+}
+EOF
+  ln -sfn /etc/nginx/sites-available/piloproject /etc/nginx/sites-enabled/piloproject
+  rm -f /etc/nginx/sites-enabled/default
+  nginx -t
+  systemctl reload nginx
+  certbot --nginx --non-interactive --agree-tos --email "$certbot_email" \
+    -d "$domain" -d "$www_domain"
+fi
+
 install -o root -g root -m 0644 /root/nginx-piloproject.conf /etc/nginx/sites-available/piloproject
 ln -sfn /etc/nginx/sites-available/piloproject /etc/nginx/sites-enabled/piloproject
 rm -f /etc/nginx/sites-enabled/default
-
-cat > /var/www/piloproject/index.html <<'HTML'
-<!doctype html>
-<html lang="ru">
-<meta charset="utf-8">
-<title>Установка сайта</title>
-<p>Сайт устанавливается.</p>
-HTML
-chown -R www-data:www-data /var/www/piloproject
-
-set -a
-. /etc/piloproject/backend.env
-set +a
-psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f /opt/piloproject/schema.sql
-
-systemctl daemon-reload
-systemctl enable --now piloproject-backend
 nginx -t
 systemctl reload nginx
-sleep 2
-curl --fail --silent http://127.0.0.1:8080/api/health

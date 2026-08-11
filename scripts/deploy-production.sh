@@ -56,7 +56,7 @@ tar -xzf "$archive" -C "$source_dir" --strip-components=1
 
 cd "$source_dir"
 npm --prefix frontend ci
-NUXT_PUBLIC_API_BASE="$domain" npm --prefix frontend run generate
+npm --prefix frontend run generate
 
 public="frontend/.output/public"
 for required in index.html sitemap.xml robots.txt; do
@@ -66,10 +66,62 @@ for directory in _nuxt images pilomaterialy cart; do
   test -d "$public/$directory"
 done
 grep -RaqF "$domain" "$public"
-if grep -RaqE 'https?://(localhost|127\.0\.0\.1):8080' "$public"; then
-  echo "localhost API found in production output" >&2
-  exit 1
-fi
+python3 - "$public" "$domain" <<'PY'
+from html.parser import HTMLParser
+from pathlib import Path
+from urllib.parse import urlparse
+import re
+import sys
+
+public = Path(sys.argv[1])
+allowed_host = urlparse(sys.argv[2]).hostname
+errors = []
+
+class ResourceScanner(HTMLParser):
+    resource_attributes = {
+        "script": {"src"}, "img": {"src", "srcset"}, "source": {"src", "srcset"},
+        "link": {"href"}, "video": {"src", "poster"}, "audio": {"src"},
+        "iframe": {"src"}, "form": {"action"},
+    }
+
+    def __init__(self, path):
+        super().__init__()
+        self.path = path
+
+    def handle_starttag(self, tag, attrs):
+        if tag in {"iframe", "form"}:
+            errors.append(f"{self.path}: forbidden <{tag}>")
+        checked = self.resource_attributes.get(tag, set())
+        for name, value in attrs:
+            if name not in checked or not value:
+                continue
+            for candidate in value.split(","):
+                url = candidate.strip().split()[0]
+                parsed = urlparse(url)
+                if parsed.scheme in {"http", "https"} and parsed.hostname != allowed_host:
+                    errors.append(f"{self.path}: external {tag} {name}={url}")
+
+markers = re.compile(
+    r"/api/(?:health|reviews)|map-widget|mc\.yandex|metrika|googletagmanager|"
+    r"google-analytics|facebook\.net|vk\.com/rtrg|top\.mail\.ru|clarity\.ms|hotjar|sendBeacon",
+    re.IGNORECASE,
+)
+
+for path in public.rglob("*"):
+    if path.suffix not in {".html", ".js", ".css", ".json"}:
+        continue
+    text = path.read_text(encoding="utf-8", errors="ignore")
+    if markers.search(text):
+        errors.append(f"{path}: tracking or removed API marker")
+    if path.suffix == ".html":
+        scanner = ResourceScanner(path)
+        scanner.feed(text)
+
+if errors:
+    print("Privacy guard failed:", file=sys.stderr)
+    print("\n".join(errors), file=sys.stderr)
+    raise SystemExit(1)
+PY
 
 mv "$public" "$staging"
 nginx -t
@@ -91,7 +143,7 @@ check_200() {
   printf '%s: %s\n' "$label" "$code"
 }
 
-for route in / /pilomaterialy /foto /dostavka /kontakty /otzyvy /cart /korzina /sitemap.xml /robots.txt /api/health; do
+for route in / /pilomaterialy /foto /dostavka /kontakty /otzyvy /cart /korzina /sitemap.xml /robots.txt; do
   check_200 "$route" "$domain$route"
 done
 
@@ -102,7 +154,7 @@ test -n "$image_file"
 check_200 JS "$domain${js_file#$site}"
 check_200 IMAGE "$domain${image_file#$site}"
 
-for service in nginx piloproject-backend postgresql; do
+for service in nginx; do
   state="$(systemctl is-active "$service")"
   test "$state" = active
   printf '%s: %s\n' "$service" "$state"

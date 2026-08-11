@@ -4,7 +4,7 @@ definePageMeta({
 })
 
 useSeoMeta({
-  title: 'Контакты пилорамы в Разбегаево – телефоны, адрес, карта',
+  title: 'Контакты пилорамы в Разбегаево – телефоны, email, адрес',
   description: 'Телефоны пилорамы в Разбегаево, адрес производственной площадки, схема проезда на Яндекс Картах и юридические реквизиты.',
   ogTitle: 'Контакты пилорамы в Разбегаево',
   ogDescription: 'Телефоны, адрес производственной площадки, схема проезда и юридические реквизиты.',
@@ -52,12 +52,13 @@ useSchemaOrg([
           <div class="grid gap-2">
             <a class="font-[Segoe_UI,Arial,sans-serif] text-[clamp(1.75rem,2.6vw,2.4rem)] font-[780] tracking-normal no-underline hover:text-[#d65a1f]" :href="businessPhoneHref">{{ businessPhone }}</a>
             <a class="font-[Segoe_UI,Arial,sans-serif] text-[clamp(1.35rem,2vw,1.85rem)] font-[760] tracking-normal no-underline hover:text-[#d65a1f]" :href="businessSecondaryPhoneHref">{{ businessSecondaryPhone }}</a>
+            <a class="font-[Segoe_UI,Arial,sans-serif] text-lg font-[700] no-underline hover:text-[#d65a1f]" :href="businessEmailHref">{{ businessEmail }}</a>
           </div>
           <a
             class="mt-5 inline-flex min-h-12 w-max items-center justify-center bg-[#d65a1f] px-5 py-3 font-[Segoe_UI,Arial,sans-serif] font-[760] text-[#fffdf7] no-underline transition-colors duration-150 hover:bg-[#a53e10]"
             :href="businessMaxUrl"
             target="_blank"
-            rel="noopener"
+            rel="noopener noreferrer"
           >Написать в MAX</a>
         </div>
 
@@ -104,18 +105,15 @@ useSchemaOrg([
           class="mt-3 inline-flex min-h-12 w-max items-center justify-center border border-[#d65a1f] bg-[#d65a1f] px-5 py-3 text-center font-[Segoe_UI,Arial,sans-serif] font-[760] leading-[1.2] text-[#fffdf7] no-underline transition-colors duration-150 hover:border-[#a53e10] hover:bg-[#a53e10]"
           :href="businessMapsUrl"
           target="_blank"
-          rel="noopener"
+          rel="noopener noreferrer"
         >Открыть в Яндекс Картах</a>
       </div>
 
-      <div class="max-[840px]:min-h-[420px] max-[840px]:border-l-0 max-[840px]:border-t min-h-[520px] overflow-hidden border-l border-[#171916] bg-[#f5f2eb]">
-        <iframe
-          class="block h-full min-h-[520px] w-full border-0 max-[840px]:min-h-[420px]"
-          :src="businessMapEmbedUrl"
-          title="Пилорама в Разбегаево на Яндекс Картах"
-          loading="lazy"
-          referrerpolicy="strict-origin-when-cross-origin"
-        />
+      <div class="max-[840px]:border-l-0 max-[840px]:border-t flex min-h-[360px] items-center border-l border-[#171916] bg-[#f5f2eb] p-[56px] max-[560px]:min-h-0 max-[560px]:p-8">
+        <div>
+          <p class="mb-3 font-[Segoe_UI,Arial,sans-serif] text-sm font-[760] uppercase">Адрес производственной площадки</p>
+          <p class="mb-0 text-lg leading-[1.65]">{{ businessAddress }}</p>
+        </div>
       </div>
     </section>
 

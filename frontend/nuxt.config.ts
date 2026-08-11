@@ -2,6 +2,7 @@
 import tailwindcss from '@tailwindcss/vite'
 import {
   businessAddress,
+  businessEmail,
   businessMapsUrl,
   businessMaxUrl,
   businessPhoneInternational,
@@ -13,19 +14,19 @@ const securityHeaders = {
   'Content-Security-Policy': [
     "default-src 'self'",
     "base-uri 'self'",
-    `connect-src 'self' http://localhost:8080 http://127.0.0.1:8080 ${siteUrl}`,
+    "connect-src 'self'",
     "font-src 'self' data:",
-    "form-action 'self'",
-    "frame-src 'self' https://yandex.ru https://yandex.com",
+    "form-action 'none'",
+    "frame-src 'none'",
     "frame-ancestors 'none'",
-    "img-src 'self' data: https:",
+    "img-src 'self' data:",
     "media-src 'self'",
     "object-src 'none'",
     "script-src 'self' 'unsafe-inline'",
     "style-src 'self' 'unsafe-inline'",
   ].join('; '),
   'Permissions-Policy': 'camera=(), microphone=(), geolocation=(), payment=()',
-  'Referrer-Policy': 'strict-origin-when-cross-origin',
+  'Referrer-Policy': 'no-referrer',
   'X-Content-Type-Options': 'nosniff',
   'X-Frame-Options': 'DENY',
 }
@@ -53,8 +54,6 @@ export default defineNuxtConfig({
       crawlLinks: true,
       routes: [
         ...indexableRoutes.map((route) => route.loc),
-        '/admin',
-        '/system-status',
         '/cart',
         '/korzina',
         '/robots.txt',
@@ -71,12 +70,10 @@ export default defineNuxtConfig({
   robots: {
     sitemap: `${siteUrl}/sitemap.xml`,
     allow: '/',
-    disallow: ['/admin', '/system-status'],
     groups: [
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/admin', '/system-status'],
         cleanParam: ['utm_source&utm_medium&utm_campaign&utm_content&utm_term&yclid&gclid&fbclid /'],
       },
     ],
@@ -85,7 +82,7 @@ export default defineNuxtConfig({
   },
 
   sitemap: {
-    exclude: ['/admin', '/system-status'],
+    exclude: [],
     autoLastmod: true,
     credits: false,
   },
@@ -111,6 +108,7 @@ export default defineNuxtConfig({
       legalName: businessRequisites.fullName,
       url: siteUrl,
       telephone: businessPhoneInternational,
+      email: businessEmail,
       sameAs: [businessMapsUrl, businessMaxUrl],
       image: `${siteUrl}/images/lentochnaya-pilorama-raspil.jpg`,
       address: {
@@ -139,12 +137,5 @@ export default defineNuxtConfig({
   },
   vite: {
     plugins: [tailwindcss()],
-  },
-
-  // Базовый URL Rust-backend, переопределяется через NUXT_PUBLIC_API_BASE.
-  runtimeConfig: {
-    public: {
-      apiBase: 'http://localhost:8080',
-    },
   },
 })

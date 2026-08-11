@@ -124,9 +124,9 @@ useSchemaOrg([
                 v-if="product.price !== null"
                 class="min-h-11 shrink-0 cursor-pointer border-0 bg-[#d65a1f] px-5 py-3 font-[Segoe_UI,Arial,sans-serif] font-[760] text-[#fffdf7] transition-colors duration-150 hover:bg-[#a53e10]"
                 type="button"
-                :aria-label="`Добавить в корзину: ${product.title}`"
+                :aria-label="`Добавить в заявку: ${product.title}`"
                 @click="addProduct(product.id)"
-              >В корзину</button>
+              >В заявку</button>
               <NuxtLink
                 v-else
                 class="inline-flex min-h-11 shrink-0 items-center bg-[#d65a1f] px-5 py-3 font-[Segoe_UI,Arial,sans-serif] font-[760] text-[#fffdf7] no-underline transition-colors duration-150 hover:bg-[#a53e10]"

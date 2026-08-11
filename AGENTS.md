@@ -5,8 +5,7 @@
 Piloproject consists of:
 
 - `frontend/` — Nuxt 3, Vue, TypeScript, and static generation.
-- `backend/` — Rust, Axum, SeaORM, and PostgreSQL.
-- `docs/` — API, security, deployment, and code requirements.
+- `docs/` — architecture, security, deployment, and code requirements.
 - `deploy/` and `scripts/` — operational and development scripts.
 
 Before making changes, read `README.md` and the documents in `docs/` that are relevant to the task.
@@ -18,7 +17,7 @@ Before making changes, read `README.md` and the documents in `docs/` that are re
 - Do not edit generated directories such as `node_modules`, `.nuxt`, `.output`, or `target`.
 - Do not perform a production deployment without an explicit request.
 - Never add secrets, passwords, or real production environment values to the repository.
-- Update `docs/backend-api.md` when an API contract changes.
+- Update `docs/backend-api.md` if an API is introduced or changed.
 - Follow `docs/code-style.md`.
 - Preserve Russian-language user-facing content and documentation unless the task asks for a translation.
 
@@ -30,26 +29,19 @@ Run the baseline check from the repository root:
 npm run check
 ```
 
-For backend changes, also run:
-
-```text
-cargo fmt --manifest-path backend/Cargo.toml --check
-cargo clippy --manifest-path backend/Cargo.toml -- -D warnings
-```
-
 For changes to static generation, routes, or SEO, run:
 
 ```text
 npm --prefix frontend run generate
 ```
 
-If generation requires a running backend or an environment variable, report that requirement explicitly.
+Generation is self-contained and must not require a backend or API environment variable.
 
 ## Subagents
 
 Use subagents when a task contains at least two independent workstreams. Good candidates include:
 
-- parallel frontend and backend investigation;
+- parallel frontend and operations investigation;
 - a separate security review;
 - test-coverage analysis;
 - reviewing a large branch against multiple independent criteria.

@@ -7,8 +7,8 @@ definePageMeta({
 })
 
 useSeoMeta({
-  title: 'Корзина',
-  description: 'Корзина заказа пиломатериалов пилорамы в Разбегаево.',
+  title: 'Предварительная заявка',
+  description: 'Локальный перечень пиломатериалов для предварительной заявки.',
   robots: 'noindex, nofollow',
 })
 
@@ -33,22 +33,22 @@ const orderText = computed(() => {
     return `${index + 1}. ${product.title} — ${quantity} ${product.unit} × ${(product.price ?? 0).toLocaleString('ru-RU')} ₽/${product.unit}`
   })
   return [
-    'Здравствуйте! Хочу заказать пиломатериалы:',
+    'Здравствуйте! Направляю предварительную заявку на пиломатериалы:',
     '',
     ...lines,
     '',
     `Предварительная сумма: ${formattedSubtotal.value}`,
-    'Пожалуйста, подтвердите наличие, итоговую стоимость и условия доставки.',
+    'Пожалуйста, подтвердите наличие, итоговую стоимость и условия доставки. Эта заявка не подтверждает заказ.',
   ].join('\n')
 })
 
 async function copyOrderText() {
   try {
     await navigator.clipboard.writeText(orderText.value)
-    copyFeedback.value = 'Состав заказа скопирован. Откройте MAX и отправьте его менеджеру.'
+    copyFeedback.value = 'Состав заявки скопирован. Откройте MAX и отправьте его менеджеру.'
   }
   catch {
-    copyFeedback.value = 'Не удалось скопировать автоматически. Позвоните менеджеру — корзина сохранится в браузере.'
+    copyFeedback.value = 'Не удалось скопировать автоматически. Позвоните менеджеру — заявка сохранится в браузере.'
   }
 }
 </script>
@@ -56,12 +56,12 @@ async function copyOrderText() {
 <template>
   <main>
     <section class="max-[560px]:px-[18px] border-b border-[#171916] bg-[#d8d2c6] px-[max(24px,calc((100vw_-_1280px)/2))] pb-10 pt-14">
-      <h1>Корзина</h1>
+      <h1>Предварительная заявка</h1>
     </section>
 
     <section class="max-[560px]:px-[18px] bg-[#f5f2eb] px-[max(24px,calc((100vw_-_1280px)/2))] pb-20 pt-10">
       <div v-if="detailedItems.length === 0" class="py-12">
-        <h2>Корзина пуста</h2>
+        <h2>Заявка пуста</h2>
         <p>Добавьте нужные позиции из каталога пиломатериалов.</p>
         <NuxtLink class="w-max border-b-2 border-current pb-[3px] font-[Segoe_UI,Arial,sans-serif] font-[760] text-[#1f3a2f] no-underline hover:text-[#d65a1f]" to="/pilomaterialy">Перейти в каталог</NuxtLink>
       </div>
@@ -83,22 +83,22 @@ async function copyOrderText() {
         </article>
 
         <div class="mt-10 flex flex-wrap items-end justify-between gap-8">
-          <button class="w-max border-0 border-b-2 border-current bg-transparent px-0 pb-[3px] font-[Segoe_UI,Arial,sans-serif] font-[760] text-[#a53e10]" type="button" @click="clearCart">Очистить корзину</button>
+          <button class="w-max border-0 border-b-2 border-current bg-transparent px-0 pb-[3px] font-[Segoe_UI,Arial,sans-serif] font-[760] text-[#a53e10]" type="button" @click="clearCart">Очистить заявку</button>
           <div class="max-w-[560px]">
             <p class="mb-3 font-[Segoe_UI,Arial,sans-serif] text-[0.8125rem] font-[760] uppercase">Предварительная сумма</p>
             <p class="text-[clamp(1.8rem,3vw,2.8rem)] font-[750] leading-none">{{ formattedSubtotal }}</p>
-            <p>Наличие, итоговую стоимость и условия доставки подтверждает менеджер.</p>
+            <p>Передача перечня не подтверждает заказ. Наличие, цена, доставка и заключение договора согласовываются с менеджером.</p>
             <div class="flex flex-wrap gap-3">
               <button
                 class="inline-flex min-h-11 cursor-pointer items-center border-0 bg-[#d65a1f] px-5 py-3 font-[Segoe_UI,Arial,sans-serif] font-[760] text-[#fffdf7] transition-colors duration-150 hover:bg-[#a53e10]"
                 type="button"
                 @click="copyOrderText"
-              >Скопировать заказ</button>
+              >Скопировать заявку</button>
               <a
                 class="inline-flex min-h-11 items-center border border-[#d65a1f] bg-[#d65a1f] px-5 py-3 font-[Segoe_UI,Arial,sans-serif] font-[760] text-[#fffdf7] no-underline transition-colors duration-150 hover:border-[#a53e10] hover:bg-[#a53e10]"
                 :href="businessMaxUrl"
                 target="_blank"
-                rel="noopener"
+                rel="noopener noreferrer"
               >Открыть MAX</a>
               <a
                 class="inline-flex min-h-11 items-center border border-[#171916] px-5 py-3 font-[Segoe_UI,Arial,sans-serif] font-[760] no-underline transition-colors duration-150 hover:bg-[#171916] hover:text-[#fffdf7]"

@@ -1,46 +1,22 @@
 # Безопасность
 
-## Что включено
+Сайт статический: нет API, базы данных, серверной авторизации и принимающих данные форм.
 
-- Backend ограничивает CORS через `ALLOWED_ORIGINS`. Wildcard `*` не используется.
-- Backend добавляет защитные заголовки: `X-Content-Type-Options`, `X-Frame-Options`,
-  `Referrer-Policy`, `Permissions-Policy`, `Content-Security-Policy`.
-- Frontend задает security headers через `routeRules` Nuxt. При отдаче чистой статики убедитесь,
-  что выбранный хостинг или веб-сервер действительно применяет эти заголовки.
-- JSON-тело API ограничено 16 КБ.
-- Поля отзывов ограничены на backend: `authorName` до 80 символов, `text` до 1000 символов,
-  `rating` от 1 до 5.
-- Внутренние ошибки PostgreSQL не возвращаются клиенту в открытом виде.
-- Админские операции требуют `Authorization: Basic ...`.
-- Basic Auth для админки хранится только в памяти вкладки и сбрасывается при перезагрузке страницы.
-- `/admin` закрыт от индексации и исключен из sitemap.
+## Браузер
 
-## Проверки
+- CSP разрешает скрипты, стили, изображения и сетевые запросы только с собственного домена;
+- `frame-src 'none'` и `form-action 'none'` запрещают фреймы и отправку форм;
+- `Referrer-Policy: no-referrer` не передаёт адресу внешней ссылки URL страницы;
+- внешние ссылки используют `noopener noreferrer`;
+- карта, отзывы и MAX открываются только после действия посетителя.
 
-```bash
-cd backend
-cargo fmt --check
-cargo clippy -- -D warnings
-cargo test
+## Сервер
 
-cd ../frontend
-npm audit --omit=dev
-npm run typecheck
-npm run generate
-```
+- HTTPS и security headers задаёт Nginx;
+- access log отключён;
+- error log ограничен уровнем `crit`;
+- в репозитории нет секретов и production-значений.
 
-## Остаточный риск
+IP-адрес всё равно технически передаётся серверу и сетевым провайдерам для доставки страницы. Настройки уменьшают его сохранение, но не могут исключить передачу.
 
-`npm audit` без `--omit=dev` сейчас показывает high advisories в dev/build-цепочке
-`nuxt -> nitropack -> archiver -> brace-expansion`. Production-аудит (`npm audit --omit=dev`)
-чистый. Принудительный override `archiver@8` ломает текущий Nitro, а `npm audit fix --force`
-ведет к major-переходу Nuxt. Обновляйте Nuxt/Nitro после появления совместимого фикса и обязательно
-прогоняйте `npm run typecheck` и `npm run generate`.
-
-## Production-чеклист
-
-- Включить HTTPS.
-- Задать длинный случайный `ADMIN_PASSWORD`.
-- Задать `ALLOWED_ORIGINS` только с реальными frontend-доменами.
-- Не публиковать backend напрямую в интернет, если API проксируется через веб-сервер.
-- Проверить security headers командой `curl -I https://example.com`.
+Перед подключением аналитики, рекламы, чата, формы или виджета требуется отдельная проверка источников запросов, cookies, оснований обработки и документации.

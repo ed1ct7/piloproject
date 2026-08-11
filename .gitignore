@@ -8,9 +8,6 @@ dist
 frontend/verify/
 /verify/
 
-# бэкенд
-/backend/target
-
 # прочее
 /.idea/
 .codex-logs/

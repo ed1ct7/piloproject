@@ -5,14 +5,12 @@
     "node": ">=22.12"
   },
   "scripts": {
-    "dev": "node scripts/dev.mjs",
-    "setup": "npm run install:frontend && npm run fetch:backend",
+    "dev": "npm --prefix frontend run dev -- --host 127.0.0.1 --port 3000",
+    "setup": "npm run install:frontend",
     "install:frontend": "npm --prefix frontend ci",
-    "fetch:backend": "node scripts/run-cargo.mjs fetch --manifest-path backend/Cargo.toml --locked",
-    "build": "npm run build:all",
-    "build:all": "npm run build:backend && npm run build:frontend",
-    "build:backend": "node scripts/run-cargo.mjs build --manifest-path backend/Cargo.toml --release --locked",
+    "build": "npm run build:frontend",
+    "build:all": "npm run build:frontend",
     "build:frontend": "npm --prefix frontend run generate",
-    "check": "node scripts/run-cargo.mjs test --manifest-path backend/Cargo.toml --locked && npm --prefix frontend run typecheck"
+    "check": "npm --prefix frontend run typecheck"
   }
 }

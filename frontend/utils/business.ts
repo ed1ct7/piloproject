@@ -12,6 +12,12 @@ export const businessPhoneInternational = '+7 921 984-91-01'
 /** Телефон для ссылки `tel:` — только цифры с кодом страны. */
 export const businessPhoneHref = 'tel:+79219849101'
 
+/** Публичный адрес электронной почты. */
+export const businessEmail = 'shidov_roman@mail.ru'
+
+/** Адрес электронной почты для ссылки `mailto:`. */
+export const businessEmailHref = `mailto:${businessEmail}`
+
 /** Публичная ссылка на профиль основного контакта в MAX. */
 export const businessMaxUrl = 'https://web.max.ru/100742329'
 
@@ -26,9 +32,6 @@ export const businessAddress = 'Ленинградская область, Ло�
 
 /** Карточка производственной площадки в Яндекс Картах. */
 export const businessMapsUrl = 'https://yandex.ru/maps/org/pilomaterialy_makoyev_r_a_/213229964032?si=d4wy1vbz26r7ax97ytxj2w38mr'
-
-/** Встраиваемая карта производственной площадки. */
-export const businessMapEmbedUrl = 'https://yandex.ru/map-widget/v1/?ll=29.963405%2C59.807923&mode=search&oid=213229964032&ol=biz&z=16'
 
 /** Юридические реквизиты индивидуального предпринимателя. */
 export const businessRequisites = {

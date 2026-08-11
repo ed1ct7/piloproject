@@ -47,7 +47,7 @@ watch(
           <NuxtLink to="/dostavka">Доставка</NuxtLink>
           <NuxtLink to="/otzyvy">Отзывы</NuxtLink>
           <NuxtLink to="/kontakty">Контакты</NuxtLink>
-          <NuxtLink to="/cart">Корзина ({{ totalQuantity }})</NuxtLink>
+          <NuxtLink to="/cart">Заявка ({{ totalQuantity }})</NuxtLink>
         </nav>
 
         <a class="max-[1100px]:hidden ml-[18px] inline-flex items-center whitespace-nowrap font-[Segoe_UI,Arial,sans-serif] text-base font-[760] tracking-[0.01em] no-underline hover:text-[#d65a1f]" :href="businessPhoneHref">{{ businessPhone }}</a>
@@ -55,7 +55,7 @@ watch(
           class="max-[1100px]:col-start-2 max-[1100px]:row-start-1 max-[840px]:col-start-3 max-[840px]:ml-2.5 max-[840px]:min-h-11 max-[840px]:px-3 max-[560px]:hidden ml-[18px] inline-flex min-h-11 items-center bg-[#d65a1f] px-4 font-[Segoe_UI,Arial,sans-serif] text-[0.9375rem] font-[760] text-[#fffdf7] no-underline transition-colors duration-150 hover:bg-[#a53e10]"
           :href="businessMaxUrl"
           target="_blank"
-          rel="noopener"
+          rel="noopener noreferrer"
           aria-label="Написать в MAX"
         >Написать в MAX</a>
       </div>
@@ -86,17 +86,18 @@ watch(
           class="font-[Segoe_UI,Arial,sans-serif] text-[1.15rem] font-[760] text-[#fffdf7] no-underline hover:text-[#d65a1f]"
           :href="businessSecondaryPhoneHref"
         >{{ businessSecondaryPhone }}</a>
+        <a class="font-[Segoe_UI,Arial,sans-serif] font-[700] text-[#fffdf7] no-underline hover:text-[#d65a1f]" :href="businessEmailHref">{{ businessEmail }}</a>
         <a
           class="w-max border-b-2 border-current pb-[3px] font-[Segoe_UI,Arial,sans-serif] font-[760] text-[#fffdf7] no-underline transition-colors duration-150 hover:text-[#d65a1f]"
           :href="businessMaxUrl"
           target="_blank"
-          rel="noopener"
+          rel="noopener noreferrer"
         >Написать в MAX</a>
         <a
           class="w-max border-b-2 border-current pb-[3px] font-[Segoe_UI,Arial,sans-serif] font-[760] text-[#fffdf7] no-underline transition-colors duration-150 hover:text-[#d65a1f]"
           :href="businessMapsUrl"
           target="_blank"
-          rel="noopener"
+          rel="noopener noreferrer"
         >Открыть в Яндекс Картах</a>
       </div>
 

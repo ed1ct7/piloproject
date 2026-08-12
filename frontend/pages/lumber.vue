@@ -16,7 +16,14 @@ const selectedProduct = ref<PriceListProduct | null>(null)
 const selectedProductTone = computed(() => selectedProduct.value
   ? getProductCardTone(selectedProduct.value)
   : {})
-const { addProduct } = useCart()
+const { addProduct, totalQuantity } = useCart()
+const productDialog = useTemplateRef<HTMLDialogElement>('product-dialog')
+const closeDialogButton = useTemplateRef<HTMLButtonElement>('close-dialog-button')
+const catalogStatusMessage = ref('')
+const dialogStatusMessage = ref('')
+let productDialogTrigger: HTMLElement | null = null
+let catalogStatusTimeout: ReturnType<typeof setTimeout> | undefined
+let dialogStatusTimeout: ReturnType<typeof setTimeout> | undefined
 
 const categoryFilterOptions: { label: string, value: CatalogFilterValue }[] = [
   { label: 'Все', value: 'all' },
@@ -38,7 +45,7 @@ const productCardToneStyles: Record<ProductColorGroup, Record<string, string>> =
     '--card-panel': '#e3bf92',
   },
   evOgnebio: {
-    '--card-accent': '#a8461e',
+    '--card-accent': '#914019',
     '--card-bg': '#ead0bf',
     '--card-line': '#c88c6f',
     '--card-panel': '#d88b68',
@@ -87,6 +94,14 @@ function getProductCardTone(product: PriceListProduct): Record<string, string> {
   return productCardToneStyles[getProductColorGroup(product)]
 }
 
+function getProductDialogImageSrcset(product: PriceListProduct): string {
+  const imagePath = product.image.replace(/^\//, '')
+  return [
+    `/_ipx/f_webp&q_82&s_480x640/${imagePath} 480w`,
+    `/_ipx/f_webp&q_82&s_720x960/${imagePath} 720w`,
+  ].join(', ')
+}
+
 function isProductInSelectedFilter(product: PriceListProduct, filter: CatalogFilterValue): boolean {
   if (filter === 'all') {
     return true
@@ -115,13 +130,69 @@ function isProductInSelectedFilter(product: PriceListProduct, filter: CatalogFil
   return product.category === 'vagonka'
 }
 
-function openProductDetails(product: PriceListProduct): void {
+async function openProductDetails(product: PriceListProduct, event?: Event): Promise<void> {
+  productDialogTrigger = event?.currentTarget instanceof HTMLElement ? event.currentTarget : null
   selectedProduct.value = product
+  await nextTick()
+
+  if (productDialog.value && !productDialog.value.open) {
+    productDialog.value.showModal()
+    closeDialogButton.value?.focus()
+  }
 }
 
 function closeProductDetails(): void {
-  selectedProduct.value = null
+  if (productDialog.value?.open) {
+    productDialog.value.close()
+    return
+  }
+
+  finishClosingProductDetails()
 }
+
+function finishClosingProductDetails(): void {
+  selectedProduct.value = null
+  nextTick(() => productDialogTrigger?.focus())
+}
+
+function handleDialogBackdropClick(event: MouseEvent): void {
+  if (event.target === productDialog.value) {
+    closeProductDetails()
+  }
+}
+
+function showStatusMessage(message: string, source: 'catalog' | 'dialog'): void {
+  const messageRef = source === 'dialog' ? dialogStatusMessage : catalogStatusMessage
+  const activeTimeout = source === 'dialog' ? dialogStatusTimeout : catalogStatusTimeout
+  messageRef.value = message
+  if (activeTimeout) {
+    clearTimeout(activeTimeout)
+  }
+
+  const nextTimeout = setTimeout(() => {
+    messageRef.value = ''
+  }, 2600)
+  if (source === 'dialog') {
+    dialogStatusTimeout = nextTimeout
+  }
+  else {
+    catalogStatusTimeout = nextTimeout
+  }
+}
+
+function addProductWithFeedback(product: PriceListProduct, source: 'catalog' | 'dialog'): void {
+  addProduct(product.id)
+  showStatusMessage(`${product.displayTitle}: добавлено в заявку. Товаров в заявке: ${totalQuantity.value}`, source)
+}
+
+onBeforeUnmount(() => {
+  if (catalogStatusTimeout) {
+    clearTimeout(catalogStatusTimeout)
+  }
+  if (dialogStatusTimeout) {
+    clearTimeout(dialogStatusTimeout)
+  }
+})
 
 useSeoMeta({
   title: 'Пиломатериалы в Разбегаево – доска, вагонка и цены',
@@ -192,20 +263,16 @@ useSchemaOrg([
             >{{ option.label }}</button>
           </div>
 
-          <span class="shrink-0 rounded-[6px] border border-[#9aa98f] bg-[#d6ded0] px-2 py-1.5 font-[Segoe_UI,Arial,sans-serif] text-[0.74rem] font-[760] leading-none text-[#1f3a2f] max-[560px]:text-[0.7rem]">{{ filteredProductsCount }} поз.</span>
+          <span class="shrink-0 rounded-[6px] border border-[#9aa98f] bg-[#d6ded0] px-2 py-1.5 font-[Segoe_UI,Arial,sans-serif] text-[0.74rem] font-[760] leading-none text-[#1f3a2f] max-[560px]:text-[0.7rem]" aria-live="polite" aria-atomic="true">{{ filteredProductsCount }} поз.</span>
         </div>
       </div>
 
-      <div class="grid auto-rows-fr grid-cols-4 gap-5 py-10 max-[1180px]:grid-cols-3 max-[900px]:grid-cols-2 max-[560px]:grid-cols-1 max-[560px]:py-8">
+      <TransitionGroup name="catalog-products" tag="div" class="grid auto-rows-fr grid-cols-4 gap-5 py-10 max-[1180px]:grid-cols-3 max-[900px]:grid-cols-2 max-[560px]:grid-cols-1 max-[560px]:py-8">
         <article
           v-for="product in filteredProducts"
           :key="product.id"
-          class="flex h-full min-w-0 cursor-pointer flex-col border border-t-[6px] border-[#171916] border-t-[var(--card-accent)] bg-[var(--card-bg)] shadow-[0_14px_30px_rgba(23,25,22,0.13)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_22px_46px_rgba(23,25,22,0.2)]"
+          class="flex h-full min-w-0 flex-col border border-t-[6px] border-[#171916] border-t-[var(--card-accent)] bg-[var(--card-bg)] shadow-[0_14px_30px_rgba(23,25,22,0.13)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_22px_46px_rgba(23,25,22,0.2)]"
           :style="getProductCardTone(product)"
-          tabindex="0"
-          @click="openProductDetails(product)"
-          @keydown.enter.prevent="openProductDetails(product)"
-          @keydown.space.prevent="openProductDetails(product)"
         >
           <figure data-parallax="6" class="h-[165px] overflow-hidden border-b-4 border-[var(--card-accent)] bg-[var(--card-panel)] max-[900px]:h-[185px] max-[560px]:h-[190px] [&_img]:h-full [&_img]:w-full [&_img]:object-cover">
             <NuxtImg
@@ -216,7 +283,7 @@ useSchemaOrg([
               sizes="xs:100vw sm:50vw lg:34vw"
               densities="1"
               format="webp"
-              loading="eager"
+              loading="lazy"
             />
           </figure>
 
@@ -234,52 +301,50 @@ useSchemaOrg([
                 <button
                   class="w-max border-0 border-b-2 border-current bg-transparent px-0 pb-[3px] font-[Segoe_UI,Arial,sans-serif] text-[0.88rem] font-[760] text-[#1f3a2f] transition-colors duration-150 hover:text-[var(--card-accent)]"
                   type="button"
-                  @click.stop="openProductDetails(product)"
+                  @click="openProductDetails(product, $event)"
                 >Подробнее</button>
                 <button
                   v-if="product.price !== null"
                   class="inline-flex w-max shrink-0 cursor-pointer items-center border-0 border-b-2 border-current bg-transparent px-0 pb-[3px] font-[Segoe_UI,Arial,sans-serif] text-[0.9rem] font-extrabold leading-none text-[var(--card-accent)] transition-colors duration-150 hover:text-[#171916]"
                   type="button"
                   :aria-label="`Добавить в заявку: ${product.title}`"
-                  @click.stop="addProduct(product.id)"
+                  @click="addProductWithFeedback(product, 'catalog')"
                 >В заявку</button>
                 <NuxtLink
                   v-else
                   class="w-max shrink-0 border-0 border-b-2 border-current bg-transparent px-0 pb-[3px] font-[Segoe_UI,Arial,sans-serif] text-[0.88rem] font-[760] text-[var(--card-accent)] no-underline transition-colors duration-150 hover:text-[#171916]"
                   to="/kontakty"
-                  @click.stop
                 >Уточнить цену</NuxtLink>
               </div>
             </div>
           </div>
         </article>
-      </div>
+      </TransitionGroup>
 
       <div class="mt-7 flex justify-end max-[560px]:justify-start">
         <NuxtLink class="w-max cursor-pointer border-0 border-b-2 border-current bg-transparent px-0 pb-[3px] font-[Segoe_UI,Arial,sans-serif] font-[760] text-[#1f3a2f] no-underline transition-colors duration-150 hover:text-[#a8461e] disabled:cursor-not-allowed disabled:opacity-50" to="/kontakty">Уточнить наличие</NuxtLink>
       </div>
     </section>
 
-    <div
+    <dialog
       v-if="selectedProduct"
-      class="fixed inset-0 z-50 grid place-items-center bg-[rgba(23,25,22,0.54)] px-5 py-8"
-      role="dialog"
-      aria-modal="true"
+      ref="product-dialog"
+      class="fixed inset-0 z-50 m-0 hidden h-dvh max-h-none w-screen max-w-none place-items-center border-0 bg-[rgba(23,25,22,0.54)] px-5 py-8 open:grid"
       :aria-labelledby="`product-details-${selectedProduct.id}`"
-      @click.self="closeProductDetails"
-      @keydown.esc="closeProductDetails"
+      @click="handleDialogBackdropClick"
+      @close="finishClosingProductDetails"
     >
       <article class="grid max-h-[min(760px,calc(100vh_-_48px))] w-[min(940px,100%)] grid-cols-[minmax(260px,0.86fr)_minmax(0,1.14fr)] overflow-auto border border-t-[8px] border-[#171916] border-t-[var(--card-accent)] bg-[var(--card-bg)] shadow-[0_28px_80px_rgba(23,25,22,0.36)] max-[760px]:grid-cols-1" :style="selectedProductTone">
         <figure class="min-h-[420px] overflow-hidden border-r border-[#171916] bg-[var(--card-panel)] max-[760px]:min-h-[260px] max-[760px]:border-r-0 max-[760px]:border-b [&_img]:h-full [&_img]:w-full [&_img]:object-cover">
-          <NuxtImg
+          <img
             :src="selectedProduct.image"
+            :srcset="getProductDialogImageSrcset(selectedProduct)"
+            sizes="(max-width: 760px) calc(100vw - 40px), 400px"
             :alt="selectedProduct.alt"
             width="900"
             height="1200"
-            sizes="xs:100vw md:45vw lg:38vw"
-            densities="1"
-            format="webp"
             loading="eager"
+            decoding="async"
           />
         </figure>
 
@@ -290,6 +355,7 @@ useSchemaOrg([
               <h2 :id="`product-details-${selectedProduct.id}`" class="mb-0 !text-[clamp(1.55rem,2.3vw,2.4rem)]">{{ selectedProduct.displayTitle }}</h2>
             </div>
             <button
+              ref="close-dialog-button"
               class="grid size-11 shrink-0 place-items-center border border-[#171916] bg-[#fff8eb] text-2xl leading-none transition-colors hover:bg-[#171916] hover:text-[#fffdf7]"
               type="button"
               aria-label="Закрыть подробности"
@@ -316,7 +382,7 @@ useSchemaOrg([
               class="min-h-11 cursor-pointer border-0 bg-[var(--card-accent)] px-5 py-3 font-[Segoe_UI,Arial,sans-serif] font-[760] text-[#fffdf7] shadow-[0_8px_18px_rgba(23,25,22,0.16)] transition-colors duration-150 hover:bg-[#171916]"
               type="button"
               :aria-label="`Добавить в заявку: ${selectedProduct.title}`"
-              @click="addProduct(selectedProduct.id)"
+              @click="addProductWithFeedback(selectedProduct, 'dialog')"
             >В заявку</button>
             <NuxtLink
               v-else
@@ -324,9 +390,34 @@ useSchemaOrg([
               to="/kontakty"
             >Уточнить цену</NuxtLink>
           </div>
+          <UiStatusMessage class="mt-4" :message="dialogStatusMessage" />
         </div>
       </article>
-    </div>
+    </dialog>
+
+    <UiStatusMessage :message="catalogStatusMessage" floating />
 
   </main>
 </template>
+
+<style scoped>
+.catalog-products-enter-active,
+.catalog-products-leave-active,
+.catalog-products-move {
+  transition: opacity 160ms ease, transform 160ms ease;
+}
+
+.catalog-products-enter-from,
+.catalog-products-leave-to {
+  opacity: 0;
+  transform: scale(0.985);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .catalog-products-enter-active,
+  .catalog-products-leave-active,
+  .catalog-products-move {
+    transition: none;
+  }
+}
+</style>

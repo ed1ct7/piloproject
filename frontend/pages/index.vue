@@ -133,7 +133,7 @@ useSchemaOrg([
           alt="Ленточная пилорама с бревном на рельсах производственной площадки"
           width="1200"
           height="1600"
-          sizes="xs:100vw sm:100vw md:55vw lg:55vw xl:55vw"
+          sizes="xs:100vw sm:100vw md:100vw 841:42vw lg:42vw xl:42vw"
           densities="1"
           format="webp"
           loading="eager"
@@ -185,7 +185,7 @@ useSchemaOrg([
             </div>
             <div>
               <dt>Цена</dt>
-              <dd class="whitespace-nowrap font-[Segoe_UI,Arial,sans-serif] font-extrabold text-[#a8461e] text-[1.05rem]">
+              <dd class="whitespace-nowrap font-[Segoe_UI,Arial,sans-serif] font-extrabold text-[#7a451e] text-[1.05rem]">
                 {{ formatProductPrice(product) }}
               </dd>
             </div>
@@ -235,7 +235,7 @@ useSchemaOrg([
             sizes="xs:100vw sm:50vw md:25vw lg:25vw"
             densities="1"
             format="webp"
-            loading="eager"
+            loading="lazy"
           />
           <figcaption>{{ photo.caption }}</figcaption>
         </figure>
@@ -254,7 +254,7 @@ useSchemaOrg([
         data-parallax="14"
         class="aspect-[4/3] w-full max-w-[620px] justify-self-end border border-[#171916] bg-[#171916] object-cover shadow-[0_20px_48px_rgba(23,25,22,0.22)] max-[840px]:justify-self-start"
         controls
-        preload="metadata"
+        preload="none"
         playsinline
         poster="/images/pilorama-stanok-brevno.jpg"
         aria-label="Короткое видео с производственной площадки пилорамы"

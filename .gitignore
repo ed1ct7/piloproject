@@ -7,6 +7,8 @@ node_modules
 dist
 frontend/verify/
 /verify/
+frontend/test-results/
+frontend/playwright-report/
 
 # прочее
 /.idea/

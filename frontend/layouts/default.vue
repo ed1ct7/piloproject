@@ -1,19 +1,35 @@
 <script setup lang="ts">
 const route = useRoute()
 const navOpen = ref(false)
+const menuButton = useTemplateRef<HTMLButtonElement>('menu-button')
 const { totalQuantity } = useCart()
+
+function closeNavigation(restoreFocus = false): void {
+  if (!navOpen.value) {
+    return
+  }
+
+  navOpen.value = false
+  if (restoreFocus) {
+    nextTick(() => menuButton.value?.focus())
+  }
+}
+
+function handleNavigationEscape(): void {
+  closeNavigation(true)
+}
 
 watch(
   () => route.fullPath,
   () => {
-    navOpen.value = false
+    closeNavigation()
   },
 )
 </script>
 
 <template>
   <div class="min-h-screen overflow-x-hidden bg-[#efe6d7] font-[Segoe_UI,Arial,sans-serif] text-base leading-[1.55] text-[#171916] selection:bg-[#1f3a2f] selection:text-[#fffdf7] [&_address]:not-italic [&_button]:font-[inherit] [&_figure]:m-0 [&_figcaption]:flex [&_figcaption]:justify-between [&_figcaption]:gap-4 [&_figcaption]:border-t [&_figcaption]:border-[#171916] [&_figcaption]:bg-[#fff8eb] [&_figcaption]:px-4 [&_figcaption]:py-3 [&_figcaption]:font-[Segoe_UI,Arial,sans-serif] [&_figcaption]:text-sm [&_figcaption]:font-semibold [&_figcaption]:uppercase [&_figcaption]:leading-[1.4] [&_figcaption]:text-[#171916] [&_h1]:mt-0 [&_h1]:text-[clamp(2.55rem,3.65vw,4.55rem)] [&_h1]:font-[750] [&_h1]:leading-[1.04] [&_h1]:tracking-normal [&_h1]:[overflow-wrap:anywhere] [&_h2]:mt-0 [&_h2]:text-[clamp(1.85rem,2.35vw,2.9rem)] [&_h2]:font-[750] [&_h2]:leading-[1.1] [&_h2]:tracking-normal [&_h2]:[overflow-wrap:anywhere] [&_h3]:mt-0 [&_h3]:text-[clamp(1.15rem,1.35vw,1.45rem)] [&_h3]:font-[750] [&_h3]:leading-[1.15] [&_h3]:[overflow-wrap:anywhere] [&_img]:block [&_img]:max-w-full [&_p]:mt-0 [&_video]:block [&_video]:max-w-full max-[560px]:[&_figcaption]:block max-[560px]:[&_h1]:text-[clamp(2.15rem,10vw,3rem)] max-[560px]:[&_h2]:text-[clamp(1.6rem,7.5vw,2.2rem)]">
-    <header class="sticky top-0 z-30 min-h-[72px] border-b border-[#171916] bg-[#fff8eb] shadow-[0_8px_18px_rgba(23,25,22,0.08)]">
+    <header class="sticky top-0 z-30 min-h-[72px] border-b border-[#171916] bg-[#fff8eb] shadow-[0_8px_18px_rgba(23,25,22,0.08)]" @keydown.esc="handleNavigationEscape">
       <div class="max-[1100px]:grid-cols-[minmax(220px,1fr)_auto] max-[840px]:min-h-16 max-[840px]:w-[calc(100%-32px)] max-[840px]:grid-cols-[1fr_auto_auto] max-[560px]:grid-cols-[1fr_auto] relative mx-auto grid min-h-[72px] w-[min(1280px,calc(100%_-_48px))] grid-cols-[minmax(240px,1fr)_auto_auto_auto] items-center">
         <NuxtLink class="max-[560px]:gap-[9px] inline-flex w-max items-center gap-[13px] no-underline" to="/" aria-label="Пилорама Разбегаево, главная страница">
           <span class="max-[840px]:size-9 grid size-11 place-items-center bg-[#1f3a2f] font-[Segoe_UI,Arial,sans-serif] text-sm font-extrabold text-[#fffdf7]" aria-hidden="true">ПР</span>
@@ -24,11 +40,12 @@ watch(
         </NuxtLink>
 
         <button
+          ref="menu-button"
           class="max-[840px]:col-start-2 max-[840px]:ml-2.5 max-[840px]:block max-[560px]:col-start-2 hidden size-11 border border-[#171916] bg-transparent [&_span]:mx-auto [&_span]:my-[5px] [&_span]:block [&_span]:h-0.5 [&_span]:w-5 [&_span]:bg-[#171916]"
           type="button"
           :aria-expanded="navOpen"
           aria-controls="main-navigation"
-          aria-label="Открыть основную навигацию"
+          :aria-label="navOpen ? 'Закрыть основную навигацию' : 'Открыть основную навигацию'"
           @click="navOpen = !navOpen"
         >
           <span />

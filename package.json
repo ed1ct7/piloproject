@@ -11,6 +11,8 @@
     "build": "npm run build:frontend",
     "build:all": "npm run build:frontend",
     "build:frontend": "npm --prefix frontend run generate",
-    "check": "npm --prefix frontend run typecheck"
+    "check": "npm --prefix frontend run typecheck",
+    "test": "npm --prefix frontend run test:unit",
+    "test:smoke": "npm --prefix frontend run test:smoke"
   }
 }

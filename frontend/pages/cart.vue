@@ -105,7 +105,7 @@ async function copyOrderText() {
                 :href="businessPhoneHref"
               >Позвонить: {{ businessPhone }}</a>
             </div>
-            <p v-if="copyFeedback" class="mt-4 text-sm" role="status">{{ copyFeedback }}</p>
+            <UiStatusMessage class="mt-4" :message="copyFeedback" />
             <a
               class="mt-3 inline-flex border-b-2 border-current pb-1 font-[Segoe_UI,Arial,sans-serif] font-[760] no-underline hover:text-[#a8461e]"
               :href="businessSecondaryPhoneHref"

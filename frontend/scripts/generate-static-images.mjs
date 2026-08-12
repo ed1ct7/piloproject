@@ -19,6 +19,15 @@ for (const file of htmlFiles) {
   }
 }
 
+const productsSource = await readFile(join(projectDir, 'utils', 'products.ts'), 'utf8')
+const productImageMatches = productsSource.matchAll(/image:\s*['"](\/images\/[^'"]+)['"]/g)
+
+for (const match of productImageMatches) {
+  const source = match[1]
+  imageRoutes.add(`/_ipx/f_webp&q_82&s_480x640${source}`)
+  imageRoutes.add(`/_ipx/f_webp&q_82&s_720x960${source}`)
+}
+
 for (const route of imageRoutes) {
   const image = parseIpxRoute(route)
 

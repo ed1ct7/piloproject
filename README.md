@@ -18,8 +18,12 @@ npm run dev
 
 ```bash
 npm run check   # проверка типов
+npm run test    # модульные проверки данных и SEO-маршрутов
 npm run build   # статическая генерация
+npm run test:smoke # генерация и браузерная проверка страниц, доступности и приватности
 ```
+
+Перед первым браузерным прогоном установите Chromium для зафиксированной версии Playwright: `npm --prefix frontend exec -- playwright install chromium`.
 
 Результат генерации находится в `frontend/.output/public`.
 

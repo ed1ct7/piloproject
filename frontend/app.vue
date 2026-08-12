@@ -267,18 +267,15 @@ body {
 }
 
 .motion-reveal {
-  opacity: 0;
   translate: 0 24px;
   scale: 0.992;
   transition:
     translate 680ms cubic-bezier(0.22, 1, 0.36, 1) var(--motion-delay, 0ms),
-    scale 680ms cubic-bezier(0.22, 1, 0.36, 1) var(--motion-delay, 0ms),
-    opacity 520ms ease var(--motion-delay, 0ms);
+    scale 680ms cubic-bezier(0.22, 1, 0.36, 1) var(--motion-delay, 0ms);
   will-change: translate, scale;
 }
 
 .motion-reveal.is-motion-visible {
-  opacity: 1;
   translate: 0 0;
   scale: 1;
   will-change: auto;
@@ -286,22 +283,15 @@ body {
 
 .page-enter-active,
 .page-leave-active {
-  transition:
-    opacity 220ms ease,
-    transform 320ms cubic-bezier(0.22, 1, 0.36, 1),
-    filter 220ms ease;
+  transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .page-enter-from {
-  opacity: 0;
   transform: translateY(10px);
-  filter: blur(3px);
 }
 
 .page-leave-to {
-  opacity: 0;
   transform: translateY(-6px);
-  filter: blur(2px);
 }
 
 [data-parallax] {

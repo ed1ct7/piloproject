@@ -176,7 +176,26 @@ watch(
 .site-shell h1,
 .site-shell h2,
 .site-shell h3 {
+  margin: 0;
   overflow-wrap: anywhere;
+}
+
+.site-shell h1 {
+  font-size: clamp(2.8rem, 4.1vw, 4.8rem);
+  font-weight: 400;
+  line-height: 1.02;
+}
+
+.site-shell h2 {
+  font-size: clamp(2.1rem, 3vw, 3.4rem);
+  font-weight: 400;
+  line-height: 1.06;
+}
+
+.site-shell h3 {
+  font-size: clamp(1.25rem, 1.6vw, 1.65rem);
+  font-weight: 700;
+  line-height: 1.18;
 }
 
 .menu-toggle {
@@ -261,6 +280,18 @@ watch(
 @keyframes site-scroll-progress {
   to {
     transform: scaleX(1);
+  }
+}
+
+@media (max-width: 560px) {
+  .site-shell h1 {
+    overflow-wrap: normal;
+    font-size: clamp(2.45rem, 11vw, 3.3rem);
+    hyphens: auto;
+  }
+
+  .site-shell h2 {
+    font-size: clamp(2rem, 9vw, 2.75rem);
   }
 }
 

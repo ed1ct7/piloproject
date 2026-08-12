@@ -25,7 +25,7 @@ useHead({
       </div>
     </section>
 
-    <article class="mx-auto w-[min(980px,100%)] px-8 py-14 text-[#30332e] max-[560px]:px-[18px] [&_a]:font-semibold [&_a]:underline [&_h2]:mb-4 [&_h2]:mt-10 [&_li]:leading-[1.65] [&_p]:leading-[1.7] [&_ul]:grid [&_ul]:gap-2">
+    <article class="mx-auto w-[min(980px,100%)] px-8 py-14 text-[#30332e] max-[560px]:px-[18px] [&_a]:font-semibold [&_a]:underline [&_h2]:mb-4 [&_h2]:mt-10 [&_li]:leading-[1.65] [&_p+p]:mt-3 [&_p]:leading-[1.7] [&_ul]:grid [&_ul]:gap-2">
       <p>Настоящая политика относится к сайту <a :href="siteUrl">pilorama-razbegaevo.ru</a>.</p>
 
       <h2>1. Владелец сайта</h2>

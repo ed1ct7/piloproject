@@ -1,4 +1,5 @@
 import AxeBuilder from '@axe-core/playwright'
+import type { Locator } from '@playwright/test'
 import { expect, test } from '@playwright/test'
 
 const publicRoutes = [
@@ -11,6 +12,20 @@ const publicRoutes = [
   '/politika-konfidencialnosti',
   '/cart',
 ]
+
+async function expectVerticalGap(upper: Locator, lower: Locator, minimum: number) {
+  const upperBox = await upper.boundingBox()
+  const lowerBox = await lower.boundingBox()
+
+  expect(upperBox).not.toBeNull()
+  expect(lowerBox).not.toBeNull()
+
+  if (!upperBox || !lowerBox) {
+    return
+  }
+
+  expect(lowerBox.y - (upperBox.y + upperBox.height)).toBeGreaterThanOrEqual(minimum)
+}
 
 test.beforeEach(async ({ page }) => {
   const externalRequests: string[] = []
@@ -88,6 +103,42 @@ test('мобильное меню сообщает состояние и зак�
   expect((page as typeof page & { externalRequests: string[] }).externalRequests).toEqual([])
 })
 
+test('текстовые блоки сохраняют вертикальный ритм', async ({ page }) => {
+  await page.goto('/o-nas')
+
+  const hero = page.locator('main > section').first()
+  await expectVerticalGap(hero.locator('h1'), hero.locator('p').last(), 20)
+
+  const production = page.locator('section[aria-labelledby="production-title"]')
+  const productionParagraphs = production.locator('p').filter({ hasNotText: 'Чем занимаемся' })
+  await expectVerticalGap(production.locator('h2'), productionParagraphs.nth(0), 20)
+  await expectVerticalGap(productionParagraphs.nth(0), productionParagraphs.nth(1), 12)
+
+  const nextStep = page.locator('section[aria-labelledby="next-step-title"] > div').nth(1)
+  await expectVerticalGap(nextStep.locator('p'), nextStep.locator('a').first(), 20)
+
+  await page.goto('/kontakty')
+  const map = page.locator('section[aria-labelledby="map-title"] > div').first()
+  await expectVerticalGap(map.locator('h2'), map.locator(':scope > p'), 20)
+  await expectVerticalGap(map.locator(':scope > p'), map.locator(':scope > a'), 20)
+
+  await page.goto('/cart')
+  const emptyCart = page.getByText('Заявка пуста').locator('..')
+  await expectVerticalGap(emptyCart.locator('h2'), emptyCart.locator('p'), 16)
+  await expectVerticalGap(emptyCart.locator('p'), emptyCart.locator('a'), 16)
+
+  await page.goto('/politika-konfidencialnosti')
+  const policyParagraphs = page.locator('article > p')
+  await expectVerticalGap(policyParagraphs.nth(1), policyParagraphs.nth(2), 12)
+
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto('/o-nas')
+  const mobileProduction = page.locator('section[aria-labelledby="production-title"]')
+  const mobileParagraphs = mobileProduction.locator('p').filter({ hasNotText: 'Чем занимаемся' })
+  await expectVerticalGap(mobileProduction.locator('h2'), mobileParagraphs.nth(0), 20)
+  await expectVerticalGap(mobileParagraphs.nth(0), mobileParagraphs.nth(1), 12)
+})
+
 test('корзина хранится только локально и переживает перезагрузку', async ({ page }) => {
   await page.goto('/pilomaterialy')
   await page.getByRole('button', { name: /Добавить в заявку/ }).first().click()
@@ -97,5 +148,10 @@ test('корзина хранится только локально и пере�
   await page.reload()
   await expect(page.getByRole('button', { name: /Увеличить количество/ })).toBeVisible()
   await expect(page.getByRole('button', { name: 'Скопировать заявку' })).toBeVisible()
+
+  const orderSummary = page.getByText('Предварительная сумма', { exact: true }).locator('..')
+  const summaryParagraphs = orderSummary.locator(':scope > p')
+  await expectVerticalGap(summaryParagraphs.nth(1), summaryParagraphs.nth(2), 20)
+  await expectVerticalGap(summaryParagraphs.nth(2), orderSummary.locator(':scope > div').first(), 20)
   expect((page as typeof page & { externalRequests: string[] }).externalRequests).toEqual([])
 })

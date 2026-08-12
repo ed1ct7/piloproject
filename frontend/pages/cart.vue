@@ -60,7 +60,7 @@ async function copyOrderText() {
     </section>
 
     <section class="max-[560px]:px-[18px] bg-[#efe6d7] px-[max(24px,calc((100vw_-_1280px)/2))] pb-20 pt-10">
-      <div v-if="detailedItems.length === 0" class="py-12">
+      <div v-if="detailedItems.length === 0" class="grid justify-items-start gap-4 py-12">
         <h2>Заявка пуста</h2>
         <p>Добавьте нужные позиции из каталога пиломатериалов.</p>
         <NuxtLink class="w-max border-b-2 border-current pb-[3px] font-[Segoe_UI,Arial,sans-serif] font-[760] text-[#1f3a2f] no-underline hover:text-[#a8461e]" to="/pilomaterialy">Перейти в каталог</NuxtLink>
@@ -86,8 +86,8 @@ async function copyOrderText() {
           <button class="w-max border-0 border-b-2 border-current bg-transparent px-0 pb-[3px] font-[Segoe_UI,Arial,sans-serif] font-[760] text-[#a8461e]" type="button" @click="clearCart">Очистить заявку</button>
           <div class="max-w-[560px]">
             <p class="mb-3 font-[Segoe_UI,Arial,sans-serif] text-[0.8125rem] font-[760] uppercase">Предварительная сумма</p>
-            <p class="text-[clamp(1.8rem,3vw,2.8rem)] font-[750] leading-none">{{ formattedSubtotal }}</p>
-            <p>Передача перечня не подтверждает заказ. Наличие, цена, доставка и заключение договора согласовываются с менеджером.</p>
+            <p class="mb-5 text-[clamp(1.8rem,3vw,2.8rem)] font-[750] leading-none">{{ formattedSubtotal }}</p>
+            <p class="mb-5">Передача перечня не подтверждает заказ. Наличие, цена, доставка и заключение договора согласовываются с менеджером.</p>
             <div class="flex flex-wrap gap-3">
               <button
                 class="inline-flex min-h-11 cursor-pointer items-center border-0 bg-[#a8461e] px-5 py-3 font-[Segoe_UI,Arial,sans-serif] font-[760] text-[#fffdf7] transition-colors duration-150 hover:bg-[#7a451e]"

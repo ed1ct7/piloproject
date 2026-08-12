@@ -95,14 +95,16 @@ useSchemaOrg([
     </section>
 
     <section class="max-[840px]:grid-cols-1 mx-auto grid w-[min(1280px,100%)] grid-cols-[minmax(280px,0.38fr)_minmax(0,0.62fr)] border-b border-[#171916] bg-[#d6ded0]" aria-labelledby="map-title">
-      <div class="max-[560px]:px-5 max-[560px]:py-10 flex flex-col justify-center p-[56px]">
-        <p class="mb-4 font-[Segoe_UI,Arial,sans-serif] text-sm font-[760] uppercase leading-[1.4] tracking-[0.04em]">Схема проезда</p>
-        <h2 id="map-title">Производство на карте</h2>
+      <div class="max-[560px]:px-5 max-[560px]:py-10 flex flex-col justify-center gap-5 p-[56px]">
+        <div class="grid gap-4">
+          <p class="font-[Segoe_UI,Arial,sans-serif] text-sm font-[760] uppercase leading-[1.4] tracking-[0.04em]">Схема проезда</p>
+          <h2 id="map-title">Производство на карте</h2>
+        </div>
         <p class="max-w-[520px] leading-[1.6] text-[#393d37]">
           Перед выездом позвоните, чтобы согласовать время приезда и готовность заказа к погрузке.
         </p>
         <a
-          class="mt-3 inline-flex min-h-12 w-max items-center justify-center border border-[#a8461e] bg-[#a8461e] px-5 py-3 text-center font-[Segoe_UI,Arial,sans-serif] font-[760] leading-[1.2] text-[#fffdf7] no-underline transition-colors duration-150 hover:border-[#7a451e] hover:bg-[#7a451e]"
+          class="inline-flex min-h-12 w-max items-center justify-center border border-[#a8461e] bg-[#a8461e] px-5 py-3 text-center font-[Segoe_UI,Arial,sans-serif] font-[760] leading-[1.2] text-[#fffdf7] no-underline transition-colors duration-150 hover:border-[#7a451e] hover:bg-[#7a451e]"
           :href="businessMapsUrl"
           target="_blank"
           rel="noopener noreferrer"

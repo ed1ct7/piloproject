@@ -9,6 +9,7 @@ frontend/verify/
 /verify/
 frontend/test-results/
 frontend/playwright-report/
+/test-results/
 
 # прочее
 /.idea/

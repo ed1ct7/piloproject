@@ -1,87 +1,83 @@
 <script setup lang="ts">
-import type { PriceListProduct } from '~/utils/products'
-
 const featuredProductIds = new Set([
-  "doska-ev-sort-1",
-  "doska-suhaya-kamernoi-sushki",
-  "doska-suhaya-stroganaya",
-  "imitatsiya-brusa-20x145",
-]);
+  'doska-ev-sort-2',
+  'doska-suhaya-kamernoi-sushki',
+  'doska-suhaya-stroganaya',
+  'imitatsiya-brusa-20x145',
+])
 const featuredProducts = priceListProducts.filter((product) =>
   featuredProductIds.has(product.id),
-);
-
-const featuredProductTonePalette = [
-  'bg-[#f1dcc2] hover:bg-[#e8cda9] [--row-accent:#7a451e] [--row-line:#c49d73]',
-  'bg-[#dce7d6] hover:bg-[#cdddbc] [--row-accent:#2f5b45] [--row-line:#9bb18f]',
-  'bg-[#dbe5e2] hover:bg-[#c9d9d7] [--row-accent:#365f68] [--row-line:#97afb1]',
-  'bg-[#ead0bf] hover:bg-[#e2bea6] [--row-accent:#a8461e] [--row-line:#c88c6f]',
-]
-
-function getFeaturedProductTone(product: PriceListProduct): string {
-  const productIndex = Number.parseInt(product.number, 10) - 1
-  return featuredProductTonePalette[productIndex % featuredProductTonePalette.length]
-}
+)
 
 const galleryPreview = [
   {
-    image: "/images/pilorama-stanok-brevno.jpg",
-    alt: "Пилорамный станок с бревном на подаче под навесом производства",
-    caption: "Распил бревна",
+    image: '/images/paint-shop-4.jpg',
+    alt: 'Участок обработки древесины с оборудованием и подготовленными материалами',
+    caption: 'Цех обработки',
+    className: 'gallery-card--wide',
   },
   {
-    image: "/images/sklad-obrabotannoi-doski.jpg",
-    alt: "Штабели обработанной доски на крытом складе пилорамы",
-    caption: "Крытый склад",
+    image: '/images/vagonka-shtil-12-5x120x3000.png',
+    alt: 'Аккуратно сложенная вагонка профиля Штиль из хвойной древесины',
+    caption: 'Готовая продукция',
+    className: 'gallery-card--product',
   },
   {
-    image: "/images/ploshchadka-otgruzka-pilomaterialov.jpg",
-    alt: "Производственная площадка с партией доски и машиной на отгрузке",
-    caption: "Отгрузка партии",
+    image: '/images/lentochnaya-pilorama-raspil.jpg',
+    alt: 'Ленточная пилорама с бревном на производственной площадке',
+    caption: 'Распил бревна',
+    className: 'gallery-card--tall',
   },
   {
-    image: "/images/doska-s-ognebiozashchitoi.jpg",
-    alt: "Штабель доски, обработанной огнебиозащитным составом",
-    caption: "Огнебиозащита",
+    image: '/images/shtabel-suhoi-doski.jpg',
+    alt: 'Высокие штабели сухой доски на крытом складе',
+    caption: 'Крытый склад',
+    className: 'gallery-card--tall',
   },
-];
+  {
+    image: '/images/lumber-yard-2025-05-21.jpg',
+    alt: 'Образцы обработанной древесины на производственной площадке',
+    caption: 'Финишная обработка',
+    className: 'gallery-card--finish',
+  },
+]
 
 useSeoMeta({
-  title: "Пилорама Разбегаево – доска, вагонка и пиломатериалы",
+  title: 'Пилорама Разбегаево – доска, вагонка и пиломатериалы',
   description:
-    "Пиломатериалы от производителя в Разбегаево: доска естественной влажности, сухая и строганая доска, имитация бруса, вагонка и огнебиозащита.",
-  ogTitle: "Пилорама Разбегаево",
+    'Пиломатериалы от производителя в Разбегаево: доска естественной влажности, сухая и строганая доска, имитация бруса, вагонка и огнебиозащита.',
+  ogTitle: 'Пилорама Разбегаево',
   ogDescription:
-    "Доска, имитация бруса и вагонка с производственной площадки в Разбегаево. Актуальные минимальные цены и фото производства.",
-  ogImage: `${siteUrl}/images/lentochnaya-pilorama-raspil.jpg`,
-  ogType: "website",
-});
+    'Доска, имитация бруса и вагонка с производственной площадки в Разбегаево. Актуальные минимальные цены и фото производства.',
+  ogImage: `${siteUrl}/images/brushing-1.jpg`,
+  ogType: 'website',
+})
 
 useHead({
-  htmlAttrs: { lang: "ru" },
-  link: [{ rel: "canonical", href: `${siteUrl}/` }],
-});
+  htmlAttrs: { lang: 'ru' },
+  link: [{ rel: 'canonical', href: `${siteUrl}/` }],
+})
 
 useSchemaOrg([
   defineLocalBusiness({
-    "@id": `${siteUrl}/#localbusiness`,
-    "@type": "HomeAndConstructionBusiness",
-    name: "Пилорама Разбегаево",
+    '@id': `${siteUrl}/#localbusiness`,
+    '@type': 'HomeAndConstructionBusiness',
+    name: 'Пилорама Разбегаево',
     url: `${siteUrl}/`,
     telephone: businessPhoneInternational,
     sameAs: [businessMapsUrl, businessMaxUrl],
-    image: `${siteUrl}/images/lentochnaya-pilorama-raspil.jpg`,
+    image: `${siteUrl}/images/brushing-1.jpg`,
     address: {
-      "@type": "PostalAddress",
-      streetAddress: "промзона Большевик, зона 2-й микрорайон",
-      addressLocality: "деревня Разбегаево",
-      addressRegion: "Ленинградская область",
-      addressCountry: "RU",
+      '@type': 'PostalAddress',
+      streetAddress: 'промзона Большевик, зона 2-й микрорайон',
+      addressLocality: 'деревня Разбегаево',
+      addressRegion: 'Ленинградская область',
+      addressCountry: 'RU',
     },
     makesOffer: priceListProducts.filter((product) => product.price !== null).map((product) =>
       defineOffer({
         price: product.price ?? undefined,
-        priceCurrency: "RUB",
+        priceCurrency: 'RUB',
         itemOffered: defineProduct({
           name: product.title,
           description: product.description,
@@ -90,50 +86,55 @@ useSchemaOrg([
       }),
     ),
   }),
-]);
+])
 </script>
 
 <template>
-  <main>
-    <section class="max-[1100px]:min-h-0 max-[840px]:grid-cols-1 mx-auto grid min-h-[560px] w-[min(1280px,100%)] grid-cols-12 border-b border-[#171916]">
-      <div class="max-[840px]:col-span-full max-[840px]:min-h-[440px] max-[560px]:min-h-0 max-[560px]:px-[18px] max-[560px]:pb-9 max-[560px]:pt-8 col-span-7 flex min-w-0 flex-col justify-center bg-[#efe6d7] p-10">
-        <h1 class="mb-5 max-w-[720px] text-[clamp(2.5rem,3.35vw,4.1rem)] leading-[1.06] max-[840px]:max-w-full max-[840px]:!text-[2.35rem] max-[840px]:leading-[1.1] max-[560px]:mb-4 max-[560px]:!text-[1.82rem] max-[560px]:leading-[1.12]">
-          <span class="max-[840px]:hidden">Пиломатериалы в Разбегаево: доска, вагонка, имитация бруса</span>
-          <span class="hidden max-[840px]:block">Пиломатериалы в<br>Разбегаево:<br>доска, вагонка,<br>имитация бруса</span>
-        </h1>
-        <p class="mb-7 max-w-[640px] text-[clamp(1rem,1.25vw,1.18rem)] leading-[1.55] text-[#393d37] max-[840px]:max-w-full max-[840px]:text-base max-[560px]:mb-6 max-[560px]:text-[0.96rem] max-[560px]:leading-[1.5]">
-          <span class="max-[840px]:hidden">
-            Пиломатериалы от производителя оптом и в розницу. Доставка по Санкт-Петербургу
-            и Ленинградской области. Оплата по факту отгрузки.
-          </span>
-          <span class="hidden max-[840px]:block">
-            Пиломатериалы от производителя<br>
-            оптом и в розницу. Доставка по<br>
-            Санкт-Петербургу и Ленинградской<br>
-            области. Оплата по факту отгрузки.
-          </span>
+  <main class="home-page">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero__content">
+        <p class="eyebrow">Пиломатериалы из Ленинградской области</p>
+        <h1 id="hero-title">Дерево, подготовленное для хорошей работы</h1>
+        <p class="hero__lead">
+          Производим доску, вагонку и имитацию бруса в Разбегаево. Отбираем материал,
+          сушим, обрабатываем и доставляем по Санкт-Петербургу и области.
         </p>
 
-        <div class="flex flex-wrap gap-3 max-[560px]:grid max-[560px]:grid-cols-1">
-          <NuxtLink class="inline-flex min-h-[50px] cursor-pointer items-center justify-center border border-[#a8461e] bg-[#a8461e] px-5 py-3 text-center font-[Segoe_UI,Arial,sans-serif] text-[0.95rem] font-[760] leading-[1.2] text-[#fffdf7] no-underline transition-colors duration-150 hover:border-[#7a451e] hover:bg-[#7a451e] disabled:cursor-not-allowed disabled:opacity-50" to="/pilomaterialy"
-            >Каталог и цены</NuxtLink
-          >
+        <div class="hero__actions">
+          <NuxtLink class="button button--primary" to="/pilomaterialy">
+            Смотреть каталог
+          </NuxtLink>
           <a
-            class="inline-flex min-h-[50px] cursor-pointer items-center justify-center border border-[#1f3a2f] bg-[#1f3a2f] px-5 py-3 text-center font-[Segoe_UI,Arial,sans-serif] text-[0.95rem] font-[760] leading-[1.2] text-[#fffdf7] no-underline shadow-[0_8px_18px_rgba(23,25,22,0.16)] transition-colors duration-150 hover:border-[#171916] hover:bg-[#171916] disabled:cursor-not-allowed disabled:opacity-50"
+            class="button button--secondary"
             :href="businessMaxUrl"
             target="_blank"
-            rel="noopener"
-          >Написать в MAX</a>
+            rel="noopener noreferrer"
+          >Обсудить заказ в MAX</a>
         </div>
+
+        <dl class="hero__facts" aria-label="Преимущества производства">
+          <div>
+            <dt>Производство</dt>
+            <dd>в Разбегаево</dd>
+          </div>
+          <div>
+            <dt>Продажа</dt>
+            <dd>оптом и в розницу</dd>
+          </div>
+          <div>
+            <dt>Оплата</dt>
+            <dd>по факту отгрузки</dd>
+          </div>
+        </dl>
       </div>
 
-      <figure data-parallax="22" class="max-[840px]:col-span-full max-[840px]:min-h-[420px] max-[840px]:border-l-0 max-[840px]:border-t max-[840px]:border-[#171916] max-[560px]:min-h-[380px] relative col-span-5 min-w-0 overflow-hidden border-l border-[#171916] bg-[#14251e] shadow-[0_22px_48px_rgba(23,25,22,0.22)] [&_figcaption]:absolute [&_figcaption]:inset-x-0 [&_figcaption]:bottom-0 [&_img]:h-full [&_img]:w-full [&_img]:object-cover">
+      <figure class="hero__media" data-parallax="18">
         <NuxtImg
-          src="/images/lentochnaya-pilorama-raspil.jpg"
-          alt="Ленточная пилорама с бревном на рельсах производственной площадки"
-          width="1200"
-          height="1600"
-          sizes="xs:100vw sm:100vw md:100vw 841:42vw lg:42vw xl:42vw"
+          src="/images/brushing-1.jpg"
+          alt="Крупный план обработанной доски с выраженной текстурой древесины"
+          width="1536"
+          height="2048"
+          sizes="xs:100vw sm:100vw md:100vw 841:46vw lg:46vw xl:46vw"
           densities="1"
           format="webp"
           loading="eager"
@@ -141,98 +142,109 @@ useSchemaOrg([
           fetchpriority="high"
         />
         <figcaption>
-          <span>Ленточная пилорама</span>
+          <span>Точная обработка древесины</span>
           <span>Разбегаево</span>
         </figcaption>
       </figure>
     </section>
 
-    <section class="bg-[#fff8eb] px-[max(24px,calc((100vw_-_1280px)/2))] py-[72px] max-[560px]:px-[18px] max-[560px]:py-14" aria-labelledby="catalog-title">
-      <header class="mb-12 grid grid-cols-[minmax(0,1.35fr)_minmax(260px,0.65fr)] items-start gap-[clamp(40px,7vw,104px)] max-[840px]:grid-cols-1 max-[840px]:gap-5 max-[560px]:mb-9">
-        <h2 id="catalog-title" class="mb-0 max-w-[650px]">Основные позиции с актуальными ценами</h2>
-        <p class="mb-0 max-w-[430px] text-[1.02rem] leading-[1.55] text-[#393d37]">
-          Доска естественной влажности, камерной сушки и строганая, имитация бруса,
-          вагонка и огнебиозащитная обработка.
-        </p>
+    <section class="catalog-preview" aria-labelledby="catalog-title">
+      <header class="section-heading">
+        <div>
+          <p class="eyebrow">Каталог</p>
+          <h2 id="catalog-title">Основные позиции</h2>
+        </div>
+        <div class="section-heading__aside">
+          <p>
+            Четыре востребованных материала с актуальными минимальными ценами.
+            Сечения и наличие конкретной партии подтвердит менеджер.
+          </p>
+          <NuxtLink class="text-link" to="/pilomaterialy">Весь каталог и цены</NuxtLink>
+        </div>
       </header>
 
-      <div class="border-b border-[#171916]">
+      <div class="product-list">
         <article
           v-for="product in featuredProducts"
           :key="product.number"
-          class="max-[1100px]:grid-cols-[150px_minmax(220px,1fr)_minmax(230px,0.8fr)] max-[840px]:grid-cols-[140px_minmax(0,1fr)] max-[560px]:grid-cols-[86px_1fr] max-[560px]:items-start max-[560px]:gap-[18px] max-[560px]:py-6 grid min-h-[150px] grid-cols-[minmax(130px,190px)_minmax(260px,1fr)_minmax(270px,0.7fr)] items-center gap-[clamp(20px,3vw,48px)] border border-b-0 border-[#171916] px-4 py-[22px] shadow-[0_12px_28px_rgba(23,25,22,0.08)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_18px_36px_rgba(23,25,22,0.14)] max-[560px]:min-h-0 max-[560px]:px-0 [&_figure]:aspect-[4/3] [&_figure]:overflow-hidden [&_figure]:border [&_figure]:border-[var(--row-accent)] [&_figure]:bg-[#ded5c4] [&_img]:h-full [&_img]:w-full [&_img]:object-cover [&_img]:transition-transform [&:hover_img]:scale-[1.03] [&_h3]:mb-0 [&_dl]:m-0 max-[840px]:[&_dl]:col-start-2 max-[560px]:[&_dl]:col-span-full [&_dl_div]:grid [&_dl_div]:grid-cols-[74px_1fr] [&_dl_div]:gap-4 [&_dl_div]:border-t [&_dl_div]:border-[var(--row-line)] [&_dl_div]:py-[9px] [&_dl_div:last-child]:border-b [&_dl_div:last-child]:border-[var(--row-line)] [&_dt]:mb-2 [&_dt]:font-[Segoe_UI,Arial,sans-serif] [&_dt]:text-[0.8125rem] [&_dt]:font-[760] [&_dt]:uppercase [&_dd]:m-0 [&_dd]:text-[0.94rem]"
-          :class="getFeaturedProductTone(product)"
+          class="product-row"
         >
-          <figure>
+          <span class="product-row__number" aria-hidden="true">{{ product.number }}</span>
+          <figure class="product-row__image">
             <NuxtImg
               :src="product.image"
               :alt="product.alt"
               width="720"
               height="520"
-              sizes="xs:100vw sm:42vw md:28vw lg:24vw"
+              sizes="xs:34vw sm:25vw md:18vw lg:16vw"
               densities="1"
               format="webp"
               loading="lazy"
             />
           </figure>
-          <div class="max-[560px]:col-start-2">
+          <div class="product-row__copy">
             <h3>{{ product.displayTitle }}</h3>
+            <p>{{ product.description }}</p>
           </div>
-          <dl>
+          <dl class="product-row__details">
             <div>
-              <dt>Сечение</dt>
+              <dt>{{ product.specs[0][0] }}</dt>
               <dd>{{ product.specs[0][1] }}</dd>
             </div>
             <div>
               <dt>Цена</dt>
-              <dd class="whitespace-nowrap font-[Segoe_UI,Arial,sans-serif] font-extrabold text-[#7a451e] text-[1.05rem]">
-                {{ formatProductPrice(product) }}
-              </dd>
+              <dd class="product-row__price">{{ formatProductPrice(product) }}</dd>
             </div>
           </dl>
         </article>
       </div>
-
-      <div class="max-[560px]:justify-start mt-7 flex justify-end">
-        <NuxtLink class="w-max cursor-pointer border-0 border-b-2 border-current bg-transparent px-0 pb-[3px] font-[Segoe_UI,Arial,sans-serif] font-[760] text-[#1f3a2f] no-underline transition-colors duration-150 hover:text-[#a8461e] disabled:cursor-not-allowed disabled:opacity-50" to="/pilomaterialy"
-          >Все позиции и цены каталога</NuxtLink
-        >
-      </div>
     </section>
 
-    <section class="max-[840px]:grid-cols-1 max-[560px]:px-[18px] grid grid-cols-[minmax(320px,0.78fr)_minmax(340px,1.22fr)] border-b border-[#171916] bg-[#d6ded0] px-[max(24px,calc((100vw_-_1280px)/2))] max-[560px]:py-14" aria-labelledby="about-title">
-      <div class="max-[840px]:border-r-0 max-[840px]:border-b max-[840px]:py-12 max-[560px]:py-0 max-[560px]:pb-10 flex min-w-0 flex-col justify-center border-r border-[#171916] py-20 pr-[clamp(32px,6vw,88px)]">
-        <p class="font-[Segoe_UI,Arial,sans-serif] uppercase mb-4 text-[0.8125rem] font-[760] leading-[1.4] tracking-[0.04em]">Собственное производство</p>
-        <h2 id="about-title">О производстве</h2>
+    <section class="production" aria-labelledby="production-title">
+      <div class="production__heading">
+        <p class="eyebrow eyebrow--light">Собственное производство</p>
+        <h2 id="production-title">От бревна<br>до готового профиля</h2>
       </div>
-
-      <div class="max-[840px]:py-12 max-[840px]:pl-0 max-[560px]:pb-0 max-[560px]:pt-10 flex min-w-0 flex-col justify-center py-20 pl-[clamp(32px,6vw,88px)]">
-        <p class="mb-7 max-w-[650px] text-[1.05rem] leading-[1.6] text-[#393d37]">
-          Производим пиломатериалы естественной влажности и камерной сушки, строганую доску, имитацию бруса и вагонку. Работаем с частными заказчиками и организациями, организуем доставку по Санкт-Петербургу и Ленинградской области.
+      <div class="production__body">
+        <p class="production__lead">
+          Работаем с материалом на собственной площадке: распиливаем, сушим,
+          строгаем и готовим партии к отгрузке.
         </p>
-        <NuxtLink class="w-max cursor-pointer border-0 border-b-2 border-current bg-transparent px-0 pb-[3px] font-[Segoe_UI,Arial,sans-serif] font-[760] text-[#1f3a2f] no-underline transition-colors duration-150 hover:text-[#a8461e] disabled:cursor-not-allowed disabled:opacity-50" to="/o-nas"
-          >Подробнее о производстве</NuxtLink
-        >
+        <dl class="production__steps">
+          <div><dt>01</dt><dd>Распил и сортировка древесины</dd></div>
+          <div><dt>02</dt><dd>Камерная сушка материала</dd></div>
+          <div><dt>03</dt><dd>Строгание и профилирование</dd></div>
+          <div><dt>04</dt><dd>Комплектация и доставка партии</dd></div>
+        </dl>
+        <NuxtLink class="text-link text-link--light" to="/o-nas">
+          Подробнее о производстве
+        </NuxtLink>
       </div>
     </section>
 
-    <section class="max-[560px]:px-[18px] border-b border-[#171916] bg-[#fff8eb] px-[max(24px,calc((100vw_-_1280px)/2))] py-20 max-[560px]:py-14" aria-labelledby="photo-band-title">
-      <header class="max-[840px]:grid-cols-[90px_minmax(0,1fr)] max-[840px]:items-start max-[560px]:block mb-10 grid grid-cols-[56px_minmax(0,1fr)_auto] items-end gap-8">
-        <div aria-hidden="true" />
-        <h2 id="photo-band-title" class="scroll-mt-28">Производство, склад и отгрузка</h2>
-        <NuxtLink class="w-max cursor-pointer border-0 border-b-2 border-current bg-transparent px-0 pb-[3px] font-[Segoe_UI,Arial,sans-serif] font-[760] text-[#1f3a2f] no-underline transition-colors duration-150 hover:text-[#a8461e] disabled:cursor-not-allowed disabled:opacity-50" to="/foto"
-          >Смотреть все фотографии</NuxtLink
-        >
+    <section class="gallery" aria-labelledby="gallery-title">
+      <header class="section-heading section-heading--gallery">
+        <div>
+          <p class="eyebrow">Без постановочных кадров</p>
+          <h2 id="gallery-title">Производство в деталях</h2>
+        </div>
+        <NuxtLink class="text-link" to="/foto">Все фотографии</NuxtLink>
       </header>
 
-      <div class="grid grid-cols-4 gap-5 max-[1100px]:gap-4 max-[840px]:grid-cols-2 max-[560px]:grid-cols-1 max-[560px]:gap-4">
-        <figure v-for="photo in galleryPreview" :key="photo.image" data-parallax="10" class="overflow-hidden border border-[#171916] bg-[#ded5c4] shadow-[0_18px_38px_rgba(23,25,22,0.14)] transition duration-200 hover:-translate-y-1 hover:shadow-[0_26px_54px_rgba(23,25,22,0.22)] [&_img]:aspect-[4/3] [&_img]:w-full [&_img]:object-cover">
+      <div class="gallery__grid">
+        <figure
+          v-for="photo in galleryPreview"
+          :key="photo.image"
+          class="gallery-card"
+          :class="photo.className"
+          data-parallax="8"
+        >
           <NuxtImg
             :src="photo.image"
             :alt="photo.alt"
-            width="720"
+            width="1200"
             height="900"
-            sizes="xs:100vw sm:50vw md:25vw lg:25vw"
+            sizes="xs:100vw sm:50vw md:50vw lg:34vw"
             densities="1"
             format="webp"
             loading="lazy"
@@ -242,27 +254,669 @@ useSchemaOrg([
       </div>
     </section>
 
-    <section class="grid grid-cols-[minmax(280px,420px)_minmax(360px,620px)] items-start justify-center gap-[clamp(48px,7vw,112px)] border-b border-[#171916] bg-[#ded5c4] px-[max(24px,calc((100vw_-_1280px)/2))] py-[72px] max-[840px]:grid-cols-1 max-[840px]:gap-9 max-[560px]:px-[18px] max-[560px]:py-14" aria-labelledby="video-title">
-      <div class="min-w-0 max-w-[420px] max-[840px]:max-w-[620px]">
-        <h2 id="video-title" class="mb-4 text-[clamp(2rem,2.6vw,2.8rem)] leading-[1.08] max-[560px]:mb-3">Работа пилорамы в Разбегаево</h2>
-        <p class="mb-0 max-w-[390px] text-[1.05rem] leading-[1.55] text-[#393d37]">
-          Короткое видео распила бревна на производственной площадке.
+    <section class="video-story" aria-labelledby="video-title">
+      <div class="video-story__copy">
+        <p class="eyebrow">Рабочий процесс</p>
+        <h2 id="video-title">Как начинается ваша доска</h2>
+        <p>
+          Короткий фрагмент распила бревна на нашей производственной площадке
+          в Разбегаево.
         </p>
       </div>
-
       <video
-        data-parallax="14"
-        class="aspect-[4/3] w-full max-w-[620px] justify-self-end border border-[#171916] bg-[#171916] object-cover shadow-[0_20px_48px_rgba(23,25,22,0.22)] max-[840px]:justify-self-start"
+        class="video-story__video"
         controls
         preload="none"
         playsinline
         poster="/images/pilorama-stanok-brevno.jpg"
         aria-label="Короткое видео с производственной площадки пилорамы"
       >
-        <source src="/mp4/short-sawmill-video.mp4" type="video/mp4" />
+        <source src="/mp4/short-sawmill-video.mp4" type="video/mp4">
         Ваш браузер не поддерживает воспроизведение видео.
       </video>
     </section>
-
   </main>
 </template>
+
+<style scoped>
+.home-page {
+  background: var(--color-cream);
+}
+
+.eyebrow {
+  margin-bottom: 18px;
+  color: var(--color-copper);
+  font-size: 0.72rem;
+  font-weight: 760;
+  letter-spacing: 0.15em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.eyebrow--light {
+  color: #d5a184;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(430px, 0.92fr);
+  min-height: 690px;
+  max-width: 1320px;
+  margin: 0 auto;
+  border-bottom: 1px solid var(--color-line);
+}
+
+.hero__content {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  justify-content: center;
+  padding: 84px clamp(42px, 6vw, 92px) 70px 24px;
+}
+
+.hero h1 {
+  max-width: 720px;
+  margin: 0 0 28px;
+  font-size: clamp(3.2rem, 5.4vw, 6.25rem);
+  font-weight: 400;
+  line-height: 0.98;
+}
+
+.hero__lead {
+  max-width: 610px;
+  margin-bottom: 34px;
+  color: #50564f;
+  font-size: clamp(1rem, 1.3vw, 1.18rem);
+  line-height: 1.65;
+}
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.button {
+  display: inline-flex;
+  min-height: 52px;
+  align-items: center;
+  justify-content: center;
+  padding: 13px 22px;
+  font-size: 0.92rem;
+  font-weight: 740;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  transition: background-color 180ms ease, color 180ms ease, transform 180ms ease;
+}
+
+.button:hover {
+  transform: translateY(-2px);
+}
+
+.button--primary {
+  background: var(--color-copper);
+  color: #fffaf2;
+}
+
+.button--primary:hover {
+  background: var(--color-copper-dark);
+}
+
+.button--secondary {
+  border: 1px solid var(--color-forest);
+  color: var(--color-forest);
+}
+
+.button--secondary:hover {
+  background: var(--color-forest);
+  color: #fffaf2;
+}
+
+.hero__facts {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  max-width: 650px;
+  margin: 64px 0 0;
+  border-top: 1px solid var(--color-line);
+}
+
+.hero__facts div {
+  padding: 19px 18px 0 0;
+}
+
+.hero__facts div + div {
+  padding-left: 18px;
+  border-left: 1px solid var(--color-line);
+}
+
+.hero__facts dt,
+.product-row__details dt {
+  margin-bottom: 4px;
+  color: #555b54;
+  font-size: 0.67rem;
+  font-weight: 760;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.hero__facts dd {
+  margin: 0;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1rem;
+}
+
+.hero__media {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  background: var(--color-forest);
+}
+
+.hero__media::after {
+  position: absolute;
+  inset: 0;
+  content: '';
+  background: linear-gradient(180deg, transparent 64%, rgb(18 39 30 / 38%));
+  pointer-events: none;
+}
+
+.hero__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 58%;
+}
+
+.hero__media figcaption {
+  position: absolute;
+  right: 24px;
+  bottom: 22px;
+  left: 24px;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  color: #fffaf2;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.catalog-preview,
+.gallery {
+  padding: 112px max(24px, calc((100vw - 1320px) / 2));
+  background: var(--color-paper);
+}
+
+.section-heading {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 0.55fr);
+  align-items: end;
+  gap: clamp(48px, 9vw, 140px);
+  margin-bottom: 60px;
+}
+
+.section-heading h2,
+.production h2,
+.video-story h2 {
+  max-width: 760px;
+  margin: 0;
+  font-size: clamp(2.7rem, 4.4vw, 5.1rem);
+  font-weight: 400;
+  line-height: 1;
+}
+
+.section-heading__aside p {
+  max-width: 460px;
+  margin-bottom: 24px;
+  color: #555b54;
+}
+
+.text-link {
+  display: inline-block;
+  width: max-content;
+  border-bottom: 1px solid currentcolor;
+  color: var(--color-forest);
+  font-size: 0.9rem;
+  font-weight: 740;
+  text-decoration: none;
+  transition: color 180ms ease;
+}
+
+.text-link:hover {
+  color: var(--color-copper);
+}
+
+.text-link--light {
+  color: #f5eee2;
+}
+
+.product-list {
+  border-top: 1px solid var(--color-ink);
+}
+
+.product-row {
+  display: grid;
+  grid-template-columns: 40px minmax(145px, 180px) minmax(260px, 1fr) minmax(260px, 0.55fr);
+  align-items: center;
+  gap: clamp(20px, 3vw, 46px);
+  min-height: 180px;
+  padding: 24px 0;
+  border-bottom: 1px solid var(--color-line);
+  transition: background-color 220ms ease, padding 220ms ease;
+}
+
+.product-row:hover {
+  padding-right: 18px;
+  padding-left: 18px;
+  background: #f1ebe0;
+}
+
+.product-row__number {
+  align-self: start;
+  padding-top: 5px;
+  color: #5f645e;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 0.86rem;
+}
+
+.product-row__image {
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: var(--color-sand);
+}
+
+.product-row__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 480ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.product-row:hover img {
+  transform: scale(1.035);
+}
+
+.product-row h3 {
+  margin: 0 0 10px;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(1.5rem, 2vw, 2.15rem);
+  font-weight: 400;
+  line-height: 1.1;
+}
+
+.product-row__copy > p:last-child {
+  max-width: 520px;
+  margin-bottom: 0;
+  color: #666b64;
+  font-size: 0.9rem;
+}
+
+.product-row__details {
+  margin: 0;
+}
+
+.product-row__details div {
+  padding: 11px 0;
+  border-top: 1px solid var(--color-line);
+}
+
+.product-row__details div:last-child {
+  border-bottom: 1px solid var(--color-line);
+}
+
+.product-row__details dd {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.product-row__price {
+  color: var(--color-copper-dark);
+  font-size: 1.04rem !important;
+  font-weight: 800;
+}
+
+.production {
+  display: grid;
+  grid-template-columns: minmax(320px, 0.9fr) minmax(380px, 1.1fr);
+  gap: clamp(56px, 10vw, 160px);
+  padding: 118px max(24px, calc((100vw - 1320px) / 2));
+  background: var(--color-forest);
+  color: #f5eee2;
+}
+
+.production__lead {
+  max-width: 610px;
+  margin-bottom: 44px;
+  color: #d8d8ce;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(1.35rem, 2vw, 1.8rem);
+  line-height: 1.45;
+}
+
+.production__steps {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 36px;
+  margin: 0 0 42px;
+  border-top: 1px solid rgb(245 238 226 / 28%);
+}
+
+.production__steps div {
+  display: grid;
+  grid-template-columns: 32px 1fr;
+  gap: 14px;
+  padding: 18px 0;
+  border-bottom: 1px solid rgb(245 238 226 / 22%);
+}
+
+.production__steps dt {
+  color: #d5a184;
+  font-family: Georgia, 'Times New Roman', serif;
+}
+
+.production__steps dd {
+  margin: 0;
+}
+
+.section-heading--gallery {
+  grid-template-columns: 1fr auto;
+}
+
+.gallery__grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-auto-rows: 165px;
+  gap: 18px;
+}
+
+.gallery-card {
+  position: relative;
+  grid-column: span 4;
+  grid-row: span 2;
+  overflow: hidden;
+  background: var(--color-sand);
+}
+
+.gallery-card--wide {
+  grid-column: span 8;
+  grid-row: span 3;
+}
+
+.gallery-card--product {
+  grid-row: span 3;
+}
+
+.gallery-card--tall {
+  grid-row: span 3;
+}
+
+.gallery-card--finish {
+  grid-column: span 4;
+}
+
+.gallery-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 600ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.gallery-card--wide img {
+  object-position: 50% 58%;
+}
+
+.gallery-card--tall img {
+  object-position: 50% 57%;
+}
+
+.gallery-card--finish img {
+  object-position: 38% 58%;
+}
+
+.gallery-card:hover img {
+  transform: scale(1.025);
+}
+
+.gallery-card figcaption {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  left: 14px;
+  padding: 10px 12px;
+  background: rgb(250 247 240 / 92%);
+  color: var(--color-ink);
+  font-size: 0.7rem;
+  font-weight: 760;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  backdrop-filter: blur(8px);
+}
+
+.video-story {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.7fr) minmax(420px, 1.3fr);
+  align-items: center;
+  gap: clamp(48px, 9vw, 140px);
+  padding: 112px max(24px, calc((100vw - 1320px) / 2));
+  background: #ded4c3;
+}
+
+.video-story__copy > p:last-child {
+  max-width: 420px;
+  margin: 26px 0 0;
+  color: #565b54;
+  font-size: 1.05rem;
+}
+
+.video-story__video {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  background: var(--color-ink);
+  box-shadow: 0 30px 70px rgb(32 35 31 / 18%);
+  object-fit: cover;
+}
+
+@media (max-width: 1100px) {
+  .hero {
+    grid-template-columns: minmax(0, 1fr) minmax(360px, 0.9fr);
+  }
+
+  .hero__content {
+    padding-left: 32px;
+  }
+
+  .product-row {
+    grid-template-columns: 32px 150px minmax(220px, 1fr) minmax(220px, 0.62fr);
+  }
+}
+
+@media (max-width: 841px) {
+  .hero,
+  .production,
+  .video-story {
+    grid-template-columns: 1fr;
+  }
+
+  .hero__content {
+    padding: 76px 28px 56px;
+  }
+
+  .hero h1 {
+    font-size: clamp(3.2rem, 11vw, 5.6rem);
+  }
+
+  .hero__media {
+    min-height: 600px;
+  }
+
+  .section-heading {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
+  .product-row {
+    grid-template-columns: 30px 140px minmax(0, 1fr);
+  }
+
+  .product-row__details {
+    grid-column: 3;
+  }
+
+  .production__heading h2 br {
+    display: none;
+  }
+
+  .gallery-card,
+  .gallery-card--finish {
+    grid-column: span 6;
+  }
+
+  .gallery-card--wide {
+    grid-column: span 12;
+  }
+}
+
+@media (max-width: 560px) {
+  .hero__content {
+    padding: 58px 18px 44px;
+  }
+
+  .hero h1 {
+    margin-bottom: 22px;
+    overflow-wrap: normal;
+    font-size: clamp(2.45rem, 11.8vw, 3.4rem);
+    hyphens: auto;
+    word-break: normal;
+  }
+
+  .hero__lead {
+    font-size: 0.98rem;
+  }
+
+  .hero__actions {
+    display: grid;
+  }
+
+  .hero__facts {
+    grid-template-columns: 1fr;
+    margin-top: 44px;
+  }
+
+  .hero__facts div,
+  .hero__facts div + div {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    padding: 13px 0;
+    border-bottom: 1px solid var(--color-line);
+    border-left: 0;
+  }
+
+  .hero__facts dt {
+    margin: 0;
+  }
+
+  .hero__media {
+    min-height: 450px;
+  }
+
+  .catalog-preview,
+  .gallery,
+  .production,
+  .video-story {
+    padding: 78px 18px;
+  }
+
+  .section-heading {
+    margin-bottom: 42px;
+  }
+
+  .section-heading h2,
+  .production h2,
+  .video-story h2 {
+    font-size: clamp(2.5rem, 13vw, 3.7rem);
+  }
+
+  .product-row {
+    grid-template-columns: 78px minmax(0, 1fr);
+    gap: 16px;
+    padding: 22px 0;
+  }
+
+  .product-row:hover {
+    padding-right: 0;
+    padding-left: 0;
+  }
+
+  .product-row__number {
+    display: none;
+  }
+
+  .product-row__image {
+    align-self: start;
+  }
+
+  .product-row__copy {
+    grid-column: 2;
+  }
+
+  .product-row__copy > p:last-child {
+    display: none;
+  }
+
+  .product-row h3 {
+    font-size: 1.35rem;
+  }
+
+  .product-row__details {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+  }
+
+  .production__steps {
+    grid-template-columns: 1fr;
+  }
+
+  .section-heading--gallery {
+    grid-template-columns: 1fr;
+  }
+
+  .gallery__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-auto-rows: auto;
+  }
+
+  .gallery-card,
+  .gallery-card--wide,
+  .gallery-card--product,
+  .gallery-card--tall,
+  .gallery-card--finish {
+    grid-column: auto;
+    grid-row: auto;
+    aspect-ratio: 4 / 3;
+  }
+
+  .gallery-card--tall {
+    aspect-ratio: 3 / 4;
+  }
+
+  .video-story__video {
+    aspect-ratio: 4 / 3;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .button,
+  .product-row,
+  .product-row__image img,
+  .gallery-card img {
+    transform: none;
+    transition: none;
+  }
+}
+</style>

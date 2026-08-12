@@ -231,8 +231,30 @@ if (import.meta.client) {
 <style>
 @import "tailwindcss";
 
+:root {
+  --color-ink: #20231f;
+  --color-forest: #183126;
+  --color-forest-soft: #29483a;
+  --color-cream: #f3efe6;
+  --color-paper: #faf7f0;
+  --color-sand: #ded4c3;
+  --color-line: rgb(32 35 31 / 22%);
+  --color-copper: #934626;
+  --color-copper-dark: #7d3d24;
+}
+
+html {
+  background: var(--color-cream);
+}
+
+body {
+  margin: 0;
+  background: var(--color-cream);
+  color: var(--color-ink);
+}
+
 :where(a, button, [tabindex]):focus-visible {
-  outline: 3px solid #a8461e;
+  outline: 3px solid var(--color-copper);
   outline-offset: 3px;
 }
 
@@ -245,15 +267,18 @@ if (import.meta.client) {
 }
 
 .motion-reveal {
+  opacity: 0;
   translate: 0 24px;
   scale: 0.992;
   transition:
     translate 680ms cubic-bezier(0.22, 1, 0.36, 1) var(--motion-delay, 0ms),
-    scale 680ms cubic-bezier(0.22, 1, 0.36, 1) var(--motion-delay, 0ms);
+    scale 680ms cubic-bezier(0.22, 1, 0.36, 1) var(--motion-delay, 0ms),
+    opacity 520ms ease var(--motion-delay, 0ms);
   will-change: translate, scale;
 }
 
 .motion-reveal.is-motion-visible {
+  opacity: 1;
   translate: 0 0;
   scale: 1;
   will-change: auto;
@@ -306,6 +331,7 @@ if (import.meta.client) {
   .page-enter-from,
   .page-leave-to {
     translate: none;
+    opacity: 1;
     scale: none;
     transform: none;
     filter: none;

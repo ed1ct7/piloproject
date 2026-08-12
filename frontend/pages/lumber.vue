@@ -242,14 +242,14 @@ useSchemaOrg([
 
 <template>
   <main>
-    <section class="max-[840px]:min-h-0 max-[560px]:px-[18px] max-[560px]:pb-9 max-[560px]:pt-8 grid min-h-[280px] items-end border-b border-[#171916] bg-[#d6ded0] px-[max(24px,calc((100vw_-_1280px)/2))] pb-12 pt-14 max-[560px]:[&_h1]:!text-[2.75rem] max-[390px]:[&_h1]:!text-[2.55rem]">
+    <section class="max-[841px]:min-h-0 max-[560px]:px-[18px] max-[560px]:pb-9 max-[560px]:pt-8 grid min-h-[280px] items-end border-b border-[#171916] bg-[#d6ded0] px-[max(24px,calc((100vw_-_1280px)/2))] pb-12 pt-14 max-[560px]:[&_h1]:!text-[2.75rem] max-[390px]:[&_h1]:!text-[2.55rem]">
       <div class="max-w-[760px] [&_h1]:mb-0">
         <h1>Каталог пиломатериалов</h1>
       </div>
     </section>
 
     <section class="max-[560px]:px-[18px] bg-[#efe6d7] px-[max(24px,calc((100vw_-_1280px)/2))] pb-20 pt-0 max-[560px]:pb-14" aria-label="Каталог пиломатериалов с ценами">
-      <div class="sticky top-[72px] z-20 -mx-[max(24px,calc((100vw_-_1280px)/2))] border-y border-[#cbb99d] bg-[#efe6d7]/95 px-[max(24px,calc((100vw_-_1280px)/2))] py-1.5 shadow-[0_6px_14px_rgba(23,25,22,0.07)] backdrop-blur max-[840px]:top-16 max-[560px]:-mx-[18px] max-[560px]:px-[18px] max-[560px]:py-1">
+      <div class="sticky top-[76px] z-20 -mx-[max(24px,calc((100vw_-_1280px)/2))] border-y border-[#cbb99d] bg-[#efe6d7]/95 px-[max(24px,calc((100vw_-_1280px)/2))] py-1.5 shadow-[0_6px_14px_rgba(23,25,22,0.07)] backdrop-blur max-[1101px]:top-[120px] max-[841px]:top-16 max-[560px]:-mx-[18px] max-[560px]:px-[18px] max-[560px]:py-1">
         <div class="flex min-w-0 items-center gap-2">
           <div class="flex min-w-0 flex-1 gap-1.5 overflow-x-auto overscroll-x-contain py-0.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" role="group" aria-label="Фильтр по категории">
             <button

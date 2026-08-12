@@ -55,16 +55,16 @@ watch(
 
         <nav
           id="main-navigation"
-          class="primary-navigation max-[1100px]:col-span-full max-[1100px]:row-start-2 max-[1100px]:min-h-11 max-[1100px]:border-t max-[1100px]:border-[#cbb99d] max-[840px]:absolute max-[840px]:inset-x-0 max-[840px]:top-full max-[840px]:hidden max-[840px]:border-y max-[840px]:border-[#171916] max-[840px]:bg-[#fff8eb] flex self-stretch [&_a.router-link-active]:border-[#171916] [&_a.router-link-active]:bg-[#1f3a2f] [&_a.router-link-active]:text-[#fffdf7] [&_a:hover]:border-[#171916] [&_a:hover]:bg-[#1f3a2f] [&_a:hover]:text-[#fffdf7] [&_a]:grid [&_a]:place-items-center [&_a]:whitespace-nowrap [&_a]:border-x [&_a]:border-transparent [&_a]:px-[15px] [&_a]:font-[Segoe_UI,Arial,sans-serif] [&_a]:text-[0.9375rem] [&_a]:font-bold [&_a]:no-underline [&_a]:transition-colors [&_a]:duration-150 max-[840px]:[&_a]:min-h-12 max-[840px]:[&_a]:place-items-start max-[840px]:[&_a]:border-t max-[840px]:[&_a]:border-[#cbb99d] max-[840px]:[&_a]:px-4 max-[840px]:[&_a]:py-3"
+          class="primary-navigation max-[1100px]:col-span-full max-[1100px]:row-start-2 max-[1100px]:min-h-11 max-[1100px]:border-t max-[1100px]:border-[#cbb99d] max-[840px]:absolute max-[840px]:inset-x-0 max-[840px]:top-full max-[840px]:hidden max-[840px]:border-y max-[840px]:border-[#171916] max-[840px]:bg-[#fff8eb] flex self-stretch [&_a.router-link-active]:border-[#171916] [&_a.router-link-active]:bg-[#1f3a2f] [&_a.router-link-active]:text-[#fffdf7] [&_a]:grid [&_a]:place-items-center [&_a]:whitespace-nowrap [&_a]:border-x [&_a]:border-transparent [&_a]:px-[15px] [&_a]:font-[Segoe_UI,Arial,sans-serif] [&_a]:text-[0.9375rem] [&_a]:font-bold [&_a]:no-underline max-[840px]:[&_a]:min-h-12 max-[840px]:[&_a]:place-items-start max-[840px]:[&_a]:border-t max-[840px]:[&_a]:border-[#cbb99d] max-[840px]:[&_a]:px-4 max-[840px]:[&_a]:py-3"
           :class="navOpen ? 'max-[840px]:grid' : 'max-[840px]:hidden'"
           aria-label="Основная навигация"
         >
-          <NuxtLink to="/pilomaterialy">Пиломатериалы</NuxtLink>
-          <NuxtLink to="/o-nas">О нас</NuxtLink>
-          <NuxtLink to="/foto">Фото</NuxtLink>
-          <NuxtLink to="/dostavka">Доставка</NuxtLink>
-          <NuxtLink to="/kontakty">Контакты</NuxtLink>
-          <NuxtLink to="/cart">Заявка ({{ totalQuantity }})</NuxtLink>
+          <NuxtLink to="/pilomaterialy"><span>Пиломатериалы</span></NuxtLink>
+          <NuxtLink to="/o-nas"><span>О нас</span></NuxtLink>
+          <NuxtLink to="/foto"><span>Фото</span></NuxtLink>
+          <NuxtLink to="/dostavka"><span>Доставка</span></NuxtLink>
+          <NuxtLink to="/kontakty"><span>Контакты</span></NuxtLink>
+          <NuxtLink to="/cart"><span>Заявка ({{ totalQuantity }})</span></NuxtLink>
         </nav>
 
         <a class="max-[1100px]:hidden ml-[18px] inline-flex items-center whitespace-nowrap font-[Segoe_UI,Arial,sans-serif] text-base font-[760] tracking-[0.01em] no-underline hover:text-[#a8461e]" :href="businessPhoneHref">{{ businessPhone }}</a>
@@ -179,9 +179,79 @@ watch(
 }
 
 .primary-navigation a {
-  transition-property: color, background-color, border-color, transform;
-  transition-duration: 220ms;
-  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  transition:
+    color 360ms ease,
+    border-color 360ms ease,
+    transform 360ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.primary-navigation a span {
+  position: relative;
+  z-index: 2;
+  transition: transform 360ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.primary-navigation a::before {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  content: '';
+  background: #1f3a2f;
+  transform: scaleY(0);
+  transform-origin: center bottom;
+  transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.primary-navigation a::after {
+  position: absolute;
+  right: 14px;
+  bottom: 0;
+  left: 14px;
+  z-index: 3;
+  height: 3px;
+  content: '';
+  background: #d96a35;
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.primary-navigation a:hover,
+.primary-navigation a:focus-visible {
+  color: #fffdf7;
+  border-color: #171916;
+  transform: translateY(-2px);
+}
+
+.primary-navigation a:hover::before,
+.primary-navigation a:focus-visible::before {
+  transform: scaleY(1);
+}
+
+.primary-navigation a:hover::after,
+.primary-navigation a:focus-visible::after {
+  transform: scaleX(1);
+}
+
+.primary-navigation a:hover span,
+.primary-navigation a:focus-visible span {
+  transform: translateY(-1px);
+}
+
+.primary-navigation a.router-link-active::before {
+  background: #315746;
+}
+
+.primary-navigation a.router-link-active::after {
+  transform: scaleX(0.32);
+}
+
+.primary-navigation a.router-link-active:hover::after,
+.primary-navigation a.router-link-active:focus-visible::after {
+  transform: scaleX(1);
 }
 
 .site-header__cta {
@@ -227,10 +297,17 @@ watch(
   .menu-toggle,
   .menu-toggle span,
   .primary-navigation a,
+  .primary-navigation a span,
   .site-header__cta,
   .site-footer a {
     translate: none;
     transform: none;
+    transition: none;
+  }
+
+  .primary-navigation a::before,
+  .primary-navigation a::after {
+    display: none;
     transition: none;
   }
 }

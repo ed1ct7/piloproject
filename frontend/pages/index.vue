@@ -299,8 +299,8 @@ useSchemaOrg([
 
 .hero {
   display: grid;
-  grid-template-columns: minmax(0, 1.08fr) minmax(430px, 0.92fr);
-  min-height: 690px;
+  grid-template-columns: minmax(0, 1.15fr) minmax(430px, 0.85fr);
+  min-height: 640px;
   max-width: 1320px;
   margin: 0 auto;
   border-bottom: 1px solid var(--color-line);
@@ -311,20 +311,23 @@ useSchemaOrg([
   min-width: 0;
   flex-direction: column;
   justify-content: center;
-  padding: 84px clamp(42px, 6vw, 92px) 70px 24px;
+  padding: 64px clamp(32px, 4vw, 64px) 54px 24px;
 }
 
 .hero h1 {
   max-width: 720px;
-  margin: 0 0 28px;
-  font-size: clamp(3.2rem, 5.4vw, 6.25rem);
+  margin: 0 0 22px;
+  overflow-wrap: normal;
+  font-size: clamp(3.2rem, 4.8vw, 5rem);
   font-weight: 400;
-  line-height: 0.98;
+  hyphens: none;
+  line-height: 1;
+  word-break: normal;
 }
 
 .hero__lead {
   max-width: 610px;
-  margin-bottom: 34px;
+  margin-bottom: 26px;
   color: #50564f;
   font-size: clamp(1rem, 1.3vw, 1.18rem);
   line-height: 1.65;
@@ -377,7 +380,7 @@ useSchemaOrg([
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   max-width: 650px;
-  margin: 64px 0 0;
+  margin: 44px 0 0;
   border-top: 1px solid var(--color-line);
 }
 
@@ -721,7 +724,7 @@ useSchemaOrg([
 
 @media (max-width: 1100px) {
   .hero {
-    grid-template-columns: minmax(0, 1fr) minmax(360px, 0.9fr);
+    grid-template-columns: minmax(0, 1.2fr) minmax(360px, 0.8fr);
   }
 
   .hero__content {

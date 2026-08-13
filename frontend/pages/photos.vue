@@ -125,7 +125,7 @@ useSchemaOrg([
     </section>
 
     <section class="grid grid-cols-4 gap-5 bg-[#efe6d7] px-[max(24px,calc((100vw_-_1280px)/2))] pb-20 pt-14 max-[1100px]:grid-cols-3 max-[840px]:grid-cols-2 max-[560px]:grid-cols-1 max-[560px]:gap-4 max-[560px]:px-[18px] max-[560px]:pb-14" aria-label="Фотографии производственной площадки">
-      <figure v-for="photo in photos" :key="photo.image" data-parallax="10" class="overflow-hidden border border-[#171916] bg-[#ded5c4] shadow-[0_18px_42px_rgba(23,25,22,0.14)] transition duration-200 hover:-translate-y-1 hover:shadow-[0_28px_62px_rgba(23,25,22,0.22)] [&_img]:aspect-[4/3] [&_img]:w-full [&_img]:object-cover">
+      <figure v-for="photo in photos" :key="photo.image" data-parallax="10" class="relative overflow-hidden border border-[#171916] bg-[#ded5c4] shadow-[0_18px_42px_rgba(23,25,22,0.14)] transition duration-200 hover:-translate-y-1 hover:shadow-[0_28px_62px_rgba(23,25,22,0.22)] [&_img]:aspect-[4/3] [&_img]:w-full [&_img]:object-cover">
         <NuxtImg
           :src="photo.image"
           :alt="photo.alt"
@@ -136,7 +136,9 @@ useSchemaOrg([
           format="webp"
           loading="lazy"
         />
-        <figcaption>{{ photo.caption }}</figcaption>
+        <figcaption class="absolute inset-x-3 bottom-3 bg-[rgb(250_247_240/92%)] px-3 py-2.5 text-[0.7rem] font-bold uppercase leading-[1.4] tracking-[0.08em] text-[#20231f] backdrop-blur-sm">
+          {{ photo.caption }}
+        </figcaption>
       </figure>
     </section>
 

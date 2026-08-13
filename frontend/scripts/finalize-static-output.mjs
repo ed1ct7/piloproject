@@ -26,7 +26,7 @@ await cp(clientBundleDir, join(outputDir, '_nuxt'), { recursive: true, force: fa
 // app manifest too. The client still requests it during hydration, so provide
 // the same minimal manifest shape Nuxt expects instead of leaving a noisy 404.
 const manifestFiles = (await readdir(manifestMetaDir)).filter(
-  (file) => extname(file) === '.json',
+  (file) => extname(file) === '.json' && file !== 'dev.json',
 )
 
 if (manifestFiles.length !== 1) {

@@ -109,7 +109,7 @@ if (import.meta.client) {
 
         revealElements.add(element)
         element.classList.add('motion-reveal')
-        element.style.setProperty('--motion-delay', `${Math.min(siblingPosition, 5) * 55}ms`)
+        element.style.setProperty('--motion-delay', `${Math.min(siblingPosition, 4) * 40}ms`)
 
         const rect = element.getBoundingClientRect()
         if (rect.top < window.innerHeight * 0.92 && rect.bottom > 0) {
@@ -241,6 +241,14 @@ if (import.meta.client) {
   --color-line: rgb(32 35 31 / 22%);
   --color-copper: #934626;
   --color-copper-dark: #7d3d24;
+  --color-focus-inner: #fffdf7;
+  --color-focus-outer: #20231f;
+  --motion-duration-press: 140ms;
+  --motion-duration-ui: 180ms;
+  --motion-duration-page: 220ms;
+  --motion-duration-reveal: 280ms;
+  --motion-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --motion-ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
 }
 
 html {
@@ -254,24 +262,26 @@ body {
 }
 
 :where(a, button, [tabindex]):focus-visible {
-  outline: 3px solid var(--color-copper);
-  outline-offset: 3px;
+  outline: 2px solid var(--color-focus-inner);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 5px var(--color-focus-outer) !important;
 }
 
 :where(a, button) {
   -webkit-tap-highlight-color: transparent;
+  transition: scale var(--motion-duration-press) var(--motion-ease-out);
 }
 
 :where(a, button):active {
-  translate: 0 1px;
+  scale: 0.98;
 }
 
 .motion-reveal {
-  translate: 0 24px;
-  scale: 0.992;
+  translate: 0 14px;
+  scale: 0.996;
   transition:
-    translate 680ms cubic-bezier(0.22, 1, 0.36, 1) var(--motion-delay, 0ms),
-    scale 680ms cubic-bezier(0.22, 1, 0.36, 1) var(--motion-delay, 0ms);
+    translate var(--motion-duration-reveal) var(--motion-ease-out) var(--motion-delay, 0ms),
+    scale var(--motion-duration-reveal) var(--motion-ease-out) var(--motion-delay, 0ms);
   will-change: translate, scale;
 }
 
@@ -283,7 +293,7 @@ body {
 
 .page-enter-active,
 .page-leave-active {
-  transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition: transform var(--motion-duration-page) var(--motion-ease-out);
 }
 
 .page-enter-from {
@@ -326,6 +336,14 @@ body {
     transform: none;
     filter: none;
     transition: none;
+  }
+
+  :where(a, button) {
+    transition: none;
+  }
+
+  :where(a, button):active {
+    scale: none;
   }
 
   [data-parallax] > img,

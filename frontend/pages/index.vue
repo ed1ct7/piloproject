@@ -109,6 +109,7 @@ useSchemaOrg([
             :href="businessMaxUrl"
             target="_blank"
             rel="noopener noreferrer"
+            aria-label="Обсудить заказ в MAX, откроется новая вкладка"
           >Обсудить заказ в MAX</a>
         </div>
 
@@ -258,9 +259,12 @@ useSchemaOrg([
       <div class="video-story__copy">
         <p class="eyebrow">Рабочий процесс</p>
         <h2 id="video-title">Как начинается ваша доска</h2>
-        <p>
+        <p class="video-story__description">
           Короткий фрагмент распила бревна на нашей производственной площадке
           в Разбегаево.
+        </p>
+        <p id="video-audio-description" class="video-story__audio-description">
+          В ролике нет речи: звуковая дорожка передаёт шум работающей ленточной пилорамы.
         </p>
       </div>
       <video
@@ -270,8 +274,16 @@ useSchemaOrg([
         playsinline
         poster="/images/pilorama-stanok-brevno.jpg"
         aria-label="Короткое видео с производственной площадки пилорамы"
+        aria-describedby="video-audio-description"
       >
         <source src="/mp4/short-sawmill-video.mp4" type="video/mp4">
+        <track
+          default
+          kind="captions"
+          src="/captions/short-sawmill-video.ru.vtt"
+          srclang="ru"
+          label="Русские субтитры"
+        >
         Ваш браузер не поддерживает воспроизведение видео.
       </video>
     </section>
@@ -351,10 +363,6 @@ useSchemaOrg([
   text-align: center;
   text-decoration: none;
   transition: background-color 180ms ease, color 180ms ease, transform 180ms ease;
-}
-
-.button:hover {
-  transform: translateY(-2px);
 }
 
 .button--primary {
@@ -508,13 +516,6 @@ useSchemaOrg([
   min-height: 180px;
   padding: 24px 0;
   border-bottom: 1px solid var(--color-line);
-  transition: background-color 220ms ease, padding 220ms ease;
-}
-
-.product-row:hover {
-  padding-right: 18px;
-  padding-left: 18px;
-  background: #f1ebe0;
 }
 
 .product-row__number {
@@ -535,11 +536,6 @@ useSchemaOrg([
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 480ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.product-row:hover img {
-  transform: scale(1.035);
 }
 
 .product-row h3 {
@@ -664,7 +660,6 @@ useSchemaOrg([
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 600ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .gallery-card--wide img {
@@ -677,10 +672,6 @@ useSchemaOrg([
 
 .gallery-card--finish img {
   object-position: 38% 58%;
-}
-
-.gallery-card:hover img {
-  transform: scale(1.025);
 }
 
 .gallery-card figcaption {
@@ -698,6 +689,12 @@ useSchemaOrg([
   backdrop-filter: blur(8px);
 }
 
+@media (hover: hover) and (pointer: fine) {
+  .button:hover {
+    transform: translateY(-2px);
+  }
+}
+
 .video-story {
   display: grid;
   grid-template-columns: minmax(280px, 0.7fr) minmax(420px, 1.3fr);
@@ -707,11 +704,16 @@ useSchemaOrg([
   background: #ded4c3;
 }
 
-.video-story__copy > p:last-child {
+.video-story__description {
   max-width: 420px;
   margin: 26px 0 0;
   color: #565b54;
   font-size: 1.05rem;
+}
+
+.video-story__copy .video-story__audio-description {
+  margin-top: 12px;
+  font-size: 0.9rem;
 }
 
 .video-story__video {
@@ -736,7 +738,7 @@ useSchemaOrg([
   }
 }
 
-@media (max-width: 841px) {
+@media (max-width: 840px) {
   .hero,
   .production,
   .video-story {
@@ -791,7 +793,7 @@ useSchemaOrg([
     margin-bottom: 22px;
     overflow-wrap: normal;
     font-size: clamp(2.45rem, 11.8vw, 3.4rem);
-    hyphens: auto;
+    hyphens: none;
     word-break: normal;
   }
 

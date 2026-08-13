@@ -36,7 +36,7 @@ useSchemaOrg([
         <h1>Контакты пилорамы в Разбегаево</h1>
       </div>
 
-      <address class="max-[560px]:min-h-0 max-[560px]:border-l-0 max-[560px]:border-t max-[560px]:border-[#171916] max-[560px]:px-5 max-[560px]:py-[34px] flex flex-col justify-center border-l border-[#171916] bg-[#a8461e] px-8 py-10 text-[#fffdf7]">
+      <address class="max-[560px]:min-h-0 max-[560px]:border-l-0 max-[560px]:border-t max-[560px]:border-[#171916] max-[560px]:px-5 max-[560px]:py-[34px] flex flex-col justify-center border-l border-[#171916] bg-[#934626] px-8 py-10 text-[#fffdf7]">
         <span class="mb-5 font-[Segoe_UI,Arial,sans-serif] text-sm font-[760] uppercase leading-[1.4] tracking-[0.04em]">Адрес</span>
         <strong class="mb-1">Производственная площадка</strong>
         <span>{{ businessAddress }}</span>
@@ -48,17 +48,18 @@ useSchemaOrg([
         <p class="mb-4 font-[Segoe_UI,Arial,sans-serif] text-sm font-[760] uppercase leading-[1.4] tracking-[0.04em]">Связь с производством</p>
         <h2 id="contact-data-title">Позвоните или напишите</h2>
 
-        <div class="mb-8 mt-5 max-w-[620px] border border-l-[5px] border-[#171916] border-l-[#a8461e] bg-[#f1dcc2] px-7 py-7 shadow-[0_18px_42px_rgba(23,25,22,0.16)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_26px_58px_rgba(23,25,22,0.22)] max-[560px]:px-6 max-[560px]:py-6">
+        <div class="mb-8 mt-5 max-w-[620px] border border-l-[5px] border-[#171916] border-l-[#934626] bg-[#f1dcc2] px-7 py-7 shadow-[0_18px_42px_rgba(23,25,22,0.16)] max-[560px]:px-6 max-[560px]:py-6">
           <div class="grid gap-2">
-            <a class="font-[Segoe_UI,Arial,sans-serif] text-[clamp(1.75rem,2.6vw,2.4rem)] font-[780] tracking-normal no-underline hover:text-[#a8461e]" :href="businessPhoneHref">{{ businessPhone }}</a>
-            <a class="font-[Segoe_UI,Arial,sans-serif] text-[clamp(1.35rem,2vw,1.85rem)] font-[760] tracking-normal no-underline hover:text-[#a8461e]" :href="businessSecondaryPhoneHref">{{ businessSecondaryPhone }}</a>
-            <a class="font-[Segoe_UI,Arial,sans-serif] text-lg font-[700] no-underline hover:text-[#a8461e]" :href="businessEmailHref">{{ businessEmail }}</a>
+            <a class="font-[Segoe_UI,Arial,sans-serif] text-[clamp(1.75rem,2.6vw,2.4rem)] font-[780] tracking-normal no-underline hover:text-[#934626]" :href="businessPhoneHref">{{ businessPhone }}</a>
+            <a class="font-[Segoe_UI,Arial,sans-serif] text-[clamp(1.35rem,2vw,1.85rem)] font-[760] tracking-normal no-underline hover:text-[#934626]" :href="businessSecondaryPhoneHref">{{ businessSecondaryPhone }}</a>
+            <a class="font-[Segoe_UI,Arial,sans-serif] text-lg font-[700] no-underline hover:text-[#934626]" :href="businessEmailHref">{{ businessEmail }}</a>
           </div>
           <a
-            class="mt-5 inline-flex min-h-12 w-max items-center justify-center bg-[#a8461e] px-5 py-3 font-[Segoe_UI,Arial,sans-serif] font-[760] text-[#fffdf7] no-underline transition-colors duration-150 hover:bg-[#7a451e]"
+            class="mt-5 inline-flex min-h-12 w-max items-center justify-center bg-[#934626] px-5 py-3 font-[Segoe_UI,Arial,sans-serif] font-[760] text-[#fffdf7] no-underline transition-colors duration-150 hover:bg-[#7d3d24]"
             :href="businessMaxUrl"
             target="_blank"
             rel="noopener noreferrer"
+            aria-label="Написать в MAX, откроется новая вкладка"
           >Написать в MAX</a>
         </div>
 
@@ -104,10 +105,11 @@ useSchemaOrg([
           Перед выездом позвоните, чтобы согласовать время приезда и готовность заказа к погрузке.
         </p>
         <a
-          class="inline-flex min-h-12 w-max items-center justify-center border border-[#a8461e] bg-[#a8461e] px-5 py-3 text-center font-[Segoe_UI,Arial,sans-serif] font-[760] leading-[1.2] text-[#fffdf7] no-underline transition-colors duration-150 hover:border-[#7a451e] hover:bg-[#7a451e]"
+          class="inline-flex min-h-12 w-max items-center justify-center border border-[#934626] bg-[#934626] px-5 py-3 text-center font-[Segoe_UI,Arial,sans-serif] font-[760] leading-[1.2] text-[#fffdf7] no-underline transition-colors duration-150 hover:border-[#7d3d24] hover:bg-[#7d3d24]"
           :href="businessMapsUrl"
           target="_blank"
           rel="noopener noreferrer"
+          aria-label="Открыть производство в Яндекс Картах, откроется новая вкладка"
         >Открыть в Яндекс Картах</a>
       </div>
 

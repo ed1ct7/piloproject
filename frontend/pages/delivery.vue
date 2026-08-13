@@ -56,6 +56,7 @@ const deliverySteps = [
               :href="businessMaxUrl"
               target="_blank"
               rel="noopener"
+              aria-label="Написать в MAX, откроется новая вкладка"
             >Написать в MAX</a>
             <a class="delivery-button delivery-button--secondary" :href="businessSecondaryPhoneHref">
               {{ businessSecondaryPhone }}
@@ -128,6 +129,7 @@ const deliverySteps = [
           :href="businessMaxUrl"
           target="_blank"
           rel="noopener"
+          aria-label="Написать в MAX для расчёта доставки, откроется новая вкладка"
         >Написать в MAX для расчёта</a>
       </div>
     </section>
@@ -140,7 +142,7 @@ const deliverySteps = [
   --forest: #1f3a2f;
   --paper: #fff8eb;
   --sand: #efe6d7;
-  --orange: #a8461e;
+  --orange: #934626;
   background: var(--sand);
 }
 
@@ -236,8 +238,8 @@ const deliverySteps = [
 }
 
 .delivery-button--primary:hover {
-  border-color: #7a451e;
-  background: #7a451e;
+  border-color: #7d3d24;
+  background: #7d3d24;
 }
 
 .delivery-button--secondary {
@@ -281,12 +283,6 @@ const deliverySteps = [
   flex-direction: column;
   padding: clamp(24px, 2.4vw, 32px);
   box-shadow: 0 18px 42px rgb(23 25 22 / 12%);
-  transition: transform 180ms ease, box-shadow 180ms ease;
-}
-
-.receiving-card:hover {
-  box-shadow: 0 28px 62px rgb(23 25 22 / 20%);
-  transform: translateY(-4px);
 }
 
 .receiving-card + .receiving-card {

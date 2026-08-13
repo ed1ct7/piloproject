@@ -17,6 +17,7 @@ useHead({
 })
 
 const {
+  initialized,
   detailedItems,
   subtotal,
   increment,
@@ -27,6 +28,8 @@ const {
 
 const formattedSubtotal = computed(() => `${subtotal.value.toLocaleString('ru-RU')} ₽`)
 const copyFeedback = ref('')
+const cartFeedback = ref('')
+let cartFeedbackTimeout: ReturnType<typeof setTimeout> | undefined
 const orderText = computed(() => {
   const lines = detailedItems.value.map((item: CartProductItem, index: number) => {
     const { product, quantity } = item
@@ -51,6 +54,54 @@ async function copyOrderText() {
     copyFeedback.value = 'Не удалось скопировать автоматически. Позвоните менеджеру — заявка сохранится в браузере.'
   }
 }
+
+function showCartFeedback(message: string): void {
+  cartFeedback.value = ''
+  if (cartFeedbackTimeout) {
+    clearTimeout(cartFeedbackTimeout)
+  }
+
+  nextTick(() => {
+    cartFeedback.value = message
+    cartFeedbackTimeout = setTimeout(() => {
+      cartFeedback.value = ''
+    }, 4000)
+  })
+}
+
+function incrementWithFeedback(item: CartProductItem): void {
+  const nextQuantity = item.quantity + 1
+  increment(item.productId)
+  showCartFeedback(`${item.product.title}: количество увеличено до ${nextQuantity} ${item.product.unit}.`)
+}
+
+function decrementWithFeedback(item: CartProductItem): void {
+  if (item.quantity <= 1) {
+    removeProduct(item.productId)
+    showCartFeedback(`${item.product.title}: удалено из заявки.`)
+    return
+  }
+
+  const nextQuantity = item.quantity - 1
+  decrement(item.productId)
+  showCartFeedback(`${item.product.title}: количество уменьшено до ${nextQuantity} ${item.product.unit}.`)
+}
+
+function removeWithFeedback(item: CartProductItem): void {
+  removeProduct(item.productId)
+  showCartFeedback(`${item.product.title}: удалено из заявки.`)
+}
+
+function clearWithFeedback(): void {
+  clearCart()
+  showCartFeedback('Заявка очищена.')
+}
+
+onBeforeUnmount(() => {
+  if (cartFeedbackTimeout) {
+    clearTimeout(cartFeedbackTimeout)
+  }
+})
 </script>
 
 <template>
@@ -60,45 +111,53 @@ async function copyOrderText() {
     </section>
 
     <section class="max-[560px]:px-[18px] bg-[#efe6d7] px-[max(24px,calc((100vw_-_1280px)/2))] pb-20 pt-10">
-      <div v-if="detailedItems.length === 0" class="grid justify-items-start gap-4 py-12">
+      <UiStatusMessage class="mb-4" :message="cartFeedback" />
+
+      <div v-if="!initialized" class="grid justify-items-start gap-4 py-12" aria-busy="true" aria-live="polite">
+        <h2>Загружаем заявку</h2>
+        <p>Проверяем сохранённые на этом устройстве позиции.</p>
+      </div>
+
+      <div v-else-if="detailedItems.length === 0" class="grid justify-items-start gap-4 py-12">
         <h2>Заявка пуста</h2>
         <p>Добавьте нужные позиции из каталога пиломатериалов.</p>
-        <NuxtLink class="w-max border-b-2 border-current pb-[3px] font-[Segoe_UI,Arial,sans-serif] font-[760] text-[#1f3a2f] no-underline hover:text-[#a8461e]" to="/pilomaterialy">Перейти в каталог</NuxtLink>
+        <NuxtLink class="inline-flex min-h-11 w-max items-center border-b-2 border-current font-[Segoe_UI,Arial,sans-serif] font-[760] text-[#1f3a2f] no-underline hover:text-[#934626]" to="/pilomaterialy">Перейти в каталог</NuxtLink>
       </div>
 
       <template v-else>
         <article v-for="item in detailedItems" :key="item.productId" class="max-[840px]:grid-cols-1 grid grid-cols-[minmax(280px,1fr)_auto_auto] items-center gap-8 border-b border-[#171916] py-8">
           <div>
             <h2 class="mb-3">{{ item.product.title }}</h2>
-            <p class="mb-0 font-[Segoe_UI,Arial,sans-serif] font-extrabold text-[#a8461e]">{{ formatProductPrice(item.product) }}</p>
+            <p class="mb-0 font-[Segoe_UI,Arial,sans-serif] font-extrabold text-[#934626]">{{ formatProductPrice(item.product) }}</p>
           </div>
 
           <div class="flex items-center gap-3" :aria-label="`Количество: ${item.product.title}`">
-            <button class="size-11 border border-[#171916] bg-[#ded5c4] text-xl transition-colors hover:bg-[#cbb99d]" type="button" :aria-label="`Уменьшить количество: ${item.product.title}`" @click="decrement(item.productId)">−</button>
+            <button class="size-11 border border-[#171916] bg-[#ded5c4] text-xl transition-colors hover:bg-[#cbb99d]" type="button" :aria-label="`Уменьшить количество: ${item.product.title}`" @click="decrementWithFeedback(item)">−</button>
             <output class="min-w-16 text-center font-[Segoe_UI,Arial,sans-serif] font-[760]" :aria-label="`Количество ${item.quantity} ${item.product.unit}`">{{ item.quantity }} {{ item.product.unit }}</output>
-            <button class="size-11 border border-[#171916] bg-[#ded5c4] text-xl transition-colors hover:bg-[#cbb99d]" type="button" :aria-label="`Увеличить количество: ${item.product.title}`" @click="increment(item.productId)">+</button>
+            <button class="size-11 border border-[#171916] bg-[#ded5c4] text-xl transition-colors hover:bg-[#cbb99d]" type="button" :aria-label="`Увеличить количество: ${item.product.title}`" @click="incrementWithFeedback(item)">+</button>
           </div>
 
-          <button class="w-max border-0 border-b-2 border-current bg-transparent px-0 pb-[3px] font-[Segoe_UI,Arial,sans-serif] font-[760] text-[#a8461e]" type="button" @click="removeProduct(item.productId)">Удалить</button>
+          <button class="inline-flex min-h-11 w-max items-center border-0 border-b-2 border-current bg-transparent px-0 font-[Segoe_UI,Arial,sans-serif] font-[760] text-[#934626]" type="button" @click="removeWithFeedback(item)">Удалить</button>
         </article>
 
         <div class="mt-10 flex flex-wrap items-end justify-between gap-8">
-          <button class="w-max border-0 border-b-2 border-current bg-transparent px-0 pb-[3px] font-[Segoe_UI,Arial,sans-serif] font-[760] text-[#a8461e]" type="button" @click="clearCart">Очистить заявку</button>
+          <button class="inline-flex min-h-11 w-max items-center border-0 border-b-2 border-current bg-transparent px-0 font-[Segoe_UI,Arial,sans-serif] font-[760] text-[#934626]" type="button" @click="clearWithFeedback">Очистить заявку</button>
           <div class="max-w-[560px]">
             <p class="mb-3 font-[Segoe_UI,Arial,sans-serif] text-[0.8125rem] font-[760] uppercase">Предварительная сумма</p>
             <p class="mb-5 text-[clamp(1.8rem,3vw,2.8rem)] font-[750] leading-none">{{ formattedSubtotal }}</p>
             <p class="mb-5">Передача перечня не подтверждает заказ. Наличие, цена, доставка и заключение договора согласовываются с менеджером.</p>
             <div class="flex flex-wrap gap-3">
               <button
-                class="inline-flex min-h-11 cursor-pointer items-center border-0 bg-[#a8461e] px-5 py-3 font-[Segoe_UI,Arial,sans-serif] font-[760] text-[#fffdf7] transition-colors duration-150 hover:bg-[#7a451e]"
+                class="inline-flex min-h-11 cursor-pointer items-center border-0 bg-[#934626] px-5 py-3 font-[Segoe_UI,Arial,sans-serif] font-[760] text-[#fffdf7] transition-colors duration-150 hover:bg-[#7d3d24]"
                 type="button"
                 @click="copyOrderText"
               >Скопировать заявку</button>
               <a
-                class="inline-flex min-h-11 items-center border border-[#a8461e] bg-[#a8461e] px-5 py-3 font-[Segoe_UI,Arial,sans-serif] font-[760] text-[#fffdf7] no-underline transition-colors duration-150 hover:border-[#7a451e] hover:bg-[#7a451e]"
+                class="inline-flex min-h-11 items-center border border-[#934626] bg-[#934626] px-5 py-3 font-[Segoe_UI,Arial,sans-serif] font-[760] text-[#fffdf7] no-underline transition-colors duration-150 hover:border-[#7d3d24] hover:bg-[#7d3d24]"
                 :href="businessMaxUrl"
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="Открыть MAX в новой вкладке"
               >Открыть MAX</a>
               <a
                 class="inline-flex min-h-11 items-center border border-[#1f3a2f] bg-[#1f3a2f] px-5 py-3 font-[Segoe_UI,Arial,sans-serif] font-[760] text-[#fffdf7] no-underline transition-colors duration-150 hover:border-[#171916] hover:bg-[#171916]"
@@ -107,9 +166,12 @@ async function copyOrderText() {
             </div>
             <UiStatusMessage class="mt-4" :message="copyFeedback" />
             <a
-              class="mt-3 inline-flex border-b-2 border-current pb-1 font-[Segoe_UI,Arial,sans-serif] font-[760] no-underline hover:text-[#a8461e]"
+              class="mt-3 inline-flex min-h-11 max-w-full flex-wrap items-center gap-x-1 border-b-2 border-current font-[Segoe_UI,Arial,sans-serif] font-[760] no-underline hover:text-[#934626] max-[560px]:w-full"
               :href="businessSecondaryPhoneHref"
-            >Дополнительный телефон: {{ businessSecondaryPhone }}</a>
+            >
+              <span>Дополнительный телефон:</span>
+              <span class="whitespace-nowrap">{{ businessSecondaryPhone }}</span>
+            </a>
           </div>
         </div>
       </template>

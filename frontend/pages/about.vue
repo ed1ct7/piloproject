@@ -85,8 +85,8 @@ useSchemaOrg([
           В фотогалерее собраны реальные кадры производственной площадки, готовой продукции и погрузки заказов.
         </p>
         <div class="flex flex-wrap gap-5">
-          <NuxtLink class="w-max cursor-pointer border-0 border-b-2 border-current bg-transparent px-0 pb-[3px] font-[Segoe_UI,Arial,sans-serif] font-[760] text-[#1f3a2f] no-underline transition-colors duration-150 hover:text-[#a8461e]" to="/foto">Смотреть фотографии</NuxtLink>
-          <NuxtLink class="w-max cursor-pointer border-0 border-b-2 border-current bg-transparent px-0 pb-[3px] font-[Segoe_UI,Arial,sans-serif] font-[760] text-[#1f3a2f] no-underline transition-colors duration-150 hover:text-[#a8461e]" to="/kontakty">Связаться с нами</NuxtLink>
+          <NuxtLink class="w-max cursor-pointer border-0 border-b-2 border-current bg-transparent px-0 pb-[3px] font-[Segoe_UI,Arial,sans-serif] font-[760] text-[#1f3a2f] no-underline transition-colors duration-150 hover:text-[#934626]" to="/foto">Смотреть фотографии</NuxtLink>
+          <NuxtLink class="w-max cursor-pointer border-0 border-b-2 border-current bg-transparent px-0 pb-[3px] font-[Segoe_UI,Arial,sans-serif] font-[760] text-[#1f3a2f] no-underline transition-colors duration-150 hover:text-[#934626]" to="/kontakty">Связаться с нами</NuxtLink>
         </div>
       </div>
     </section>

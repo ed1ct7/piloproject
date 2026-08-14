@@ -15,10 +15,12 @@ description: Design system for Пилорама Разбегаево frontend. M
 | `--color-ink` | `#20231f` | основной текст, тёмные плашки |
 | `--color-forest` | `#183126` | тёмно-зелёные поверхности, лого |
 | `--color-forest-soft` | `#29483a` | вторичный зелёный |
+| `--color-forest-deep` | `#12271e` | фон футера, самые тёмные плашки |
 | `--color-cream` | `#f3efe6` | фон страницы |
 | `--color-paper` | `#faf7f0` | карточки, светлые плашки |
 | `--color-sand` | `#ded4c3` | бордеры-разделители, тёплый нейтрал |
 | `--color-line` | `rgb(32 35 31 / 22%)` | тонкие линии |
+| `--color-line-light` | `rgb(250 247 240 / 24%)` | тонкие линии на тёмных фонах |
 | `--color-copper` | `#934626` | ЕДИНСТВЕННЫЙ акцент: hover, цены, CTA |
 | `--color-copper-dark` | `#7d3d24` | active/pressed медь |
 

@@ -18,15 +18,15 @@ useHead({
 
 <template>
   <main>
-    <section class="border-b border-[#171916] bg-[#efe6d7]">
+    <section class="border-b border-(--color-ink) bg-(--color-sand)">
       <div class="mx-auto w-[min(980px,100%)] px-8 py-16 max-[560px]:px-[18px] max-[560px]:py-11">
         <p class="mb-4 font-[Segoe_UI,Arial,sans-serif] text-[0.8125rem] font-[760] uppercase tracking-[0.04em]">Редакция от 14 августа 2026 года</p>
         <h1 class="mb-5 !text-[clamp(2.2rem,4.2vw,4rem)]">Политика конфиденциальности сайта</h1>
-        <p class="mb-0 max-w-[760px] text-[1.05rem] leading-[1.65] text-[#393d37]">Сайт не содержит форм для ввода персональных данных и не принимает заказы автоматически.</p>
+        <p class="mb-0 max-w-[760px] text-[1.05rem] leading-[1.65] text-(--color-ink)/85">Сайт не содержит форм для ввода персональных данных и не принимает заказы автоматически.</p>
       </div>
     </section>
 
-    <article class="mx-auto w-[min(980px,100%)] px-8 py-14 text-[#30332e] max-[560px]:px-[18px] [&_a]:font-semibold [&_a]:underline [&_h2]:mb-4 [&_h2]:mt-10 [&_li]:leading-[1.65] [&_p+p]:mt-3 [&_p]:leading-[1.7] [&_ul]:grid [&_ul]:gap-2">
+    <article class="mx-auto w-[min(980px,100%)] px-8 py-14 text-(--color-ink)/85 max-[560px]:px-[18px] [&_a]:font-semibold [&_a]:underline [&_h2]:mb-4 [&_h2]:mt-10 [&_li]:leading-[1.65] [&_p+p]:mt-3 [&_p]:leading-[1.7] [&_ul]:grid [&_ul]:gap-2">
       <p>Настоящая политика относится к сайту <a :href="siteUrl">pilorama-razbegaevo.ru</a>.</p>
 
       <h2>1. Владелец сайта</h2>
@@ -57,7 +57,7 @@ useHead({
       <h2>6. Изменения</h2>
       <p>Политика обновляется при изменении функций сайта или требований законодательства. Актуальная редакция публикуется на этой странице.</p>
 
-      <div class="mt-12 flex flex-wrap gap-5 border-t border-[#cbb99d] pt-7">
+      <div class="mt-12 flex flex-wrap gap-5 border-t border-(--color-sand) pt-7">
         <NuxtLink to="/kontakty">Контакты</NuxtLink>
       </div>
     </article>

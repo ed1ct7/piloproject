@@ -240,10 +240,12 @@ if (import.meta.client) {
   --color-ink: #20231f;
   --color-forest: #183126;
   --color-forest-soft: #29483a;
+  --color-forest-deep: #12271e;
   --color-cream: #f3efe6;
   --color-paper: #faf7f0;
   --color-sand: #ded4c3;
   --color-line: rgb(32 35 31 / 22%);
+  --color-line-light: rgb(250 247 240 / 24%);
   --color-copper: #934626;
   --color-copper-dark: #7d3d24;
   --color-focus-inner: #fffdf7;

@@ -140,17 +140,12 @@ const deliverySteps = [
 
 <style scoped>
 .delivery-page {
-  --ink: #171916;
-  --forest: #1f3a2f;
-  --paper: #fff8eb;
-  --sand: #efe6d7;
-  --orange: #934626;
-  background: var(--sand);
+  background: var(--color-sand);
 }
 
 .eyebrow {
   margin-bottom: 1rem;
-  color: var(--forest);
+  color: var(--color-forest);
   font-family: "Segoe UI", Arial, sans-serif;
   font-size: 0.78rem;
   font-weight: 800;
@@ -164,8 +159,8 @@ const deliverySteps = [
   width: 100%;
   min-height: 0;
   margin: 0;
-  border-bottom: 1px solid var(--ink);
-  background: var(--paper);
+  border-bottom: 1px solid var(--color-ink);
+  background: var(--color-paper);
 }
 
 .delivery-hero__content {
@@ -191,7 +186,7 @@ const deliverySteps = [
 .delivery-hero__lead {
   max-width: 640px;
   margin-bottom: 0;
-  color: #393d37;
+  color: rgb(32 35 31 / 85%);
   font-size: clamp(1.04rem, 1.35vw, 1.25rem);
   line-height: 1.55;
 }
@@ -204,7 +199,7 @@ const deliverySteps = [
 .delivery-hero__contact > p {
   max-width: 360px;
   margin-bottom: 1.25rem;
-  color: #393d37;
+  color: rgb(32 35 31 / 85%);
   font-size: 1.04rem;
   line-height: 1.55;
 }
@@ -222,7 +217,7 @@ const deliverySteps = [
   min-height: 52px;
   align-items: center;
   justify-content: center;
-  border: 1px solid var(--ink);
+  border: 1px solid var(--color-ink);
   padding: 0.85rem 1.3rem;
   font-family: "Segoe UI", Arial, sans-serif;
   font-size: 0.94rem;
@@ -234,32 +229,32 @@ const deliverySteps = [
 }
 
 .delivery-button--primary {
-  border-color: var(--orange);
-  background: var(--orange);
-  color: #fffdf7;
+  border-color: var(--color-copper);
+  background: var(--color-copper);
+  color: var(--color-paper);
 }
 
 .delivery-button--primary:hover {
-  border-color: #7d3d24;
-  background: #7d3d24;
+  border-color: var(--color-copper-dark);
+  background: var(--color-copper-dark);
 }
 
 .delivery-button--secondary {
-  border-color: var(--forest);
-  background: var(--forest);
-  color: #fffdf7;
-  box-shadow: 0 10px 22px rgb(23 25 22 / 16%);
+  border-color: var(--color-forest);
+  background: var(--color-forest);
+  color: var(--color-paper);
+  box-shadow: 0 10px 22px rgb(32 35 31 / 16%);
 }
 
 .delivery-button--secondary:hover {
-  background: var(--ink);
-  color: #fffdf7;
+  background: var(--color-ink);
+  color: var(--color-paper);
 }
 
 .receiving {
   padding: 56px 24px;
-  border-bottom: 1px solid var(--ink);
-  background: var(--paper);
+  border-bottom: 1px solid var(--color-ink);
+  background: var(--color-paper);
 }
 
 .section-heading {
@@ -276,7 +271,7 @@ const deliverySteps = [
   grid-template-columns: repeat(2, minmax(0, 1fr));
   max-width: 1200px;
   margin: 0 auto;
-  border: 1px solid var(--ink);
+  border: 1px solid var(--color-ink);
 }
 
 .receiving-card {
@@ -284,11 +279,11 @@ const deliverySteps = [
   min-width: 0;
   flex-direction: column;
   padding: clamp(24px, 2.4vw, 32px);
-  box-shadow: 0 18px 42px rgb(23 25 22 / 12%);
+  box-shadow: 0 18px 42px rgb(32 35 31 / 12%);
 }
 
 .receiving-card + .receiving-card {
-  border-left: 1px solid var(--ink);
+  border-left: 1px solid var(--color-ink);
 }
 
 .receiving-card--pickup {
@@ -315,7 +310,7 @@ const deliverySteps = [
 
 .receiving-card__label {
   padding: 0.35rem 0.55rem;
-  border: 1px solid var(--ink);
+  border: 1px solid var(--color-ink);
   font-size: 0.72rem;
   font-weight: 800;
   letter-spacing: 0.07em;
@@ -339,7 +334,7 @@ const deliverySteps = [
 .receiving-card li {
   position: relative;
   padding-left: 1.35rem;
-  color: #393d37;
+  color: rgb(32 35 31 / 85%);
   font-size: 0.94rem;
   line-height: 1.45;
 }
@@ -350,7 +345,7 @@ const deliverySteps = [
   left: 0;
   width: 6px;
   height: 6px;
-  background: var(--orange);
+  background: var(--color-copper);
   content: "";
 }
 
@@ -359,7 +354,7 @@ const deliverySteps = [
   margin-top: auto;
   border-bottom: 2px solid currentColor;
   padding-bottom: 0.2rem;
-  color: var(--forest);
+  color: var(--color-forest);
   font-family: "Segoe UI", Arial, sans-serif;
   font-weight: 760;
   text-decoration: none;
@@ -367,14 +362,14 @@ const deliverySteps = [
 }
 
 .text-link:hover {
-  color: var(--orange);
+  color: var(--color-copper);
 }
 
 .delivery-process {
   display: grid;
   grid-template-columns: minmax(360px, 0.82fr) minmax(0, 1.18fr);
-  background: var(--forest);
-  color: #fffdf7;
+  background: var(--color-forest);
+  color: var(--color-paper);
 }
 
 .delivery-process__heading {
@@ -392,7 +387,7 @@ const deliverySteps = [
 .delivery-process__list {
   margin: 0;
   padding: 0;
-  border-left: 1px solid #365f68;
+  border-left: 1px solid var(--color-line-light);
   list-style: none;
 }
 
@@ -401,7 +396,7 @@ const deliverySteps = [
   grid-template-columns: 48px minmax(0, 1fr);
   gap: clamp(20px, 3vw, 48px);
   padding: 1.75rem clamp(28px, 4vw, 64px);
-  border-bottom: 1px solid #365f68;
+  border-bottom: 1px solid var(--color-line-light);
 }
 
 .delivery-process__list li:last-child {
@@ -417,7 +412,7 @@ const deliverySteps = [
 
 .delivery-process__list h3 {
   margin-bottom: 0.55rem;
-  color: #fffdf7;
+  color: var(--color-paper);
 }
 
 .delivery-process__list p {
@@ -433,9 +428,9 @@ const deliverySteps = [
   align-items: center;
   gap: clamp(40px, 6vw, 88px);
   padding: 72px max(24px, calc((100vw - 1200px) / 2));
-  border-bottom: 1px solid var(--ink);
+  border-bottom: 1px solid var(--color-ink);
   background: var(--color-sand);
-  box-shadow: inset 0 18px 42px rgb(23 25 22 / 8%);
+  box-shadow: inset 0 18px 42px rgb(32 35 31 / 8%);
 }
 
 .delivery-cta h2 {
@@ -489,7 +484,7 @@ const deliverySteps = [
   }
 
   .delivery-process__list {
-    border-top: 1px solid #365f68;
+    border-top: 1px solid var(--color-line-light);
     border-left: 0;
   }
 
@@ -506,7 +501,7 @@ const deliverySteps = [
   }
 
   .receiving-card + .receiving-card {
-    border-top: 1px solid var(--ink);
+    border-top: 1px solid var(--color-ink);
     border-left: 0;
   }
 }

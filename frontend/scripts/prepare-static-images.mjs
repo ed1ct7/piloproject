@@ -17,7 +17,6 @@ const requiredSources = [
   'images/dostavka-pilomaterialov.jpg',
   'images/evrovagonka-12-5x95x3000.png',
   'images/imitatsiya-brusa-20x145.jpg',
-  'images/imitatsiya-brusa-av-karelskii-ship.jpg',
   'images/imitatsiya-brusa-upakovka.jpg',
   'images/lentochnaya-pilorama-raspil.jpg',
   'images/lumber-stack-2025-03-07.jpg',

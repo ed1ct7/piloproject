@@ -166,7 +166,7 @@ test('текстовые блоки сохраняют вертикальный 
   await page.goto('/cart')
   const emptyCart = page.getByText('Заявка пуста').locator('..')
   await expectVerticalGap(emptyCart.locator('h2'), emptyCart.locator('p'), 16)
-  await expectVerticalGap(emptyCart.locator('p'), emptyCart.locator('a'), 16)
+  await expectVerticalGap(emptyCart.locator('p'), emptyCart.getByRole('link', { name: 'Перейти в каталог' }), 16)
 
   await page.goto('/politika-konfidencialnosti')
   const policyParagraphs = page.locator('article > p')

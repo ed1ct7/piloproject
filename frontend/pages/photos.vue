@@ -87,6 +87,34 @@ const photos = [
   },
 ]
 
+/**
+ * Журнальная мозаика (десктоп ≥1100px): span-классы по позиции кадра.
+ * Ритм: крупный разворот → ряд мелких → пара широких, дважды, хвост широкими.
+ * Раскладка рассчитана на сетку в 6 колонок без дыр при 16 кадрах.
+ */
+const mosaicSpans = [
+  'min-[1100px]:col-span-4 min-[1100px]:row-span-2',
+  'min-[1100px]:col-span-2 min-[1100px]:row-span-2',
+  'min-[1100px]:col-span-2',
+  'min-[1100px]:col-span-2',
+  'min-[1100px]:col-span-2',
+  'min-[1100px]:col-span-3',
+  'min-[1100px]:col-span-3',
+  'min-[1100px]:col-span-2 min-[1100px]:row-span-2',
+  'min-[1100px]:col-span-4 min-[1100px]:row-span-2',
+  'min-[1100px]:col-span-2',
+  'min-[1100px]:col-span-2',
+  'min-[1100px]:col-span-2',
+  'min-[1100px]:col-span-3',
+  'min-[1100px]:col-span-3',
+  'min-[1100px]:col-span-3',
+  'min-[1100px]:col-span-3',
+]
+
+function getMosaicSpan(index: number): string {
+  return mosaicSpans[index] ?? 'min-[1100px]:col-span-2'
+}
+
 useSeoMeta({
   title: 'Фото пилорамы в Разбегаево – производство, склад, отгрузка',
   description: 'Фотографии производственной площадки пилорамы в Разбегаево: ленточная пилорама, распил бревна, склад сухой доски и бруска, обработка огнебиозащитой, отгрузка и доставка.',
@@ -118,7 +146,7 @@ useSchemaOrg([
 
 <template>
   <main>
-    <section class="max-[840px]:min-h-0 max-[560px]:block max-[560px]:px-[18px] max-[560px]:pb-10 max-[560px]:pt-[34px] grid min-h-[310px] grid-cols-[64px_minmax(0,1fr)] items-center gap-8 border-b border-[#171916] bg-(--color-sand) px-[max(24px,calc((100vw_-_1280px)/2))] pb-10 pt-14">
+    <section class="max-[840px]:min-h-0 max-[560px]:block max-[560px]:px-[18px] max-[560px]:pb-10 max-[560px]:pt-[34px] grid min-h-[310px] grid-cols-[64px_minmax(0,1fr)] items-center gap-8 border-b border-(--color-ink) bg-(--color-sand) px-[max(24px,calc((100vw_-_1280px)/2))] pb-10 pt-14">
       <div aria-hidden="true" />
       <div class="max-w-[760px] [&_h1]:mb-0">
         <p class="mb-3 font-[Segoe_UI,Arial,sans-serif] text-[0.8125rem] font-[760] uppercase tracking-[0.04em] text-(--color-copper)">Без постановочных кадров</p>
@@ -126,19 +154,19 @@ useSchemaOrg([
       </div>
     </section>
 
-    <section class="grid grid-cols-4 gap-5 bg-[#efe6d7] px-[max(24px,calc((100vw_-_1280px)/2))] pb-20 pt-14 max-[1100px]:grid-cols-3 max-[840px]:grid-cols-2 max-[560px]:grid-cols-1 max-[560px]:gap-4 max-[560px]:px-[18px] max-[560px]:pb-14" aria-label="Фотографии производственной площадки">
-      <figure v-for="photo in photos" :key="photo.image" data-parallax="10" class="relative overflow-hidden border border-[#171916] bg-[#ded5c4] shadow-[0_18px_42px_rgba(23,25,22,0.14)] [&_img]:aspect-[4/3] [&_img]:w-full [&_img]:object-cover">
+    <section class="grid grid-cols-6 grid-flow-dense auto-rows-[200px] gap-5 bg-(--color-cream) px-[max(24px,calc((100vw_-_1280px)/2))] pb-20 pt-14 max-[1100px]:auto-rows-auto max-[1100px]:grid-cols-3 max-[840px]:grid-cols-2 max-[560px]:grid-cols-1 max-[560px]:gap-4 max-[560px]:px-[18px] max-[560px]:pb-14" aria-label="Фотографии производственной площадки">
+      <figure v-for="(photo, index) in photos" :key="photo.image" data-parallax="10" class="relative overflow-hidden border border-(--color-ink) bg-(--color-sand) min-[1100px]:h-full [&_img]:aspect-[4/3] [&_img]:w-full [&_img]:object-cover min-[1100px]:[&_img]:aspect-auto min-[1100px]:[&_img]:h-full" :class="getMosaicSpan(index)">
         <NuxtImg
           :src="photo.image"
           :alt="photo.alt"
-          width="720"
+          width="1200"
           height="900"
-          sizes="xs:100vw sm:50vw md:33vw lg:25vw"
+          sizes="xs:100vw sm:50vw md:50vw lg:66vw"
           densities="1"
           format="webp"
           loading="lazy"
         />
-        <figcaption class="absolute inset-x-3 bottom-3 bg-[rgb(250_247_240/92%)] px-3 py-2.5 text-[0.7rem] font-bold uppercase leading-[1.4] tracking-[0.08em] text-[#20231f] backdrop-blur-sm">
+        <figcaption class="absolute inset-x-3 bottom-3 bg-[rgb(250_247_240/92%)] px-3 py-2.5 text-[0.7rem] font-bold uppercase leading-[1.4] tracking-[0.08em] text-(--color-ink) backdrop-blur-sm">
           {{ photo.caption }}
         </figcaption>
       </figure>

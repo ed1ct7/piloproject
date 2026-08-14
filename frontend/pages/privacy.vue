@@ -20,7 +20,7 @@ useHead({
   <main>
     <section class="border-b border-[#171916] bg-[#efe6d7]">
       <div class="mx-auto w-[min(980px,100%)] px-8 py-16 max-[560px]:px-[18px] max-[560px]:py-11">
-        <p class="mb-4 font-[Segoe_UI,Arial,sans-serif] text-[0.8125rem] font-[760] uppercase tracking-[0.04em]">Редакция от 11 августа 2026 года</p>
+        <p class="mb-4 font-[Segoe_UI,Arial,sans-serif] text-[0.8125rem] font-[760] uppercase tracking-[0.04em]">Редакция от 14 августа 2026 года</p>
         <h1 class="mb-5 !text-[clamp(2.2rem,4.2vw,4rem)]">Политика конфиденциальности сайта</h1>
         <p class="mb-0 max-w-[760px] text-[1.05rem] leading-[1.65] text-[#393d37]">Сайт не содержит форм для ввода персональных данных и не принимает заказы автоматически.</p>
       </div>
@@ -31,7 +31,9 @@ useHead({
 
       <h2>1. Владелец сайта</h2>
       <p><strong>{{ businessRequisites.fullName }}</strong><br>ИНН: {{ businessRequisites.inn }}<br>ОГРНИП: {{ businessRequisites.ogrnip }}</p>
+      <p>Зарегистрирован: {{ businessRequisites.registrationAuthority }}, дата регистрации {{ businessRequisites.registrationDate }}.</p>
       <p>Адрес производственной площадки: {{ businessAddress }}.</p>
+      <p>Режим работы: {{ businessWorkingHours.toLowerCase() }}.</p>
       <p>Обращения по вопросам работы сайта: <a :href="businessEmailHref">{{ businessEmail }}</a>.</p>
 
       <h2>2. Что сайт не собирает</h2>

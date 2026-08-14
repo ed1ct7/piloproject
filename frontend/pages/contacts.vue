@@ -41,6 +41,8 @@ useSchemaOrg([
         <span class="mb-5 font-[Segoe_UI,Arial,sans-serif] text-sm font-[760] uppercase leading-[1.4] tracking-[0.04em]">Адрес</span>
         <strong class="mb-1">Производственная площадка</strong>
         <span>{{ businessAddress }}</span>
+        <strong class="mb-1 mt-5">Режим работы</strong>
+        <span>{{ businessWorkingHours }}</span>
       </address>
     </section>
 
@@ -89,6 +91,14 @@ useSchemaOrg([
             <dd>{{ businessAddress }}</dd>
           </div>
           <div>
+            <dt>Режим работы</dt>
+            <dd>{{ businessWorkingHours }}</dd>
+          </div>
+          <div>
+            <dt>Регистрация</dt>
+            <dd>{{ businessRequisites.registrationAuthority }}, {{ businessRequisites.registrationDate }}</dd>
+          </div>
+          <div>
             <dt>Учёт продукции</dt>
             <dd>ЛесЕГАИС</dd>
           </div>
@@ -96,7 +106,7 @@ useSchemaOrg([
       </div>
     </section>
 
-    <section class="max-[840px]:grid-cols-1 mx-auto grid w-[min(1280px,100%)] grid-cols-[minmax(280px,0.38fr)_minmax(0,0.62fr)] border-b border-[#171916] bg-[#d6ded0]" aria-labelledby="map-title">
+    <section class="max-[840px]:grid-cols-1 mx-auto grid w-[min(1280px,100%)] grid-cols-[minmax(280px,0.38fr)_minmax(0,0.62fr)] border-b border-[#171916] bg-(--color-sand)" aria-labelledby="map-title">
       <div class="max-[560px]:px-5 max-[560px]:py-10 flex flex-col justify-center gap-5 p-[56px]">
         <div class="grid gap-4">
           <p class="font-[Segoe_UI,Arial,sans-serif] text-sm font-[760] uppercase leading-[1.4] tracking-[0.04em]">Схема проезда</p>
@@ -114,7 +124,7 @@ useSchemaOrg([
         >Открыть в Яндекс Картах</a>
       </div>
 
-      <div class="max-[840px]:border-l-0 max-[840px]:border-t flex min-h-[360px] items-center border-l border-[#171916] bg-[#fff8eb] p-[56px] max-[560px]:min-h-0 max-[560px]:p-8">
+      <div class="max-[840px]:border-l-0 max-[840px]:border-t flex min-h-[360px] items-center border-l border-[#171916] bg-(--color-paper) p-[56px] max-[560px]:min-h-0 max-[560px]:p-8">
         <div>
           <p class="mb-3 font-[Segoe_UI,Arial,sans-serif] text-sm font-[760] uppercase">Адрес производственной площадки</p>
           <p class="mb-0 text-lg leading-[1.65]">{{ businessAddress }}</p>

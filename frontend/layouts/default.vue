@@ -110,6 +110,7 @@ watch(
       <div class="flex flex-col items-start gap-3 text-[#efe6d7]">
         <span class="mb-3 font-[Segoe_UI,Arial,sans-serif] text-sm font-[760] uppercase leading-[1.4] tracking-[0.04em]">Связь</span>
         <address>{{ businessAddress }}</address>
+        <span>{{ businessWorkingHours }}</span>
         <a class="font-[Segoe_UI,Arial,sans-serif] text-[1.15rem] font-[760] text-[#fffdf7] no-underline hover:text-[#934626]" :href="businessPhoneHref">{{ businessPhone }}</a>
         <a
           class="font-[Segoe_UI,Arial,sans-serif] text-[1.15rem] font-[760] text-[#fffdf7] no-underline hover:text-[#934626]"

@@ -33,10 +33,26 @@ export const businessAddress = 'Ленинградская область, Ло�
 /** Карточка производственной площадки в Яндекс Картах. */
 export const businessMapsUrl = 'https://yandex.ru/maps/org/pilomaterialy_makoyev_r_a_/213229964032?si=d4wy1vbz26r7ax97ytxj2w38mr'
 
+/** Режим работы производственной площадки — человекочитаемый текст. */
+export const businessWorkingHours = 'Ежедневно с 9:00 до 19:00'
+
+/**
+ * Режим работы в формате schema.org для микроразметки LocalBusiness.
+ * @note дни недели указываются полными английскими названиями schema.org
+ */
+export const businessOpeningHoursSpecification = {
+  '@type': 'OpeningHoursSpecification',
+  dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+  opens: '09:00',
+  closes: '19:00',
+}
+
 /** Юридические реквизиты индивидуального предпринимателя. */
 export const businessRequisites = {
   shortName: 'ИП Шидов Р.Х.',
   fullName: 'ИП Шидов Роман Хабасович',
   inn: '781000201830',
   ogrnip: '325784700214687',
+  registrationAuthority: 'Межрайонная инспекция Федеральной налоговой службы № 15 по Санкт-Петербургу',
+  registrationDate: '03.07.2025',
 }

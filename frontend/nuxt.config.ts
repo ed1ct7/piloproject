@@ -5,6 +5,7 @@ import {
   businessEmail,
   businessMapsUrl,
   businessMaxUrl,
+  businessOpeningHoursSpecification,
   businessPhoneInternational,
   businessRequisites,
 } from './utils/business'
@@ -129,6 +130,7 @@ export default defineNuxtConfig({
         addressRegion: 'Ленинградская область',
         addressCountry: 'RU',
       },
+      openingHoursSpecification: businessOpeningHoursSpecification,
       areaServed: [
         'Разбегаево',
         'Ломоносовский район',

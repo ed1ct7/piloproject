@@ -103,6 +103,7 @@ onBeforeUnmount(() => {
 <template>
   <main>
     <section class="max-[560px]:px-[18px] border-b border-[#171916] bg-(--color-sand) px-[max(24px,calc((100vw_-_1280px)/2))] pb-10 pt-14">
+      <p class="mb-3 font-[Segoe_UI,Arial,sans-serif] text-[0.8125rem] font-[760] uppercase tracking-[0.04em] text-(--color-copper)">Без оплаты на сайте</p>
       <h1>Предварительная заявка</h1>
     </section>
 

@@ -47,6 +47,17 @@ export default defineNuxtConfig({
     defaultLocale: 'ru',
   },
 
+  app: {
+    head: {
+      link: [
+        { rel: 'icon', href: '/favicon.ico', sizes: '32x32' },
+        { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
+        { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
+      ],
+      meta: [{ name: 'theme-color', content: '#183126' }],
+    },
+  },
+
   // SSG: `nuxt generate` пререндерит каждый маршрут в статический HTML.
   ssr: true,
   nitro: {

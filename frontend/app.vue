@@ -14,6 +14,11 @@ useHead({
   },
 })
 
+useSeoMeta({
+  ogSiteName: 'Пилорама Разбегаево',
+  ogLocale: 'ru_RU',
+})
+
 if (import.meta.client) {
   onMounted(() => {
     const media = window.matchMedia('(prefers-reduced-motion: reduce)')

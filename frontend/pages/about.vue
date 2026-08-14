@@ -10,6 +10,7 @@ useSeoMeta({
   ogDescription: 'Собственное производство доски, бруса и других пиломатериалов в Ломоносовском районе Ленинградской области.',
   ogImage: `${siteUrl}/images/pilorama-stanok-brevno.jpg`,
   ogType: 'website',
+  ogUrl: `${siteUrl}/o-nas`,
 })
 
 useHead({

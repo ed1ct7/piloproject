@@ -235,6 +235,7 @@ useSeoMeta({
   ogDescription: 'Актуальные группы пиломатериалов с минимальными ценами за м³ и штуку от производителя.',
   ogImage: `${siteUrl}/images/sawn-board-stack-2025-04-02.jpg`,
   ogType: 'website',
+  ogUrl: `${siteUrl}/pilomaterialy`,
 })
 
 useHead({

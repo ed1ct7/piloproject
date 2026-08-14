@@ -94,6 +94,7 @@ useSeoMeta({
   ogDescription: 'Реальные фотографии площадки: станки, склад, готовые пиломатериалы и отгрузка.',
   ogImage: `${siteUrl}/images/pilorama-stanok-brevno.jpg`,
   ogType: 'website',
+  ogUrl: `${siteUrl}/foto`,
 })
 
 useHead({

@@ -10,6 +10,7 @@ useSeoMeta({
   ogDescription: 'Телефоны, адрес производственной площадки, схема проезда и юридические реквизиты.',
   ogImage: `${siteUrl}/images/ploshchadka-otgruzka-pilomaterialov.jpg`,
   ogType: 'website',
+  ogUrl: `${siteUrl}/kontakty`,
 })
 
 useHead({

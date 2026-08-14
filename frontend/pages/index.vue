@@ -49,8 +49,9 @@ useSeoMeta({
   ogTitle: 'Пилорама Разбегаево',
   ogDescription:
     'Доска, имитация бруса и вагонка с производственной площадки в Разбегаево. Актуальные минимальные цены и фото производства.',
-  ogImage: `${siteUrl}/images/brushing-1.jpg`,
+  ogImage: `${siteUrl}/images/og/glavnaya.jpg`,
   ogType: 'website',
+  ogUrl: `${siteUrl}/`,
 })
 
 useHead({
@@ -69,7 +70,7 @@ useSchemaOrg([
     image: `${siteUrl}/images/brushing-1.jpg`,
     address: {
       '@type': 'PostalAddress',
-      streetAddress: 'промзона Большевик, зона 2-й микрорайон',
+      streetAddress: businessAddress,
       addressLocality: 'деревня Разбегаево',
       addressRegion: 'Ленинградская область',
       addressCountry: 'RU',

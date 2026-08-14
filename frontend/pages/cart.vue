@@ -12,10 +12,6 @@ useSeoMeta({
   robots: 'noindex, nofollow',
 })
 
-useHead({
-  link: [{ rel: 'canonical', href: `${siteUrl}/cart` }],
-})
-
 const {
   initialized,
   detailedItems,

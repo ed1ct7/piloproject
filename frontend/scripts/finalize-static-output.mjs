@@ -22,9 +22,9 @@ await access(outputDir)
 await cp(publicSourceDir, outputDir, { recursive: true, force: false })
 await cp(clientBundleDir, join(outputDir, '_nuxt'), { recursive: true, force: false })
 
-// On the affected Windows/Node combination Nitro can exit before it copies the
-// app manifest too. The client still requests it during hydration, so provide
-// the same minimal manifest shape Nuxt expects instead of leaving a noisy 404.
+// На затронутой связке Windows/Node Nitro может выйти и до копирования манифеста
+// приложения. Клиент всё равно запрашивает его при гидратации, поэтому создаём
+// минимальный манифест ожидаемой Nuxt формы вместо шумного 404.
 const manifestFiles = (await readdir(manifestMetaDir)).filter(
   (file) => extname(file) === '.json' && file !== 'dev.json',
 )

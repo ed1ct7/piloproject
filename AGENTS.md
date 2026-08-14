@@ -1,62 +1,62 @@
 # AGENTS.md
 
-## Project
+## Проект
 
-Piloproject consists of:
+Piloproject состоит из:
 
-- `frontend/` — Nuxt 3, Vue, TypeScript, and static generation.
-- `docs/` — architecture, security, deployment, and code requirements.
-- `deploy/` and `scripts/` — operational and development scripts.
+- `frontend/` — Nuxt 3, Vue, TypeScript, статическая генерация.
+- `docs/` — архитектура, безопасность, развёртывание и требования к коду.
+- `deploy/` и `scripts/` — эксплуатационные и вспомогательные скрипты.
 
-Before making changes, read `README.md` and the documents in `docs/` that are relevant to the task.
+Перед изменениями прочитай `README.md` и относящиеся к задаче документы в `docs/`.
 
-## Working rules
+## Правила работы
 
-- Make the smallest change required by the task.
-- Do not change dependencies or `package-lock.json` unless the task requires it.
-- Do not edit generated directories such as `node_modules`, `.nuxt`, `.output`, or `target`.
-- Do not perform a production deployment without an explicit request.
-- Never add secrets, passwords, or real production environment values to the repository.
-- Update `docs/backend-api.md` if an API is introduced or changed.
-- Follow `docs/code-style.md`.
-- Preserve Russian-language user-facing content and documentation unless the task asks for a translation.
+- Делай минимальное изменение, необходимое для задачи.
+- Не меняй зависимости и `package-lock.json`, если задача этого не требует.
+- Не редактируй генерируемые директории: `node_modules`, `.nuxt`, `.output`, `target`.
+- Не выполняй production-деплой без явного запроса.
+- Никогда не добавляй в репозиторий секреты, пароли и реальные production-значения.
+- Обновляй `docs/backend-api.md`, если появляется или меняется API.
+- Соблюдай `docs/code-style.md`.
+- Сохраняй русскоязычный пользовательский контент и документацию, если задача не просит перевода.
 
-## Verification
+## Проверка
 
-Run the baseline check from the repository root:
+Базовая проверка из корня репозитория:
 
 ```text
 npm run check
 ```
 
-For changes to static generation, routes, or SEO, run:
+Для изменений статической генерации, маршрутов или SEO:
 
 ```text
 npm --prefix frontend run generate
 ```
 
-Generation is self-contained and must not require a backend or API environment variable.
+Генерация самодостаточна и не должна требовать backend или переменных окружения API.
 
-## Subagents
+## Субагенты
 
-Use subagents when a task contains at least two independent workstreams. Good candidates include:
+Используй субагентов, когда задача содержит минимум два независимых потока работы. Подходящие случаи:
 
-- parallel frontend and operations investigation;
-- a separate security review;
-- test-coverage analysis;
-- reviewing a large branch against multiple independent criteria.
+- параллельное исследование frontend и эксплуатации;
+- отдельное security-ревью;
+- анализ тестового покрытия;
+- ревью большой ветки по нескольким независимым критериям.
 
-Coordination rules:
+Правила координации:
 
-- The primary agent owns the plan, integration, and final verification.
-- Exploration and review agents do not edit files.
-- Only one agent may edit a given group of files at a time.
-- Do not delegate simple or sequential tasks.
-- After combining results, the primary agent reviews the final diff and runs the relevant checks.
+- Основной агент отвечает за план, интеграцию и финальную проверку.
+- Исследовательские и ревью-агенты не редактируют файлы.
+- Одну группу файлов в один момент времени редактирует только один агент.
+- Не делегируй простые или последовательные задачи.
+- После объединения результатов основной агент просматривает итоговый diff и запускает нужные проверки.
 
-## Definition of done
+## Критерии готовности
 
-- The requested behavior is implemented.
-- Relevant tests and checks pass.
-- Documentation is updated when contracts or operations change.
-- The diff contains no accidental or unrelated changes.
+- Запрошенное поведение реализовано.
+- Релевантные тесты и проверки проходят.
+- Документация обновлена, если изменились контракты или эксплуатация.
+- В diff нет случайных или посторонних изменений.

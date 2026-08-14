@@ -37,4 +37,4 @@ npm run test:smoke # генерация и браузерная проверка
 
 Nginx отключает журнал обращений и оставляет только критические ошибки. Полностью исключить техническую передачу IP-адреса серверу при выдаче страницы невозможно.
 
-Подробности: [deployment](docs/deployment.md), [security](docs/security.md), [персональные данные](docs/personal-data-152-fz.md), [решения клиента](docs/client-decisions-2026-08-11.md).
+Подробности: [deployment](docs/deployment.md), [security](docs/security.md), [персональные данные](docs/personal-data-152-fz.md), [решения клиента](docs/client-decisions-2026-08-11.md), [SEO для Яндекса](docs/yandex-seo.md).

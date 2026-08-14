@@ -19,7 +19,7 @@ npm --prefix frontend run generate
 1. Запустить `deploy/bootstrap-vps.sh` от root.
 2. Направить DNS домена и `www` на VPS.
 3. Разместить `deploy/nginx-piloproject.conf` как `/root/nginx-piloproject.conf` и запустить `deploy/install-release.sh`. При первом запуске скрипт временно включает HTTP, получает сертификат Certbot и затем активирует полный TLS-конфиг. Email Certbot можно переопределить через `CERTBOT_EMAIL`.
-4. Выполнить деплой командой из `docs/deploye-command.md`.
+4. Выполнить деплой командой из [deploy-command.md](deploy-command.md).
 5. Запустить `deploy/verify-vps.sh`.
 
 Nginx отдаёт только статические файлы, отключает access log и записывает лишь критические ошибки. Скрипты не удаляют ранее созданные production-базы или сервисы.
@@ -36,8 +36,8 @@ systemctl disable --now piloproject-backend
 
 ## Проверка
 
+Полная проверка — `deploy/verify-vps.sh` (шаг 5). Быстрая ручная:
+
 ```bash
 curl -I https://pilorama-razbegaevo.ru/
-curl https://pilorama-razbegaevo.ru/robots.txt
-curl https://pilorama-razbegaevo.ru/sitemap.xml
 ```

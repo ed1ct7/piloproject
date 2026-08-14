@@ -292,11 +292,11 @@ const deliverySteps = [
 }
 
 .receiving-card--pickup {
-  background: var(--sand);
+  background: var(--color-paper);
 }
 
 .receiving-card--delivery {
-  background: #d6ded0;
+  background: var(--color-paper);
 }
 
 .receiving-card__topline {
@@ -409,7 +409,7 @@ const deliverySteps = [
 }
 
 .delivery-process__list > li > span {
-  color: #d6ded0;
+  color: var(--color-cream);
   font-family: "Segoe UI", Arial, sans-serif;
   font-size: 0.82rem;
   font-weight: 800;
@@ -423,7 +423,7 @@ const deliverySteps = [
 .delivery-process__list p {
   max-width: 640px;
   margin-bottom: 0;
-  color: #d6ded0;
+  color: var(--color-cream);
   line-height: 1.55;
 }
 
@@ -434,7 +434,7 @@ const deliverySteps = [
   gap: clamp(40px, 6vw, 88px);
   padding: 72px max(24px, calc((100vw - 1200px) / 2));
   border-bottom: 1px solid var(--ink);
-  background: #d6ded0;
+  background: var(--color-sand);
   box-shadow: inset 0 18px 42px rgb(23 25 22 / 8%);
 }
 

@@ -65,7 +65,7 @@ watch(
 
         <nav
           id="main-navigation"
-          class="primary-navigation max-[1100px]:col-span-full max-[1100px]:row-start-2 max-[1100px]:min-h-11 max-[1100px]:border-t max-[1100px]:border-[#d7cebf] max-[840px]:absolute max-[840px]:inset-x-0 max-[840px]:top-full max-[840px]:border-y max-[840px]:border-[#b9ae9e] max-[840px]:bg-[#faf7f0] flex self-stretch [&_a]:grid [&_a]:place-items-center [&_a]:whitespace-nowrap [&_a]:px-[15px] [&_a]:text-[0.9rem] [&_a]:font-semibold [&_a]:no-underline max-[840px]:[&_a]:min-h-12 max-[840px]:[&_a]:place-items-start max-[840px]:[&_a]:border-t max-[840px]:[&_a]:border-[#d7cebf] max-[840px]:[&_a]:px-4 max-[840px]:[&_a]:py-3"
+          class="primary-navigation max-[1100px]:col-span-full max-[1100px]:row-start-2 max-[1100px]:min-h-11 max-[1100px]:border-t max-[1100px]:border-[#d7cebf] max-[840px]:absolute max-[840px]:inset-x-0 max-[840px]:top-full max-[840px]:border-y max-[840px]:border-[#b9ae9e] max-[840px]:bg-[#faf7f0] flex self-stretch [&>a]:grid [&>a]:place-items-center [&>a]:whitespace-nowrap [&>a]:px-[15px] [&>a]:text-[0.9rem] [&>a]:font-semibold [&>a]:no-underline max-[840px]:[&>a]:min-h-12 max-[840px]:[&>a]:place-items-start max-[840px]:[&>a]:border-t max-[840px]:[&>a]:border-[#d7cebf] max-[840px]:[&>a]:px-4 max-[840px]:[&>a]:py-3"
           :class="{ 'is-open': navOpen }"
           aria-label="Основная навигация"
           @click="closeNavigation()"
@@ -76,6 +76,18 @@ watch(
           <NuxtLink to="/dostavka">Доставка</NuxtLink>
           <NuxtLink to="/kontakty">Контакты</NuxtLink>
           <NuxtLink to="/cart">Заявка<template v-if="cartInitialized"> ({{ totalQuantity }})</template></NuxtLink>
+
+          <div class="max-[840px]:flex hidden flex-col items-start gap-3 border-t border-[#d7cebf] px-4 pb-5 pt-4">
+            <a class="font-[Segoe_UI,Arial,sans-serif] text-[1.2rem] font-[760] no-underline hover:text-(--color-copper)" :href="businessPhoneHref">{{ businessPhone }}</a>
+            <span class="text-[0.85rem] text-(--color-ink)/70">{{ businessWorkingHours }}</span>
+            <a
+              class="inline-flex min-h-11 items-center bg-(--color-copper) px-5 text-[0.9rem] font-bold text-(--color-paper) no-underline hover:bg-(--color-copper-dark)"
+              :href="businessMaxUrl"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Написать в MAX (откроется в новой вкладке)"
+            >Написать в MAX</a>
+          </div>
         </nav>
 
         <a class="max-[1100px]:hidden ml-[20px] inline-flex items-center whitespace-nowrap text-[0.95rem] font-semibold tracking-[0.01em] no-underline hover:text-[#934626]" :href="businessPhoneHref">{{ businessPhone }}</a>
@@ -256,14 +268,14 @@ watch(
   transform: translateY(-3.5px) rotate(-45deg);
 }
 
-.primary-navigation a {
+.primary-navigation > a {
   position: relative;
   transition:
     color 240ms ease,
     background-color 240ms ease;
 }
 
-.primary-navigation a::after {
+.primary-navigation > a::after {
   position: absolute;
   right: 15px;
   bottom: 13px;
@@ -276,12 +288,12 @@ watch(
   transition: transform 240ms ease;
 }
 
-.primary-navigation a:focus-visible {
+.primary-navigation > a:focus-visible {
   color: var(--color-copper);
 }
 
-.primary-navigation a:focus-visible::after,
-.primary-navigation a.router-link-active::after {
+.primary-navigation > a:focus-visible::after,
+.primary-navigation > a.router-link-active::after {
   transform: scaleX(1);
 }
 
@@ -313,11 +325,11 @@ watch(
     background: #e8e1d5;
   }
 
-  .primary-navigation a:hover {
+  .primary-navigation > a:hover {
     color: var(--color-copper);
   }
 
-  .primary-navigation a:hover::after {
+  .primary-navigation > a:hover::after {
     transform: scaleX(1);
   }
 
@@ -384,8 +396,8 @@ watch(
   .skip-link,
   .menu-toggle,
   .menu-toggle span,
-  .primary-navigation a,
-  .primary-navigation a::after,
+  .primary-navigation > a,
+  .primary-navigation > a::after,
   .site-header__cta,
   .site-footer a {
     translate: none;

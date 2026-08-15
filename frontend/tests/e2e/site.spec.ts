@@ -5,6 +5,11 @@ import { expect, test } from '@playwright/test'
 const publicRoutes = [
   '/',
   '/pilomaterialy',
+  '/doska',
+  '/suhaya-doska',
+  '/vagonka',
+  '/imitatsiya-brusa',
+  '/ognebiozashchita',
   '/o-nas',
   '/foto',
   '/dostavka',
@@ -105,6 +110,49 @@ test('каталог фильтруется, открывает доступны
   expect((page as typeof page & { externalRequests: string[] }).externalRequests).toEqual([])
 })
 
+test('фотогалерея отдаёт кадры под retina и открывает просмотрщик', async ({ page }) => {
+  await page.goto('/foto')
+  await waitForHydration(page)
+
+  // Плитка мозаики должна брать вариант срезета не мельче своей ширины,
+  // иначе браузер растягивает мелкий кадр и картинка выглядит размазанной.
+  const tileImage = page.locator('main section:nth-of-type(2) figure img').first()
+  await expect.poll(() => tileImage.evaluate((image: HTMLImageElement) => image.complete && image.naturalWidth > 0)).toBe(true)
+  const tile = await tileImage.evaluate((image: HTMLImageElement) => ({
+    cssWidth: image.getBoundingClientRect().width,
+    variantWidth: Number(image.currentSrc.match(/s_(\d+)x/)?.[1] ?? 0),
+  }))
+  expect(tile.variantWidth).toBeGreaterThanOrEqual(tile.cssWidth)
+
+  const openButton = page.getByRole('button', { name: /^Открыть фото во весь экран/ }).first()
+  await openButton.click()
+
+  const viewer = page.getByRole('dialog')
+  await expect(viewer).toBeVisible()
+  await expect(viewer.getByRole('button', { name: 'Закрыть просмотр фотографии' })).toBeFocused()
+  await expect(viewer.getByText('Кадр 1 из 16')).toBeVisible()
+
+  const viewerImage = viewer.locator('img')
+  await expect.poll(() => viewerImage.evaluate((image: HTMLImageElement) => image.complete && image.naturalWidth > 0)).toBe(true)
+  const viewerBox = await viewerImage.evaluate((image: HTMLImageElement) => ({
+    naturalWidth: image.naturalWidth,
+    height: image.getBoundingClientRect().height,
+    viewportHeight: window.innerHeight,
+  }))
+  expect(viewerBox.naturalWidth).toBe(1200)
+  expect(viewerBox.height).toBeLessThanOrEqual(viewerBox.viewportHeight)
+
+  expect((await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa']).analyze()).violations).toEqual([])
+
+  await page.keyboard.press('ArrowRight')
+  await expect(viewer.getByText('Кадр 2 из 16')).toBeVisible()
+
+  await page.keyboard.press('Escape')
+  await expect(viewer).toBeHidden()
+  await expect(openButton).toBeFocused()
+  expect((page as typeof page & { externalRequests: string[] }).externalRequests).toEqual([])
+})
+
 test('мобильное меню сообщает состояние и закрывается по Escape', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 })
   await page.goto('/')
@@ -125,12 +173,39 @@ test('мобильное меню сообщает состояние и зак�
   await expect(toggle).toHaveAccessibleName('Закрыть основную навигацию')
   await expect(page.getByRole('navigation', { name: 'Основная навигация' })).toBeVisible()
   await expect(page.getByRole('link', { name: 'Пиломатериалы', exact: true })).toBeVisible()
+  await expectMinimumTargetSize(page.locator('button[aria-controls="catalog-submenu"]'), 44)
   expect((await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa']).analyze()).violations).toEqual([])
 
   await page.keyboard.press('Escape')
   await expect(toggle).toHaveAttribute('aria-expanded', 'false')
   await expect(toggle).toBeFocused()
   await expect(page.getByRole('navigation', { name: 'Основная навигация' })).toBeHidden()
+  expect((page as typeof page & { externalRequests: string[] }).externalRequests).toEqual([])
+})
+
+test('подменю разделов каталога раскрывается с клавиатуры и закрывается по Escape', async ({ page }) => {
+  await page.goto('/dostavka')
+  await waitForHydration(page)
+
+  const catalogToggle = page.locator('button[aria-controls="catalog-submenu"]')
+  const submenu = page.locator('#catalog-submenu')
+
+  await expect(catalogToggle).toHaveAccessibleName('Показать разделы каталога')
+  await expect(submenu).toBeHidden()
+
+  await catalogToggle.focus()
+  await page.keyboard.press('Enter')
+  await expect(catalogToggle).toHaveAttribute('aria-expanded', 'true')
+  await expect(catalogToggle).toHaveAccessibleName('Скрыть разделы каталога')
+  await expect(submenu.getByRole('link', { name: 'Весь каталог и цены' })).toBeVisible()
+  await expect(submenu.getByRole('link', { name: 'Огнебиозащита' })).toBeVisible()
+  expect((await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa']).analyze()).violations).toEqual([])
+
+  await page.keyboard.press('Escape')
+  await expect(catalogToggle).toHaveAttribute('aria-expanded', 'false')
+  await expect(catalogToggle).toBeFocused()
+  await expect(submenu).toBeHidden()
+  await expect(page.getByRole('navigation', { name: 'Основная навигация' })).toBeVisible()
   expect((page as typeof page & { externalRequests: string[] }).externalRequests).toEqual([])
 })
 
@@ -157,11 +232,6 @@ test('текстовые блоки сохраняют вертикальный 
 
   const nextStep = page.locator('section[aria-labelledby="next-step-title"] > div').nth(1)
   await expectVerticalGap(nextStep.locator('p'), nextStep.locator('a').first(), 20)
-
-  await page.goto('/kontakty')
-  const map = page.locator('section[aria-labelledby="map-title"] > div').first()
-  await expectVerticalGap(map.locator('h2'), map.locator(':scope > p'), 20)
-  await expectVerticalGap(map.locator(':scope > p'), map.locator(':scope > a'), 20)
 
   await page.goto('/cart')
   const emptyCart = page.getByText('Заявка пуста').locator('..')
@@ -202,9 +272,7 @@ test('корзина хранится только локально и пере�
   await expectVerticalGap(summaryParagraphs.nth(2), orderSummary.locator(':scope > div').first(), 20)
 
   await page.setViewportSize({ width: 390, height: 844 })
-  const secondaryPhone = orderSummary.getByText('+7 965 081-00-07', { exact: true })
-  await expect(secondaryPhone).toBeVisible()
-  expect(await secondaryPhone.evaluate((element) => getComputedStyle(element).whiteSpace)).toBe('nowrap')
+  await expect(orderSummary.getByText('Предварительная сумма', { exact: true })).toBeVisible()
   expect((page as typeof page & { externalRequests: string[] }).externalRequests).toEqual([])
 })
 

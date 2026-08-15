@@ -1,15 +1,90 @@
 <script setup lang="ts">
 const route = useRoute()
 const navOpen = ref(false)
+const catalogOpen = ref(false)
 const isHydrated = ref(false)
 const menuButton = useTemplateRef<HTMLButtonElement>('menu-button')
+const catalogButton = useTemplateRef<HTMLButtonElement>('catalog-button')
 const { totalQuantity, initialized: cartInitialized } = useCart()
+
+/**
+ * Разделы каталога в подменю шапки: те же посадочные, что в подвале и на
+ * `pages/index.vue`, но доступные с любой страницы без прокрутки вниз.
+ */
+const catalogLinks: { label: string, to: string }[] = [
+  { label: 'Весь каталог и цены', to: '/pilomaterialy' },
+  { label: 'Доска обрезная', to: '/doska' },
+  { label: 'Сухая и строганая доска', to: '/suhaya-doska' },
+  { label: 'Вагонка', to: '/vagonka' },
+  { label: 'Имитация бруса', to: '/imitatsiya-brusa' },
+  { label: 'Огнебиозащита', to: '/ognebiozashchita' },
+]
+
+/** Подменю раскрывается по наведению только на десктопе с мышью. */
+let catalogHoverQuery: MediaQueryList | undefined
 
 onMounted(() => {
   isHydrated.value = true
+  catalogHoverQuery = window.matchMedia('(hover: hover) and (pointer: fine) and (min-width: 841px)')
 })
 
+function closeCatalog(restoreFocus = false): void {
+  if (!catalogOpen.value) {
+    return
+  }
+
+  catalogOpen.value = false
+  if (restoreFocus) {
+    nextTick(() => catalogButton.value?.focus())
+  }
+}
+
+/**
+ * Кнопка-шеврон переключает подменю. На устройствах с мышью подменю уже
+ * раскрыто наведением, поэтому клик его не схлопывает — закрывают уход
+ * курсора и Escape. Клавиатурная активация (`detail === 0`) переключает
+ * состояние всегда, чтобы `aria-expanded` не расходился с поведением.
+ */
+function toggleCatalog(event: MouseEvent): void {
+  if (event.detail !== 0 && catalogHoverQuery?.matches) {
+    catalogOpen.value = true
+    return
+  }
+
+  catalogOpen.value = !catalogOpen.value
+}
+
+function handleCatalogPointerEnter(): void {
+  if (catalogHoverQuery?.matches) {
+    catalogOpen.value = true
+  }
+}
+
+function handleCatalogPointerLeave(): void {
+  if (catalogHoverQuery?.matches) {
+    catalogOpen.value = false
+  }
+}
+
+/** Закрывает подменю, когда фокус ушёл за пределы группы «Пиломатериалы». */
+function handleCatalogFocusOut(event: FocusEvent): void {
+  const group = event.currentTarget
+  const nextTarget = event.relatedTarget
+
+  if (!(group instanceof HTMLElement)) {
+    return
+  }
+
+  if (nextTarget instanceof Node && group.contains(nextTarget)) {
+    return
+  }
+
+  catalogOpen.value = false
+}
+
 function closeNavigation(restoreFocus = false): void {
+  closeCatalog()
+
   if (!navOpen.value) {
     return
   }
@@ -21,6 +96,11 @@ function closeNavigation(restoreFocus = false): void {
 }
 
 function handleNavigationEscape(): void {
+  if (catalogOpen.value) {
+    closeCatalog(true)
+    return
+  }
+
   closeNavigation(true)
 }
 
@@ -70,7 +150,34 @@ watch(
           aria-label="Основная навигация"
           @click="closeNavigation()"
         >
-          <NuxtLink to="/pilomaterialy">Пиломатериалы</NuxtLink>
+          <div
+            class="nav-catalog"
+            :class="{ 'is-open': catalogOpen }"
+            @mouseenter="handleCatalogPointerEnter"
+            @mouseleave="handleCatalogPointerLeave"
+            @focusout="handleCatalogFocusOut"
+          >
+            <div class="nav-catalog__row">
+              <NuxtLink class="nav-catalog__link" to="/pilomaterialy">Пиломатериалы</NuxtLink>
+              <button
+                ref="catalog-button"
+                class="nav-catalog__toggle"
+                type="button"
+                :aria-expanded="catalogOpen"
+                aria-controls="catalog-submenu"
+                :aria-label="catalogOpen ? 'Скрыть разделы каталога' : 'Показать разделы каталога'"
+                @click.stop="toggleCatalog"
+              >
+                <svg width="11" height="7" viewBox="0 0 11 7" fill="none" aria-hidden="true" focusable="false">
+                  <path d="M1 1L5.5 5.5L10 1" stroke="currentColor" stroke-width="1.6" />
+                </svg>
+              </button>
+            </div>
+
+            <div v-show="catalogOpen" id="catalog-submenu" class="nav-catalog__panel" @click="closeCatalog()">
+              <NuxtLink v-for="link in catalogLinks" :key="link.to" :to="link.to">{{ link.label }}</NuxtLink>
+            </div>
+          </div>
           <NuxtLink to="/o-nas">О нас</NuxtLink>
           <NuxtLink to="/foto">Фото</NuxtLink>
           <NuxtLink to="/dostavka">Доставка</NuxtLink>
@@ -113,6 +220,11 @@ watch(
       <nav class="flex flex-col items-start gap-3 [&_a]:no-underline [&_a]:text-(--color-sand) [&_a:hover]:text-(--color-copper)" aria-label="Навигация в подвале">
         <span class="mb-3 font-[Segoe_UI,Arial,sans-serif] text-sm font-[760] uppercase leading-[1.4] tracking-[0.04em]">Разделы</span>
         <NuxtLink to="/pilomaterialy">Каталог пиломатериалов</NuxtLink>
+        <NuxtLink to="/doska">Доска обрезная</NuxtLink>
+        <NuxtLink to="/suhaya-doska">Сухая и строганая доска</NuxtLink>
+        <NuxtLink to="/vagonka">Вагонка</NuxtLink>
+        <NuxtLink to="/imitatsiya-brusa">Имитация бруса</NuxtLink>
+        <NuxtLink to="/ognebiozashchita">Огнебиозащита</NuxtLink>
         <NuxtLink to="/o-nas">О производстве</NuxtLink>
         <NuxtLink to="/foto">Фото производства</NuxtLink>
         <NuxtLink to="/dostavka">Доставка и самовывоз</NuxtLink>
@@ -187,12 +299,13 @@ watch(
   outline: none;
 }
 
+/* Единая тёмная шапка на всех страницах — сливается с forest-deep полями */
 .site-header {
-  border-bottom: 1px solid rgb(32 35 31 / 18%);
-  background: rgb(250 247 240 / 94%);
-  box-shadow: 0 12px 32px rgb(32 35 31 / 6%);
+  border-bottom: 1px solid var(--color-line-light);
+  background: rgb(18 39 30 / 92%);
   backdrop-filter: blur(14px);
   isolation: isolate;
+  color: var(--color-cream);
 }
 
 .site-header::after {
@@ -297,11 +410,159 @@ watch(
   transform: scaleX(1);
 }
 
+/* Группа «Пиломатериалы»: ссылка на каталог + кнопка раскрытия разделов */
+.nav-catalog {
+  position: relative;
+  display: flex;
+  align-self: stretch;
+}
+
+.nav-catalog__row {
+  display: flex;
+  align-self: stretch;
+}
+
+.nav-catalog__link {
+  position: relative;
+  display: grid;
+  place-items: center;
+  padding-inline: 15px 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  white-space: nowrap;
+  text-decoration: none;
+  transition: color 240ms ease;
+}
+
+.nav-catalog__link::after {
+  position: absolute;
+  right: 6px;
+  bottom: 13px;
+  left: 15px;
+  height: 1px;
+  content: '';
+  background: currentcolor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 240ms ease;
+}
+
+.nav-catalog__link:focus-visible::after,
+.nav-catalog__link.router-link-active::after {
+  transform: scaleX(1);
+}
+
+.nav-catalog__toggle {
+  display: grid;
+  place-items: center;
+  padding-inline: 2px 15px;
+  color: inherit;
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+  transition: color 240ms ease;
+}
+
+.nav-catalog__toggle svg {
+  transition: transform var(--motion-duration-ui) var(--motion-ease-out);
+}
+
+.nav-catalog.is-open .nav-catalog__toggle svg {
+  transform: rotate(180deg);
+}
+
+.nav-catalog__panel {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  min-width: 272px;
+  padding-block: 8px;
+  color: var(--color-ink);
+  background: var(--color-paper);
+  box-shadow: 0 30px 70px rgb(32 35 31 / 18%);
+}
+
+.nav-catalog__panel a {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 8px 18px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: inherit;
+  text-decoration: none;
+  transition: color var(--motion-duration-ui) ease, background-color var(--motion-duration-ui) ease;
+}
+
+.nav-catalog__panel a:first-child {
+  padding-bottom: 12px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid var(--color-sand);
+}
+
+.nav-catalog__panel a:focus-visible,
+.nav-catalog__panel a.router-link-active {
+  color: var(--color-copper);
+}
+
 .site-header__cta {
   box-shadow: 0 9px 22px rgb(125 61 36 / 18%);
   transition-property: color, background-color, border-color, box-shadow, transform;
   transition-duration: 240ms;
   transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.site-header .site-logo__mark {
+  background: var(--color-cream);
+  color: var(--color-forest-deep);
+}
+
+.site-header .site-logo small {
+  color: rgb(243 239 230 / 75%);
+}
+
+.site-header .menu-toggle {
+  border-color: var(--color-cream);
+}
+
+.site-header .menu-toggle span {
+  background: var(--color-cream);
+}
+
+/* Панель мобильного меню остаётся бумажной — внутри возвращаем тёмный текст */
+@media (max-width: 840px) {
+  .site-header .primary-navigation {
+    color: var(--color-ink);
+  }
+}
+
+/* Медь на forest-deep не проходит контраст — hover/focus светлой медью #d5a184
+   (легализованное исключение для тёмных поверхностей). Только десктоп: на ≤840
+   ссылки живут в бумажной панели, где остаётся обычная медь. */
+@media (min-width: 841px) {
+  .site-header .primary-navigation > a:focus-visible,
+  .site-header .nav-catalog__link:focus-visible,
+  .site-header .nav-catalog__toggle:focus-visible {
+    color: #d5a184;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) and (min-width: 841px) {
+  .site-header .primary-navigation > a:hover,
+  .site-header .nav-catalog__row:hover .nav-catalog__link,
+  .site-header .nav-catalog__row:hover .nav-catalog__toggle,
+  .site-header a[href^='tel:']:hover {
+    color: #d5a184;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .site-header .menu-toggle:hover {
+    background: rgb(243 239 230 / 16%);
+  }
 }
 
 .site-footer a {
@@ -321,16 +582,18 @@ watch(
     transform: rotate(-3deg) scale(1.04);
   }
 
-  .menu-toggle:hover {
-    background: var(--color-sand);
-  }
-
   .primary-navigation > a:hover {
     color: var(--color-copper);
   }
 
-  .primary-navigation > a:hover::after {
+  .primary-navigation > a:hover::after,
+  .nav-catalog__row:hover .nav-catalog__link::after {
     transform: scaleX(1);
+  }
+
+  .nav-catalog__panel a:hover {
+    color: var(--color-copper);
+    background: rgb(32 35 31 / 5%);
   }
 
   .site-header__cta:hover {
@@ -384,6 +647,53 @@ watch(
     align-items: center;
     padding-block: 8px;
   }
+
+  /* В бумажной панели меню группа разворачивается в столбец: строка-триггер
+     и вложенный список разделов под ней */
+  .nav-catalog {
+    flex-direction: column;
+    align-self: auto;
+  }
+
+  .nav-catalog__row {
+    border-top: 1px solid var(--color-sand);
+  }
+
+  .nav-catalog__link {
+    flex: 1;
+    min-height: 48px;
+    padding: 12px 16px;
+    place-items: center start;
+  }
+
+  .nav-catalog__link::after {
+    display: none;
+  }
+
+  .nav-catalog__toggle {
+    min-width: 56px;
+    min-height: 48px;
+    padding-inline: 16px;
+  }
+
+  .nav-catalog__panel {
+    position: static;
+    min-width: 0;
+    padding-block: 0;
+    background: rgb(32 35 31 / 4%);
+    box-shadow: none;
+  }
+
+  .nav-catalog__panel a {
+    min-height: 48px;
+    padding-left: 32px;
+  }
+
+  .nav-catalog__panel a:first-child {
+    padding-bottom: 8px;
+    margin-bottom: 0;
+    border-bottom: 0;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -397,11 +707,24 @@ watch(
   .menu-toggle,
   .menu-toggle span,
   .primary-navigation > a,
-  .primary-navigation > a::after,
+  .nav-catalog__link,
+  .nav-catalog__toggle,
+  .nav-catalog__panel a,
   .site-header__cta,
   .site-footer a {
     translate: none;
     transform: none;
+    transition: none;
+  }
+
+  /* Поворот шеврона — индикатор состояния, гасим только анимацию */
+  .nav-catalog__toggle svg {
+    transition: none;
+  }
+
+  /* transform у линии-подчёркивания НЕ сбрасывать: scaleX(0) прячет линию
+     неактивных пунктов, гасим только анимацию */
+  .primary-navigation > a::after {
     transition: none;
   }
 }

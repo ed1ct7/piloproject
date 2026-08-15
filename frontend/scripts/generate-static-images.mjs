@@ -43,7 +43,13 @@ for (const route of imageRoutes) {
   const pipeline = sharp(sourcePath)
 
   if (image.width && image.height) {
-    pipeline.resize(image.width, image.height)
+    // Срезет просит retina-ширины, которых нет у части исходников. Запрошенный
+    // кадр ужимаем до размеров исходника, сохраняя пропорцию: `withoutEnlargement`
+    // здесь не подходит — он ломает кроп и отдаёт почти полный портретный кадр.
+    const { width: sourceWidth = 0, height: sourceHeight = 0 } = await sharp(sourcePath).metadata()
+    const scale = Math.min(1, sourceWidth / image.width, sourceHeight / image.height)
+
+    pipeline.resize(Math.round(image.width * scale), Math.round(image.height * scale))
   }
 
   switch (image.format || extname(image.source).slice(1).toLowerCase()) {

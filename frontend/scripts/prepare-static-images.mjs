@@ -6,6 +6,7 @@ const projectDir = fileURLToPath(new URL('..', import.meta.url))
 const publicDir = join(projectDir, 'public')
 
 const requiredSources = [
+  'images/bg-wood-forest.webp',
   'images/brushing-1.jpg',
   'images/bruski-na-sklade.jpg',
   'images/brusok-suhoi-stroganyi-45x45.jpg',
@@ -31,6 +32,7 @@ const requiredSources = [
   'images/sklad-obrabotannoi-doski.jpg',
   'images/timber-order-2025-05-16.jpg',
   'images/vagonka-shtil-12-5x120x3000.png',
+  'images/video-poster.jpg',
   'mp4/short-sawmill-video.mp4',
 ]
 

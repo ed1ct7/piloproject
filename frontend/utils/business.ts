@@ -19,7 +19,7 @@ export const businessEmail = 'shidov_roman@mail.ru'
 export const businessEmailHref = `mailto:${businessEmail}`
 
 /** Публичная ссылка на профиль основного контакта в MAX. */
-export const businessMaxUrl = 'https://web.max.ru/100742329'
+export const businessMaxUrl = 'https://max.ru/u/f9LHodD0cOIR2ygEUT07fCLsK9bi_Ta9vKxYpaBfpMsXgwxHXtB4b25AQUE'
 
 /** Дополнительный телефон организации. */
 export const businessSecondaryPhone = '+7 965 081-00-07'

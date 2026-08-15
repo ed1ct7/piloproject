@@ -26,6 +26,16 @@ let catalogStatusTimeout: ReturnType<typeof setTimeout> | undefined
 let dialogStatusTimeout: ReturnType<typeof setTimeout> | undefined
 let recentlyAddedTimeout: ReturnType<typeof setTimeout> | undefined
 
+/** Ссылки на посадочные страницы поисковых кластеров каталога. */
+const catalogTopicLinks = [
+  { label: 'Доска обрезная', to: '/doska' },
+  { label: 'Сухая и строганая доска', to: '/suhaya-doska' },
+  { label: 'Вагонка', to: '/vagonka' },
+  { label: 'Имитация бруса', to: '/imitatsiya-brusa' },
+  { label: 'Огнебиозащита', to: '/ognebiozashchita' },
+  { label: 'Доставка по СПб и области', to: '/dostavka' },
+]
+
 const categoryFilterOptions: { label: string, value: CatalogFilterValue }[] = [
   { label: 'Все', value: 'all' },
   { label: 'Доска ЕВ', value: 'natural' },
@@ -202,10 +212,10 @@ onBeforeUnmount(() => {
 })
 
 useSeoMeta({
-  title: 'Пиломатериалы в Разбегаево – доска, вагонка и цены',
-  description: 'Каталог пилорамы в Разбегаево: доска естественной влажности по сортам, сухая и строганая доска, огнебиозащита, имитация бруса и вагонка.',
-  ogTitle: 'Пиломатериалы в Разбегаево — каталог с ценами',
-  ogDescription: 'Актуальные группы пиломатериалов с минимальными ценами за м³ и штуку от производителя.',
+  title: 'Пиломатериалы в СПб и Ленинградской области – цены производителя',
+  description: 'Каталог пилорамы в Разбегаево: доска обрезная естественной влажности по сортам, сухая и строганая доска, огнебиозащита, имитация бруса и вагонка. Цены за м³, доставка по СПб и Ленобласти.',
+  ogTitle: 'Пиломатериалы в СПб и Ленобласти — каталог с ценами',
+  ogDescription: 'Актуальные группы пиломатериалов с минимальными ценами за м³ и штуку от производителя из Разбегаево.',
   ogImage: `${siteUrl}/images/sawn-board-stack-2025-04-02.jpg`,
   ogType: 'website',
   ogUrl: `${siteUrl}/pilomaterialy`,
@@ -251,9 +261,13 @@ useSchemaOrg([
 <template>
   <main>
     <section class="max-[840px]:min-h-0 max-[560px]:px-[18px] max-[560px]:pb-9 max-[560px]:pt-8 grid min-h-[280px] items-end border-b border-[#171916] bg-(--color-sand) px-[max(24px,calc((100vw_-_1280px)/2))] pb-12 pt-14 max-[560px]:[&_h1]:!text-[2.75rem] max-[390px]:[&_h1]:!text-[2.55rem]">
-      <div class="max-w-[760px] [&_h1]:mb-0">
+      <div class="max-w-[860px] [&_h1]:mb-0">
         <p class="mb-3 font-[Segoe_UI,Arial,sans-serif] text-[0.8125rem] font-[760] uppercase tracking-[0.04em] text-(--color-copper)">Цены производства</p>
-        <h1>Каталог пиломатериалов</h1>
+        <h1>Пиломатериалы в СПб и Ленинградской области</h1>
+        <p class="mb-0 mt-4 max-w-[680px] leading-[1.6] text-(--color-ink)/85">
+          Пилим, сушим и обрабатываем на собственной площадке в Разбегаево, Ломоносовский район.
+          Доставка по Санкт-Петербургу и Ленинградской области, самовывоз с производства.
+        </p>
       </div>
     </section>
 
@@ -302,8 +316,8 @@ useSchemaOrg([
               :alt="product.alt"
               width="900"
               height="1200"
-              sizes="xs:100vw sm:50vw lg:34vw"
-              densities="1"
+              sizes="xs:100vw sm:50vw md:40vw lg:34vw xl:26vw xxl:22vw"
+              densities="1 2"
               format="webp"
               loading="lazy"
             />
@@ -348,6 +362,15 @@ useSchemaOrg([
       <div class="mt-7 flex justify-end max-[560px]:justify-start">
         <NuxtLink class="w-max cursor-pointer border-0 border-b-2 border-current bg-transparent px-0 pb-[3px] font-[Segoe_UI,Arial,sans-serif] font-[760] text-(--color-forest) no-underline transition-colors duration-150 hover:text-(--color-copper) disabled:cursor-not-allowed disabled:opacity-50" to="/kontakty">Уточнить наличие</NuxtLink>
       </div>
+
+      <nav class="mt-10 flex flex-wrap gap-x-7 gap-y-3.5 border-t border-(--color-line) pt-6" aria-label="Разделы каталога">
+        <NuxtLink
+          v-for="topic in catalogTopicLinks"
+          :key="topic.to"
+          class="inline-block w-max border-b border-current font-[Segoe_UI,Arial,sans-serif] text-[0.9rem] font-[740] text-(--color-forest) no-underline transition-colors duration-150 hover:text-(--color-copper)"
+          :to="topic.to"
+        >{{ topic.label }}</NuxtLink>
+      </nav>
     </section>
 
     <dialog

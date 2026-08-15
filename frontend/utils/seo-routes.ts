@@ -3,6 +3,11 @@ export const siteUrl = 'https://pilorama-razbegaevo.ru'
 export const indexableRoutes = [
   { loc: '/', changefreq: 'weekly' as const, priority: 1 as const },
   { loc: '/pilomaterialy', changefreq: 'weekly' as const, priority: 0.9 as const },
+  { loc: '/doska', changefreq: 'weekly' as const, priority: 0.8 as const },
+  { loc: '/suhaya-doska', changefreq: 'weekly' as const, priority: 0.8 as const },
+  { loc: '/vagonka', changefreq: 'weekly' as const, priority: 0.8 as const },
+  { loc: '/imitatsiya-brusa', changefreq: 'weekly' as const, priority: 0.8 as const },
+  { loc: '/ognebiozashchita', changefreq: 'weekly' as const, priority: 0.8 as const },
   { loc: '/o-nas', changefreq: 'monthly' as const, priority: 0.7 as const },
   { loc: '/foto', changefreq: 'monthly' as const, priority: 0.6 as const },
   { loc: '/dostavka', changefreq: 'monthly' as const, priority: 0.7 as const },

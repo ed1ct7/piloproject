@@ -4,7 +4,7 @@ definePageMeta({
 })
 
 useSeoMeta({
-  title: 'Доставка пиломатериалов – Разбегаево, Ломоносовский район, СПб',
+  title: 'Доставка пиломатериалов по СПб и Ленинградской области',
   description: 'Самовывоз и согласование доставки пиломатериалов из Разбегаево по Ломоносовскому району, Ленинградской области и Санкт-Петербургу.',
   ogTitle: 'Доставка пиломатериалов из Разбегаево',
   ogDescription: 'Порядок самовывоза и согласования доставки доски, бруса и других пиломатериалов.',
@@ -50,21 +50,6 @@ const deliverySteps = [
           </p>
         </div>
 
-        <div class="delivery-hero__contact">
-          <p>Рассчитаем стоимость по адресу и объёму заказа.</p>
-          <div class="delivery-actions">
-            <a
-              class="delivery-button delivery-button--primary"
-              :href="businessMaxUrl"
-              target="_blank"
-              rel="noopener"
-              aria-label="Написать в MAX, откроется новая вкладка"
-            >Написать в MAX</a>
-            <a class="delivery-button delivery-button--secondary" :href="businessSecondaryPhoneHref">
-              {{ businessSecondaryPhone }}
-            </a>
-          </div>
-        </div>
       </div>
     </section>
 
@@ -99,10 +84,6 @@ const deliverySteps = [
             <li>Стоимость зависит от адреса и объёма</li>
             <li>Дату и время согласуем заранее</li>
           </ul>
-          <a
-            class="text-link"
-            :href="businessPhoneHref"
-          >Позвонить и узнать стоимость</a>
         </article>
       </div>
     </section>
@@ -123,18 +104,6 @@ const deliverySteps = [
       </ol>
     </section>
 
-    <section class="delivery-cta" aria-labelledby="delivery-cta-title">
-      <h2 id="delivery-cta-title">Нужен расчёт доставки?</h2>
-      <div>
-        <a
-          class="delivery-button delivery-button--primary"
-          :href="businessMaxUrl"
-          target="_blank"
-          rel="noopener"
-          aria-label="Написать в MAX для расчёта доставки, откроется новая вкладка"
-        >Написать в MAX для расчёта</a>
-      </div>
-    </section>
   </main>
 </template>
 
@@ -164,11 +133,8 @@ const deliverySteps = [
 }
 
 .delivery-hero__content {
-  display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(300px, 0.65fr);
   width: min(1200px, calc(100% - 48px));
   min-width: 0;
-  gap: 0 clamp(48px, 7vw, 104px);
   margin: 0 auto;
   padding: 72px 0;
 }
@@ -189,66 +155,6 @@ const deliverySteps = [
   color: rgb(32 35 31 / 85%);
   font-size: clamp(1.04rem, 1.35vw, 1.25rem);
   line-height: 1.55;
-}
-
-.delivery-hero__contact {
-  align-self: end;
-  padding-bottom: 0.15rem;
-}
-
-.delivery-hero__contact > p {
-  max-width: 360px;
-  margin-bottom: 1.25rem;
-  color: rgb(32 35 31 / 85%);
-  font-size: 1.04rem;
-  line-height: 1.55;
-}
-
-.delivery-actions {
-  display: grid;
-  width: min(100%, 220px);
-  grid-template-columns: 1fr;
-  gap: 0.75rem;
-}
-
-.delivery-button {
-  display: inline-flex;
-  width: 100%;
-  min-height: 52px;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid var(--color-ink);
-  padding: 0.85rem 1.3rem;
-  font-family: "Segoe UI", Arial, sans-serif;
-  font-size: 0.94rem;
-  font-weight: 760;
-  line-height: 1.2;
-  text-align: center;
-  text-decoration: none;
-  transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
-}
-
-.delivery-button--primary {
-  border-color: var(--color-copper);
-  background: var(--color-copper);
-  color: var(--color-paper);
-}
-
-.delivery-button--primary:hover {
-  border-color: var(--color-copper-dark);
-  background: var(--color-copper-dark);
-}
-
-.delivery-button--secondary {
-  border-color: var(--color-forest);
-  background: var(--color-forest);
-  color: var(--color-paper);
-  box-shadow: 0 10px 22px rgb(32 35 31 / 16%);
-}
-
-.delivery-button--secondary:hover {
-  background: var(--color-ink);
-  color: var(--color-paper);
 }
 
 .receiving {
@@ -368,8 +274,8 @@ const deliverySteps = [
 .delivery-process {
   display: grid;
   grid-template-columns: minmax(360px, 0.82fr) minmax(0, 1.18fr);
-  background: var(--color-forest);
-  color: var(--color-paper);
+  background: var(--color-sand);
+  color: var(--color-ink);
 }
 
 .delivery-process__heading {
@@ -387,7 +293,7 @@ const deliverySteps = [
 .delivery-process__list {
   margin: 0;
   padding: 0;
-  border-left: 1px solid var(--color-line-light);
+  border-left: 1px solid var(--color-line);
   list-style: none;
 }
 
@@ -396,7 +302,7 @@ const deliverySteps = [
   grid-template-columns: 48px minmax(0, 1fr);
   gap: clamp(20px, 3vw, 48px);
   padding: 1.75rem clamp(28px, 4vw, 64px);
-  border-bottom: 1px solid var(--color-line-light);
+  border-bottom: 1px solid var(--color-line);
 }
 
 .delivery-process__list li:last-child {
@@ -404,7 +310,7 @@ const deliverySteps = [
 }
 
 .delivery-process__list > li > span {
-  color: var(--color-cream);
+  color: var(--color-copper-dark);
   font-family: "Segoe UI", Arial, sans-serif;
   font-size: 0.82rem;
   font-weight: 800;
@@ -412,59 +318,24 @@ const deliverySteps = [
 
 .delivery-process__list h3 {
   margin-bottom: 0.55rem;
-  color: var(--color-paper);
 }
 
 .delivery-process__list p {
   max-width: 640px;
   margin-bottom: 0;
-  color: var(--color-cream);
+  color: rgb(32 35 31 / 85%);
   line-height: 1.55;
-}
-
-.delivery-cta {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: center;
-  gap: clamp(40px, 6vw, 88px);
-  padding: 72px max(24px, calc((100vw - 1200px) / 2));
-  border-bottom: 1px solid var(--color-ink);
-  background: var(--color-sand);
-  box-shadow: inset 0 18px 42px rgb(32 35 31 / 8%);
-}
-
-.delivery-cta h2 {
-  max-width: 720px;
-  margin-bottom: 0;
-  font-size: clamp(2.1rem, 3.1vw, 3.65rem);
 }
 
 @media (max-width: 1100px) {
   .delivery-hero__content {
-    grid-template-columns: minmax(0, 1fr) minmax(280px, 0.55fr);
-    gap: 0 40px;
     padding-block: 56px;
   }
 }
 
 @media (max-width: 840px) {
   .delivery-hero__content {
-    grid-template-columns: 1fr;
     padding-block: 64px;
-  }
-
-  .delivery-hero__contact {
-    margin-top: 1.75rem;
-  }
-
-  .delivery-actions {
-    display: flex;
-    width: auto;
-    flex-wrap: wrap;
-  }
-
-  .delivery-actions .delivery-button {
-    width: auto;
   }
 
   .receiving {
@@ -484,14 +355,8 @@ const deliverySteps = [
   }
 
   .delivery-process__list {
-    border-top: 1px solid var(--color-line-light);
+    border-top: 1px solid var(--color-line);
     border-left: 0;
-  }
-
-  .delivery-cta {
-    grid-template-columns: 1fr;
-    gap: 2rem;
-    padding-block: 72px;
   }
 }
 
@@ -523,16 +388,6 @@ const deliverySteps = [
     font-size: 1rem;
   }
 
-  .delivery-actions {
-    display: grid;
-    width: 100%;
-    grid-template-columns: 1fr;
-  }
-
-  .delivery-actions .delivery-button {
-    width: 100%;
-  }
-
   .receiving {
     padding: 44px 18px;
   }
@@ -561,18 +416,6 @@ const deliverySteps = [
     grid-template-columns: 42px minmax(0, 1fr);
     gap: 0.75rem;
     padding: 1.6rem 18px;
-  }
-
-  .delivery-cta {
-    padding: 56px 18px;
-  }
-
-  .delivery-cta h2 {
-    font-size: clamp(2rem, 9.5vw, 2.8rem);
-  }
-
-  .delivery-cta .delivery-button {
-    width: 100%;
   }
 }
 </style>

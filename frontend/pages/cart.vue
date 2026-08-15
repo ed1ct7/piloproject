@@ -171,13 +171,6 @@ onBeforeUnmount(() => {
               >Позвонить: {{ businessPhone }}</a>
             </div>
             <UiStatusMessage class="mt-4" :message="copyFeedback" />
-            <a
-              class="mt-3 inline-flex min-h-11 max-w-full flex-wrap items-center gap-x-1 border-b-2 border-current font-[Segoe_UI,Arial,sans-serif] font-[760] no-underline hover:text-(--color-copper) max-[560px]:w-full"
-              :href="businessSecondaryPhoneHref"
-            >
-              <span>Дополнительный телефон:</span>
-              <span class="whitespace-nowrap">{{ businessSecondaryPhone }}</span>
-            </a>
           </div>
         </div>
       </template>

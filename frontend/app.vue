@@ -27,6 +27,7 @@ if (import.meta.client) {
     const revealElements = new Set<HTMLElement>()
     const revealSelector = 'main > section, main > article, main article, figure[data-parallax], .site-footer > *'
     let ticking = false
+    let hasSyncedReveal = false
     let parallaxObserver: IntersectionObserver | undefined
     let revealObserver: IntersectionObserver | undefined
     let mutationObserver: MutationObserver | undefined
@@ -113,11 +114,20 @@ if (import.meta.client) {
         }
 
         revealElements.add(element)
+
+        const rect = element.getBoundingClientRect()
+        const isInViewport = rect.top < window.innerHeight * 0.92 && rect.bottom > 0
+
+        // При навигации первый экран новой страницы показываем сразу: иначе reveal
+        // догоняет переход страницы и движение читается как два отдельных рывка.
+        if (isInViewport && hasSyncedReveal) {
+          continue
+        }
+
         element.classList.add('motion-reveal')
         element.style.setProperty('--motion-delay', `${Math.min(siblingPosition, 4) * 40}ms`)
 
-        const rect = element.getBoundingClientRect()
-        if (rect.top < window.innerHeight * 0.92 && rect.bottom > 0) {
+        if (isInViewport) {
           window.requestAnimationFrame(() => {
             if (element.isConnected && !media.matches) {
               element.classList.add('is-motion-visible')
@@ -128,6 +138,8 @@ if (import.meta.client) {
           revealObserver.observe(element)
         }
       }
+
+      hasSyncedReveal = true
     }
 
     const disableMotion = () => {
@@ -298,17 +310,23 @@ body {
   will-change: auto;
 }
 
-.page-enter-active,
+.page-enter-active {
+  transition:
+    opacity var(--motion-duration-page) var(--motion-ease-out),
+    transform var(--motion-duration-page) var(--motion-ease-out);
+}
+
 .page-leave-active {
-  transition: transform var(--motion-duration-page) var(--motion-ease-out);
+  transition: opacity var(--motion-duration-press) var(--motion-ease-out);
 }
 
 .page-enter-from {
-  transform: translateY(10px);
+  opacity: 0;
+  transform: translateY(8px);
 }
 
 .page-leave-to {
-  transform: translateY(-6px);
+  opacity: 0;
 }
 
 [data-parallax] {

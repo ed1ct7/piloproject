@@ -9,46 +9,139 @@ const featuredProducts = priceListProducts.filter((product) =>
   featuredProductIds.has(product.id),
 )
 
+/**
+ * `sizes` считается от реальной ширины карточки в сетке `.gallery__grid`:
+ * при контенте 1320px колонка равна 93px, поэтому широкий кадр занимает ~874px,
+ * а обычный — ~428px. Без `xl`/`xxl` браузер брал бы самый крупный кандидат
+ * срезета (348px) и растягивал его на всю карточку.
+ */
+const galleryCardSizes = 'xs:50vw sm:50vw md:50vw lg:31vw xl:31vw xxl:28vw'
+const galleryWideCardSizes = 'xs:100vw sm:100vw md:100vw lg:64vw xl:64vw xxl:58vw'
+
 const galleryPreview = [
   {
     image: '/images/paint-shop-4.jpg',
     alt: 'Участок обработки древесины с оборудованием и подготовленными материалами',
     caption: 'Цех обработки',
     className: 'gallery-card--wide',
+    sizes: galleryWideCardSizes,
   },
   {
     image: '/images/vagonka-shtil-12-5x120x3000.png',
     alt: 'Аккуратно сложенная вагонка профиля Штиль из хвойной древесины',
     caption: 'Готовая продукция',
     className: 'gallery-card--product',
+    sizes: galleryCardSizes,
   },
   {
     image: '/images/lentochnaya-pilorama-raspil.jpg',
     alt: 'Ленточная пилорама с бревном на производственной площадке',
     caption: 'Распил бревна',
     className: 'gallery-card--tall',
+    sizes: galleryCardSizes,
   },
   {
     image: '/images/shtabel-suhoi-doski.jpg',
     alt: 'Высокие штабели сухой доски на крытом складе',
     caption: 'Крытый склад',
     className: 'gallery-card--tall',
+    sizes: galleryCardSizes,
   },
   {
     image: '/images/lumber-yard-2025-05-21.jpg',
     alt: 'Образцы обработанной древесины на производственной площадке',
     caption: 'Финишная обработка',
     className: 'gallery-card--finish',
+    sizes: galleryCardSizes,
   },
 ]
 
+const videoBand = ref<HTMLElement | null>(null)
+const videoEl = ref<HTMLVideoElement | null>(null)
+const isPlaying = ref(false)
+const isMuted = ref(true)
+let userPaused = false
+let bandObserver: IntersectionObserver | null = null
+
+/**
+ * Переключает воспроизведение по кнопке.
+ *
+ * Ручная пауза запоминается в `userPaused`, чтобы наблюдатель не запускал
+ * ролик заново при следующем появлении полосы в кадре.
+ */
+function togglePlayback() {
+  const video = videoEl.value
+  if (!video) return
+
+  if (video.paused) {
+    userPaused = false
+    void video.play().catch(() => {})
+  }
+  else {
+    userPaused = true
+    video.pause()
+  }
+}
+
+/**
+ * Включает и выключает музыку ролика.
+ *
+ * Со звуком ролик всегда играет: если он стоял на паузе, запускаем его.
+ */
+function toggleSound() {
+  const video = videoEl.value
+  if (!video) return
+
+  video.muted = !video.muted
+  isMuted.value = video.muted
+
+  if (!video.muted && video.paused) {
+    userPaused = false
+    void video.play().catch(() => {})
+  }
+}
+
+/**
+ * Стартует ролик только когда полоса попала в кадр.
+ *
+ * `preload="none"` плюс наблюдатель держат 5,8 МБ вне первой загрузки.
+ * При `prefers-reduced-motion` и включённой экономии трафика автозапуска нет —
+ * остаётся постер и кнопка.
+ */
+onMounted(() => {
+  const video = videoEl.value
+  const band = videoBand.value
+  if (!video || !band) return
+
+  video.muted = true
+  for (let i = 0; i < video.textTracks.length; i += 1) video.textTracks[i]!.mode = 'disabled'
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  const saveData = (navigator as Navigator & { connection?: { saveData?: boolean } })
+    .connection?.saveData === true
+  if (reduceMotion || saveData) return
+
+  bandObserver = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+      if (entry.isIntersecting && !userPaused) void video.play().catch(() => {})
+      else if (!entry.isIntersecting && !video.paused) video.pause()
+    }
+  }, { threshold: 0.35 })
+  bandObserver.observe(band)
+})
+
+onBeforeUnmount(() => {
+  bandObserver?.disconnect()
+  bandObserver = null
+})
+
 useSeoMeta({
-  title: 'Пилорама Разбегаево – доска, вагонка и пиломатериалы',
+  title: 'Пилорама в Ленинградской области – доска, брус, вагонка',
   description:
-    'Пиломатериалы от производителя в Разбегаево: доска естественной влажности, сухая и строганая доска, имитация бруса, вагонка и огнебиозащита.',
-  ogTitle: 'Пилорама Разбегаево',
+    'Пилорама в Разбегаево, Ломоносовский район: доска обрезная и сухая, строганая доска, имитация бруса, вагонка, огнебиозащита. Цены производителя, доставка по СПб и Ленинградской области.',
+  ogTitle: 'Пилорама в Ленинградской области — Разбегаево',
   ogDescription:
-    'Доска, имитация бруса и вагонка с производственной площадки в Разбегаево. Актуальные минимальные цены и фото производства.',
+    'Доска, имитация бруса и вагонка с собственного производства. Цены за м³, доставка по Санкт-Петербургу и Ленинградской области.',
   ogImage: `${siteUrl}/images/og/glavnaya.jpg`,
   ogType: 'website',
   ogUrl: `${siteUrl}/`,
@@ -66,7 +159,6 @@ useSchemaOrg([
     name: 'Пилорама Разбегаево',
     url: `${siteUrl}/`,
     telephone: businessPhoneInternational,
-    sameAs: [businessMapsUrl, businessMaxUrl],
     image: `${siteUrl}/images/brushing-1.jpg`,
     address: {
       '@type': 'PostalAddress',
@@ -93,25 +185,29 @@ useSchemaOrg([
 <template>
   <main class="home-page">
     <section class="hero" aria-labelledby="hero-title">
-      <div class="hero__content">
-        <p class="eyebrow">Пиломатериалы из Ленинградской области</p>
-        <h1 id="hero-title">Дерево, подготовленное для хорошей работы</h1>
-        <p class="hero__lead">
-          Производим доску, вагонку и имитацию бруса в Разбегаево. Отбираем материал,
-          сушим, обрабатываем и доставляем по Санкт-Петербургу и области.
-        </p>
+      <div class="hero__inner">
+        <p class="eyebrow eyebrow--hero">Собственное производство · Разбегаево</p>
+        <h1 id="hero-title">Пилорама<br>в Ленинградской области</h1>
 
-        <div class="hero__actions">
-          <NuxtLink class="button button--primary" to="/pilomaterialy">
-            Смотреть каталог
-          </NuxtLink>
-          <a
-            class="button button--secondary"
-            :href="businessMaxUrl"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Обсудить заказ в MAX, откроется новая вкладка"
-          >Обсудить заказ в MAX</a>
+        <div class="hero__copy">
+          <p class="hero__lead">
+            Производим доску, вагонку и имитацию бруса в Разбегаево под Санкт-Петербургом.
+            Пилим, сушим, строгаем и красим на своей площадке, доставляем
+            по СПб и Ленинградской области.
+          </p>
+
+          <div class="hero__actions">
+            <NuxtLink class="button button--primary" to="/pilomaterialy">
+              Смотреть каталог
+            </NuxtLink>
+            <a
+              class="button button--secondary"
+              :href="businessMaxUrl"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Обсудить заказ в MAX, откроется новая вкладка"
+            >Обсудить заказ в MAX</a>
+          </div>
         </div>
 
         <dl class="hero__facts" aria-label="Преимущества производства">
@@ -129,25 +225,6 @@ useSchemaOrg([
           </div>
         </dl>
       </div>
-
-      <figure class="hero__media" data-parallax="18">
-        <NuxtImg
-          src="/images/brushing-1.jpg"
-          alt="Крупный план обработанной доски с выраженной текстурой древесины"
-          width="1536"
-          height="2048"
-          sizes="xs:100vw sm:100vw md:100vw 841:46vw lg:46vw xl:46vw"
-          densities="1"
-          format="webp"
-          loading="eager"
-          preload
-          fetchpriority="high"
-        />
-        <figcaption>
-          <span>Точная обработка древесины</span>
-          <span>Разбегаево</span>
-        </figcaption>
-      </figure>
     </section>
 
     <section class="catalog-preview" aria-labelledby="catalog-title">
@@ -178,8 +255,8 @@ useSchemaOrg([
               :alt="product.alt"
               width="720"
               height="520"
-              sizes="xs:34vw sm:25vw md:18vw lg:16vw"
-              densities="1"
+              sizes="xs:44vw sm:22vw md:20vw lg:18vw xl:14vw xxl:12vw"
+              densities="1 2"
               format="webp"
               loading="lazy"
             />
@@ -200,23 +277,31 @@ useSchemaOrg([
           </dl>
         </article>
       </div>
+
+      <nav class="catalog-preview__topics" aria-label="Разделы каталога">
+        <NuxtLink class="text-link" to="/doska">Доска обрезная</NuxtLink>
+        <NuxtLink class="text-link" to="/suhaya-doska">Сухая и строганая доска</NuxtLink>
+        <NuxtLink class="text-link" to="/vagonka">Вагонка</NuxtLink>
+        <NuxtLink class="text-link" to="/imitatsiya-brusa">Имитация бруса</NuxtLink>
+        <NuxtLink class="text-link" to="/ognebiozashchita">Огнебиозащита</NuxtLink>
+        <NuxtLink class="text-link" to="/dostavka">Доставка по СПб и области</NuxtLink>
+      </nav>
     </section>
 
     <section class="production" aria-labelledby="production-title">
       <div class="production__heading">
         <p class="eyebrow eyebrow--light">Собственное производство</p>
-        <h2 id="production-title">От бревна<br>до готового профиля</h2>
+        <h2 id="production-title">Распил, сушка,<br>строжка, покраска</h2>
       </div>
       <div class="production__body">
         <p class="production__lead">
-          Работаем с материалом на собственной площадке: распиливаем, сушим,
-          строгаем и готовим партии к отгрузке.
+          Полный цикл на собственной площадке в Разбегаево.
         </p>
         <dl class="production__steps">
           <div><dt>01</dt><dd>Распил и сортировка древесины</dd></div>
           <div><dt>02</dt><dd>Камерная сушка материала</dd></div>
           <div><dt>03</dt><dd>Строгание и профилирование</dd></div>
-          <div><dt>04</dt><dd>Комплектация и доставка партии</dd></div>
+          <div><dt>04</dt><dd>Покраска и огнебиозащита</dd></div>
         </dl>
         <NuxtLink class="text-link text-link--light" to="/o-nas">
           Подробнее о производстве
@@ -224,11 +309,81 @@ useSchemaOrg([
       </div>
     </section>
 
+    <section
+      ref="videoBand"
+      class="video-band"
+      aria-label="Видео с производства"
+    >
+      <div class="video-band__frame">
+        <video
+          ref="videoEl"
+          class="video-band__video"
+          muted
+          loop
+          playsinline
+          preload="none"
+          poster="/images/video-poster.jpg"
+          aria-label="Видео о производстве и готовой продукции"
+          aria-describedby="video-audio-description"
+          @play="isPlaying = true"
+          @pause="isPlaying = false"
+        >
+          <source src="/mp4/short-sawmill-video.mp4" type="video/mp4">
+          <!-- Дорожка остаётся как текстовая альтернатива, но не включена:
+               в кадре не должно быть подписей вроде «[Музыка]» -->
+          <track
+            kind="captions"
+            src="/captions/short-sawmill-video.ru.vtt"
+            srclang="ru"
+            label="Русские субтитры"
+          >
+          Ваш браузер не поддерживает воспроизведение видео.
+        </video>
+
+        <div class="video-band__controls">
+          <button
+            type="button"
+            class="video-band__button"
+            :aria-label="isPlaying ? 'Поставить видео на паузу' : 'Запустить видео'"
+            @click="togglePlayback"
+          >
+            <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false">
+              <path v-if="isPlaying" fill="currentColor" d="M3.5 2h3.2v12H3.5zm5.8 0h3.2v12H9.3z" />
+              <path v-else fill="currentColor" d="M4 2.2 13.4 8 4 13.8z" />
+            </svg>
+          </button>
+          <button
+            type="button"
+            class="video-band__button"
+            :aria-pressed="!isMuted"
+            aria-label="Звук в видео"
+            @click="toggleSound"
+          >
+            <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false">
+              <path fill="currentColor" d="M1.6 5.8h2.6L7.9 2.6v10.8L4.2 10.2H1.6z" />
+              <g fill="none" stroke="currentColor" stroke-width="1.3">
+                <template v-if="!isMuted">
+                  <path d="M10.2 5.6a3.4 3.4 0 0 1 0 4.8" />
+                  <path d="M12.3 3.6a6.2 6.2 0 0 1 0 8.8" />
+                </template>
+                <template v-else>
+                  <path d="m10.6 5.9 4 4.2m0-4.2-4 4.2" />
+                </template>
+              </g>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <p id="video-audio-description" class="sr-only">
+        В ролике нет речи — только музыка.
+      </p>
+    </section>
+
     <section class="gallery" aria-labelledby="gallery-title">
       <header class="section-heading section-heading--gallery">
         <div>
-          <p class="eyebrow">Без постановочных кадров</p>
-          <h2 id="gallery-title">Производство в деталях</h2>
+          <h2 id="gallery-title">Фото производства</h2>
         </div>
         <NuxtLink class="text-link" to="/foto">Все фотографии</NuxtLink>
       </header>
@@ -246,8 +401,8 @@ useSchemaOrg([
             :alt="photo.alt"
             width="1200"
             height="900"
-            sizes="xs:100vw sm:50vw md:50vw lg:34vw"
-            densities="1"
+            :sizes="photo.sizes"
+            densities="1 2"
             format="webp"
             loading="lazy"
           />
@@ -256,38 +411,6 @@ useSchemaOrg([
       </div>
     </section>
 
-    <section class="video-story" aria-labelledby="video-title">
-      <div class="video-story__copy">
-        <p class="eyebrow">Рабочий процесс</p>
-        <h2 id="video-title">Как начинается ваша доска</h2>
-        <p class="video-story__description">
-          Короткий фрагмент распила бревна на нашей производственной площадке
-          в Разбегаево.
-        </p>
-        <p id="video-audio-description" class="video-story__audio-description">
-          В ролике нет речи: звуковая дорожка передаёт шум работающей ленточной пилорамы.
-        </p>
-      </div>
-      <video
-        class="video-story__video"
-        controls
-        preload="none"
-        playsinline
-        poster="/images/pilorama-stanok-brevno.jpg"
-        aria-label="Короткое видео с производственной площадки пилорамы"
-        aria-describedby="video-audio-description"
-      >
-        <source src="/mp4/short-sawmill-video.mp4" type="video/mp4">
-        <track
-          default
-          kind="captions"
-          src="/captions/short-sawmill-video.ru.vtt"
-          srclang="ru"
-          label="Русские субтитры"
-        >
-        Ваш браузер не поддерживает воспроизведение видео.
-      </video>
-    </section>
   </main>
 </template>
 
@@ -306,42 +429,57 @@ useSchemaOrg([
   text-transform: uppercase;
 }
 
-.eyebrow--light {
+.eyebrow--light,
+.eyebrow--hero {
   color: #d5a184;
 }
 
+/* Поле героя — тёмно-зелёная крашеная доска, текст лежит прямо на ней.
+   Скрим forest-deep слева держит контраст, сверху — стык с шапкой */
 .hero {
-  display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(430px, 0.85fr);
-  min-height: 640px;
-  max-width: 1320px;
-  margin: 0 auto;
-  border-bottom: 1px solid var(--color-line);
+  overflow: hidden;
+  background-color: var(--color-forest-deep);
+  background-image:
+    linear-gradient(
+      104deg,
+      rgb(18 39 30 / 74%) 0%,
+      rgb(18 39 30 / 46%) 46%,
+      rgb(18 39 30 / 18%) 100%
+    ),
+    linear-gradient(rgb(18 39 30 / 62%) 0, rgb(18 39 30 / 0%) 16%),
+    url('/images/bg-wood-forest.webp');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  color: var(--color-cream);
 }
 
-.hero__content {
-  display: flex;
-  min-width: 0;
-  flex-direction: column;
-  justify-content: center;
-  padding: 64px clamp(32px, 4vw, 64px) 54px 24px;
+.hero__inner {
+  padding: clamp(44px, 6vh, 72px) max(24px, calc((100vw - 1320px) / 2)) 0;
 }
 
 .hero h1 {
-  max-width: 720px;
-  margin: 0 0 22px;
+  position: relative;
+  z-index: 1;
+  margin: 0;
   overflow-wrap: normal;
-  font-size: clamp(3.2rem, 4.8vw, 5rem);
+  color: var(--color-paper);
+  font-size: clamp(3.1rem, 6.2vw, 6.1rem);
   font-weight: 400;
   hyphens: none;
-  line-height: 1;
+  line-height: 1.02;
   word-break: normal;
 }
 
+.hero__copy {
+  padding-top: clamp(26px, 3.4vw, 46px);
+  padding-bottom: clamp(40px, 6vw, 92px);
+}
+
 .hero__lead {
-  max-width: 610px;
+  max-width: 560px;
   margin-bottom: 26px;
-  color: rgb(32 35 31 / 85%);
+  color: rgb(243 239 230 / 85%);
   font-size: clamp(1rem, 1.3vw, 1.18rem);
   line-height: 1.65;
 }
@@ -376,21 +514,23 @@ useSchemaOrg([
 }
 
 .button--secondary {
-  border: 1px solid var(--color-forest);
-  color: var(--color-forest);
+  border: 1px solid rgb(243 239 230 / 55%);
+  color: var(--color-cream);
 }
 
 .button--secondary:hover {
-  background: var(--color-forest);
-  color: var(--color-paper);
+  background: var(--color-cream);
+  border-color: var(--color-cream);
+  color: var(--color-forest);
 }
 
 .hero__facts {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   max-width: 650px;
-  margin: 44px 0 0;
-  border-top: 1px solid var(--color-line);
+  margin: clamp(6px, 1vw, 14px) 0 0;
+  padding-bottom: clamp(36px, 5vh, 56px);
+  border-top: 1px solid var(--color-line-light);
 }
 
 .hero__facts div {
@@ -399,10 +539,18 @@ useSchemaOrg([
 
 .hero__facts div + div {
   padding-left: 18px;
-  border-left: 1px solid var(--color-line);
+  border-left: 1px solid var(--color-line-light);
 }
 
-.hero__facts dt,
+.hero__facts dt {
+  margin-bottom: 4px;
+  color: rgb(243 239 230 / 75%);
+  font-size: 0.67rem;
+  font-weight: 760;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
 .product-row__details dt {
   margin-bottom: 4px;
   color: rgb(32 35 31 / 70%);
@@ -414,46 +562,9 @@ useSchemaOrg([
 
 .hero__facts dd {
   margin: 0;
+  color: var(--color-paper);
   font-family: Georgia, 'Times New Roman', serif;
   font-size: 1rem;
-}
-
-.hero__media {
-  position: relative;
-  min-width: 0;
-  overflow: hidden;
-  background: var(--color-forest);
-}
-
-.hero__media::after {
-  position: absolute;
-  inset: 0;
-  content: '';
-  background: linear-gradient(180deg, transparent 64%, rgb(18 39 30 / 38%));
-  pointer-events: none;
-}
-
-.hero__media img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: 50% 58%;
-}
-
-.hero__media figcaption {
-  position: absolute;
-  right: 24px;
-  bottom: 22px;
-  left: 24px;
-  z-index: 1;
-  display: flex;
-  justify-content: space-between;
-  gap: 20px;
-  color: var(--color-paper);
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
 }
 
 .catalog-preview,
@@ -471,8 +582,7 @@ useSchemaOrg([
 }
 
 .section-heading h2,
-.production h2,
-.video-story h2 {
+.production h2 {
   max-width: 760px;
   margin: 0;
   font-size: clamp(2.7rem, 4.4vw, 5.1rem);
@@ -507,6 +617,13 @@ useSchemaOrg([
 
 .product-list {
   border-top: 1px solid var(--color-ink);
+}
+
+.catalog-preview__topics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px 28px;
+  margin-top: 40px;
 }
 
 .product-row {
@@ -560,11 +677,6 @@ useSchemaOrg([
 
 .product-row__details div {
   padding: 11px 0;
-  border-top: 1px solid var(--color-line);
-}
-
-.product-row__details div:last-child {
-  border-bottom: 1px solid var(--color-line);
 }
 
 .product-row__details dd {
@@ -696,66 +808,98 @@ useSchemaOrg([
   }
 }
 
-.video-story {
-  display: grid;
-  grid-template-columns: minmax(280px, 0.7fr) minmax(420px, 1.3fr);
-  align-items: center;
-  gap: clamp(48px, 9vw, 140px);
-  padding: 112px max(24px, calc((100vw - 1320px) / 2));
-  background: var(--color-sand);
+/* Видео продолжает тёмную полосу производства: во всю ширину, без рамки,
+   заголовка и подписи. Тихий луп, звук — по кнопке */
+.video-band {
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+  background: var(--color-forest-deep);
 }
 
-.video-story__description {
-  max-width: 420px;
-  margin: 26px 0 0;
-  color: rgb(32 35 31 / 85%);
-  font-size: 1.05rem;
+/* Исходник 848×480: шире ~1180px картинка расползается в апскейл.
+   Кадр упирается в этот предел, по бокам остаётся тёмная полоса */
+.video-band__frame {
+  position: relative;
+  width: min(1180px, 100%);
+  max-height: 68vh;
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
 }
 
-.video-story__copy .video-story__audio-description {
-  margin-top: 12px;
-  font-size: 0.9rem;
-}
-
-.video-story__video {
+.video-band__video {
   width: 100%;
-  aspect-ratio: 16 / 10;
-  background: var(--color-ink);
-  box-shadow: 0 30px 70px rgb(32 35 31 / 18%);
+  height: 100%;
   object-fit: cover;
 }
 
+/* Когда кадр перестал быть во всю ширину, тёмное поле идёт и сверху-снизу —
+   иначе рамка по бокам читается как недотянутое видео, а не как оправа */
+@media (min-width: 1180px) {
+  .video-band {
+    padding-block: clamp(30px, 3.4vw, 64px);
+  }
+}
+
+.video-band__controls {
+  position: absolute;
+  bottom: clamp(16px, 2.2vw, 24px);
+  left: clamp(16px, 2.2vw, 24px);
+  display: flex;
+  gap: 1px;
+}
+
+.video-band__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  padding: 0;
+  border: 0;
+  background: rgb(18 39 30 / 84%);
+  color: var(--color-cream);
+  cursor: pointer;
+  transition:
+    background-color var(--motion-duration-ui) var(--motion-ease-out),
+    color var(--motion-duration-ui) var(--motion-ease-out);
+}
+
+.video-band__button:active {
+  background: var(--color-copper-dark);
+  color: var(--color-paper);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .video-band__button:hover {
+    background: var(--color-copper);
+    color: var(--color-paper);
+  }
+}
+
+
 @media (max-width: 1100px) {
-  .hero {
-    grid-template-columns: minmax(0, 1.2fr) minmax(360px, 0.8fr);
-  }
-
-  .hero__content {
-    padding-left: 32px;
-  }
-
   .product-row {
     grid-template-columns: 32px 150px minmax(220px, 1fr) minmax(220px, 0.62fr);
   }
 }
 
 @media (max-width: 840px) {
-  .hero,
-  .production,
-  .video-story {
+  .production {
     grid-template-columns: 1fr;
   }
 
-  .hero__content {
-    padding: 76px 28px 56px;
+  .hero__inner {
+    padding-top: 40px;
   }
 
   .hero h1 {
-    font-size: clamp(3.2rem, 11vw, 5.6rem);
+    font-size: clamp(3rem, 10.5vw, 5.4rem);
   }
 
-  .hero__media {
-    min-height: 600px;
+  .hero__copy {
+    padding-top: 22px;
+    padding-bottom: 34px;
   }
 
   .section-heading {
@@ -786,12 +930,11 @@ useSchemaOrg([
 }
 
 @media (max-width: 560px) {
-  .hero__content {
-    padding: 58px 18px 44px;
+  .hero__inner {
+    padding: 34px 18px 0;
   }
 
   .hero h1 {
-    margin-bottom: 22px;
     overflow-wrap: normal;
     font-size: clamp(2.45rem, 11.8vw, 3.4rem);
     hyphens: none;
@@ -808,7 +951,8 @@ useSchemaOrg([
 
   .hero__facts {
     grid-template-columns: 1fr;
-    margin-top: 44px;
+    margin-top: 20px;
+    padding-bottom: 34px;
   }
 
   .hero__facts div,
@@ -816,7 +960,7 @@ useSchemaOrg([
     display: grid;
     grid-template-columns: 110px 1fr;
     padding: 13px 0;
-    border-bottom: 1px solid var(--color-line);
+    border-bottom: 1px solid var(--color-line-light);
     border-left: 0;
   }
 
@@ -824,15 +968,15 @@ useSchemaOrg([
     margin: 0;
   }
 
-  .hero__media {
-    min-height: 450px;
-  }
-
   .catalog-preview,
   .gallery,
-  .production,
-  .video-story {
+  .production {
     padding: 78px 18px;
+  }
+
+  /* На узком экране 16:9 схлопывается в тонкую ленту — берём кадр выше */
+  .video-band__frame {
+    aspect-ratio: 4 / 3;
   }
 
   .section-heading {
@@ -840,8 +984,7 @@ useSchemaOrg([
   }
 
   .section-heading h2,
-  .production h2,
-  .video-story h2 {
+  .production h2 {
     font-size: clamp(2.5rem, 13vw, 3.7rem);
   }
 
@@ -909,10 +1052,6 @@ useSchemaOrg([
 
   .gallery-card--tall {
     aspect-ratio: 3 / 4;
-  }
-
-  .video-story__video {
-    aspect-ratio: 4 / 3;
   }
 }
 

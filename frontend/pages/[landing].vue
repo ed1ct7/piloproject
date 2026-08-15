@@ -126,7 +126,7 @@ useSchemaOrg([
           </figure>
 
           <div class="flex min-w-0 flex-col p-6 max-[560px]:p-5">
-            <h3 class="mb-2">{{ product.displayTitle }}</h3>
+            <h3 class="mb-3">{{ product.displayTitle }}</h3>
             <p class="mb-3 max-w-[600px] leading-[1.55] text-(--color-ink)/85">{{ product.description }}</p>
             <p class="mb-5 font-[Segoe_UI,Arial,sans-serif] text-[0.9rem] text-(--color-ink)/70">{{ product.specs[0][0] }} — {{ product.specs[0][1] }}</p>
 
@@ -168,7 +168,7 @@ useSchemaOrg([
       <h2 id="landing-faq-title" class="mb-8">Вопросы и ответы</h2>
       <div class="max-w-[860px] border-t border-(--color-line)">
         <div v-for="item in landing.faq" :key="item.question" class="border-b border-(--color-sand) py-6">
-          <h3 class="mb-2 max-w-[720px]">{{ item.question }}</h3>
+          <h3 class="mb-3 max-w-[720px]">{{ item.question }}</h3>
           <p class="mb-0 max-w-[720px] leading-[1.6] text-(--color-ink)/85">{{ item.answer }}</p>
         </div>
       </div>

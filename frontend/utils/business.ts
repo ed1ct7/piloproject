@@ -4,10 +4,10 @@
  * Единственный источник телефонов, адреса и реквизитов для шапки, подвала,
  * страницы контактов и микроразметки LocalBusiness в `nuxt.config.ts`.
  */
-export const businessPhone = '8 921 984-91-01'
+export const businessPhone = '+7 921 984-91-01'
 
 /** Основной телефон в международном формате для микроразметки. */
-export const businessPhoneInternational = '+7 921 984-91-01'
+export const businessPhoneInternational = businessPhone
 
 /** Телефон для ссылки `tel:` — только цифры с кодом страны. */
 export const businessPhoneHref = 'tel:+79219849101'

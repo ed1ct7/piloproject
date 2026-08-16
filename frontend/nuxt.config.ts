@@ -54,7 +54,11 @@ export default defineNuxtConfig({
         { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
         { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
       ],
-      meta: [{ name: 'theme-color', content: '#183126' }],
+      meta: [
+        { name: 'theme-color', content: '#183126' },
+        // Подтверждение прав на сайт в Яндекс Вебмастере.
+        { name: 'yandex-verification', content: '00d10a54c18227f1' },
+      ],
     },
   },
 

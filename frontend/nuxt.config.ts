@@ -3,7 +3,6 @@ import tailwindcss from '@tailwindcss/vite'
 import {
   businessAddress,
   businessEmail,
-  businessMapsUrl,
   businessMaxUrl,
   businessOpeningHoursSpecification,
   businessPhoneInternational,
@@ -94,7 +93,8 @@ export default defineNuxtConfig({
   },
 
   sitemap: {
-    exclude: [],
+    // Корзина закрыта noindex; noindex-страница в sitemap — ошибка в Вебмастере.
+    exclude: ['/cart', '/korzina'],
     autoLastmod: true,
     credits: false,
   },
@@ -121,7 +121,9 @@ export default defineNuxtConfig({
       url: siteUrl,
       telephone: businessPhoneInternational,
       email: businessEmail,
-      sameAs: [businessMapsUrl, businessMaxUrl],
+      // businessMapsUrl не включаем, пока карточка Карт оформлена на другое
+      // наименование: sameAs подтверждает чужую организацию (docs/yandex-seo.md).
+      sameAs: [businessMaxUrl],
       image: `${siteUrl}/images/lentochnaya-pilorama-raspil.jpg`,
       address: {
         '@type': 'PostalAddress',

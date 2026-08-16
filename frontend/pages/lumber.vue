@@ -246,10 +246,11 @@ useSchemaOrg([
         offers: product.price === null
           ? undefined
           : {
+              // AggregateOffer с lowPrice — это цена «от …» из прайса.
               '@type': 'AggregateOffer',
               lowPrice: product.price,
               priceCurrency: 'RUB',
-              offerCount: 1,
+              availability: 'https://schema.org/InStock',
               url: `${siteUrl}/pilomaterialy`,
             },
       },

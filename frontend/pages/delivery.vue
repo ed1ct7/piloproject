@@ -18,6 +18,15 @@ useHead({
   link: [{ rel: 'canonical', href: `${siteUrl}/dostavka` }],
 })
 
+useSchemaOrg([
+  defineBreadcrumb({
+    itemListElement: [
+      { name: 'Главная', item: '/' },
+      { name: 'Доставка', item: '/dostavka' },
+    ],
+  }),
+])
+
 const deliverySteps = [
   {
     number: '01',

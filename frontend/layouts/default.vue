@@ -257,12 +257,18 @@ watch(
         >Открыть в Яндекс Картах</a>
       </div>
 
-      <div class="max-[840px]:flex-col max-[840px]:items-start col-span-full mt-6 flex justify-between gap-4 border-t border-(--color-line-light) pt-5 font-[Segoe_UI,Arial,sans-serif] text-sm leading-[1.5] text-(--color-cream)/75">
-        <span>
-          {{ businessRequisites.fullName }} · ИНН {{ businessRequisites.inn }} ·
-          ОГРНИП {{ businessRequisites.ogrnip }}
-        </span>
-        <NuxtLink class="shrink-0 underline underline-offset-4 hover:text-(--color-paper)" to="/politika-konfidencialnosti">Политика конфиденциальности</NuxtLink>
+      <div class="col-span-full mt-6 grid gap-3 border-t border-(--color-line-light) pt-5 font-[Segoe_UI,Arial,sans-serif] text-sm leading-[1.5] text-(--color-cream)/75">
+        <p class="mb-0 max-w-[840px]">
+          Цены и сведения о товарах на сайте носят справочный характер и не являются публичной
+          офертой (ст. 437 ГК РФ). Наличие, стоимость и условия поставки подтверждает менеджер.
+        </p>
+        <div class="max-[840px]:flex-col max-[840px]:items-start flex justify-between gap-4">
+          <span>
+            {{ businessRequisites.fullName }} · ИНН {{ businessRequisites.inn }} ·
+            ОГРНИП {{ businessRequisites.ogrnip }}
+          </span>
+          <NuxtLink class="shrink-0 underline underline-offset-4 hover:text-(--color-paper)" to="/politika-konfidencialnosti">Политика конфиденциальности</NuxtLink>
+        </div>
       </div>
     </footer>
   </div>

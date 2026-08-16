@@ -160,6 +160,9 @@ for service in nginx; do
   printf '%s: %s\n' "$service" "$state"
 done
 
+# Ротация: имена бэкапов содержат timestamp, сортировка по имени — хронологическая.
+ls -d /var/www/piloproject.backup-* 2>/dev/null | sort | head -n -3 | xargs -r rm -rf --
+
 printf '%s\n' "$commit" > /var/www/.piloproject-deployed-commit
 rm -rf -- "$work_dir"
 trap - EXIT

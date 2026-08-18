@@ -262,8 +262,7 @@ useSchemaOrg([
 
 <template>
   <main>
-    <section class="max-[840px]:min-h-0 max-[560px]:block max-[560px]:px-[18px] max-[560px]:pb-10 max-[560px]:pt-[34px] grid min-h-[310px] grid-cols-[64px_minmax(0,1fr)] items-center gap-8 border-b border-(--color-ink) bg-(--color-sand) px-[max(24px,calc((100vw_-_1280px)/2))] pb-10 pt-14">
-      <div aria-hidden="true" />
+    <section class="max-[840px]:min-h-0 max-[560px]:px-[18px] max-[560px]:pb-10 max-[560px]:pt-[34px] grid min-h-[310px] items-center border-b border-(--color-ink) bg-(--color-sand) px-[max(24px,calc((100vw_-_1280px)/2))] pb-10 pt-14">
       <div class="max-w-[760px] [&_h1]:mb-0">
         <p class="mb-3 font-[Segoe_UI,Arial,sans-serif] text-[0.8125rem] font-[760] uppercase tracking-[0.04em] text-(--color-copper)">Производственная площадка</p>
         <h1>Фото пилорамы и склада</h1>

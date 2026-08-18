@@ -132,13 +132,14 @@ const deliverySteps = [
   text-transform: uppercase;
 }
 
+/* Верхняя секция бежевая — как hero на остальных страницах */
 .delivery-hero {
   display: block;
   width: 100%;
   min-height: 0;
   margin: 0;
   border-bottom: 1px solid var(--color-ink);
-  background: var(--color-paper);
+  background: var(--color-sand);
 }
 
 .delivery-hero__content {
@@ -166,10 +167,11 @@ const deliverySteps = [
   line-height: 1.55;
 }
 
+/* Основное тело страницы — кремовое, карточки внутри остаются светлыми */
 .receiving {
   padding: 56px 24px;
   border-bottom: 1px solid var(--color-ink);
-  background: var(--color-paper);
+  background: var(--color-cream);
 }
 
 .section-heading {

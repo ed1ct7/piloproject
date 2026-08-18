@@ -56,12 +56,197 @@ const galleryPreview = [
   },
 ]
 
+/**
+ * Документ с вендорным префиксом WebKit.
+ * @note Safari до 16.4 знает только `webkit*`-версии Fullscreen API,
+ *       поля объявлены необязательными, чтобы обойтись без `any`
+ */
+interface VendorFullscreenDocument extends Document {
+  webkitFullscreenEnabled?: boolean
+  webkitFullscreenElement?: Element | null
+  webkitExitFullscreen?: () => Promise<void> | void
+}
+
+/** Элемент с вендорным запросом полноэкранного режима (Safari до 16.4). */
+interface VendorFullscreenElement extends HTMLElement {
+  webkitRequestFullscreen?: () => Promise<void> | void
+}
+
+/** Шаг перемотки стрелками, в секундах. */
+const SEEK_STEP_SECONDS = 5
+
+/** Через столько миллисекунд без движения курсора панель уходит с кадра. */
+const CONTROLS_IDLE_MS = 2200
+
 const videoBand = ref<HTMLElement | null>(null)
+const videoFrame = ref<HTMLElement | null>(null)
 const videoEl = ref<HTMLVideoElement | null>(null)
 const isPlaying = ref(false)
 const isMuted = ref(true)
+const isFullscreen = ref(false)
+const isFullscreenSupported = ref(false)
+/** Пользователь тянет бегунок: пока это так, `timeupdate` не перебивает позицию. */
+const isScrubbing = ref(false)
+const currentTime = ref(0)
+const duration = ref(0)
+/** Конец буферизованного отрезка, содержащего текущую позицию, в секундах. */
+const bufferedTime = ref(0)
+const volumePercent = ref(100)
+/** Курсор недавно двигался над кадром — панель держим на виду. */
+const isPointerActive = ref(false)
+/** Фокус внутри кадра: панель нужна клавиатуре, даже если курсор давно замер. */
+const isFocusInFrame = ref(false)
+/** Курсор стоит на самой панели — не гасим её под занесённой рукой. */
+const isPointerOverControls = ref(false)
+
 let userPaused = false
+let pointerIdleTimer: ReturnType<typeof setTimeout> | null = null
+/** Последняя ненулевая громкость: к ней возвращаемся при снятии mute. */
+let lastVolumePercent = 100
 let bandObserver: IntersectionObserver | null = null
+/** Отписки от событий видео и документа, выполняются в `onBeforeUnmount`. */
+let detachListeners: Array<() => void> = []
+
+const isSeekable = computed(() => duration.value > 0)
+const playedPercent = computed(() =>
+  isSeekable.value ? Math.min(100, (currentTime.value / duration.value) * 100) : 0,
+)
+const bufferedPercent = computed(() =>
+  isSeekable.value ? Math.min(100, (bufferedTime.value / duration.value) * 100) : 0,
+)
+
+/**
+ * Держать панель поверх кадра постоянно незачем — она закрывает картинку.
+ * На паузе и при любом обращении к ролику панель на виду, во время
+ * воспроизведения уходит через `CONTROLS_IDLE_MS` после последнего движения.
+ */
+const areControlsVisible = computed(() =>
+  !isPlaying.value
+  || isScrubbing.value
+  || isFocusInFrame.value
+  || isPointerOverControls.value
+  || isPointerActive.value,
+)
+
+/** Отмечает обращение к кадру и заводит таймер ухода панели. */
+function markPointerActive() {
+  isPointerActive.value = true
+  if (pointerIdleTimer) clearTimeout(pointerIdleTimer)
+  pointerIdleTimer = setTimeout(() => {
+    isPointerActive.value = false
+    pointerIdleTimer = null
+  }, CONTROLS_IDLE_MS)
+}
+
+/** Курсор ушёл с кадра — прячем панель, не дожидаясь таймера. */
+function forgetPointerActivity() {
+  if (pointerIdleTimer) {
+    clearTimeout(pointerIdleTimer)
+    pointerIdleTimer = null
+  }
+  isPointerActive.value = false
+}
+
+/**
+ * Отпускает панель, когда фокус ушёл за пределы кадра.
+ * @param event событие `focusout` на кадре
+ */
+function handleFrameFocusOut(event: FocusEvent) {
+  const frame = videoFrame.value
+  const nextTarget = event.relatedTarget
+
+  if (!frame || (nextTarget instanceof Node && frame.contains(nextTarget))) return
+
+  isFocusInFrame.value = false
+}
+
+/**
+ * Подбирает форму русского существительного для числа.
+ * @param value количество
+ * @param forms формы для 1, 2 и 5 — например `['минута', 'минуты', 'минут']`
+ * @returns подходящую форму слова
+ */
+function pluralizeRu(value: number, forms: readonly [string, string, string]): string {
+  const withinHundred = value % 100
+  const withinTen = value % 10
+  if (withinHundred >= 11 && withinHundred <= 14) return forms[2]
+  if (withinTen === 1) return forms[0]
+  if (withinTen >= 2 && withinTen <= 4) return forms[1]
+  return forms[2]
+}
+
+/**
+ * Приводит секунды к целому неотрицательному значению.
+ * @note `duration` до загрузки метаданных равна `NaN`, у потоков — `Infinity`
+ * @param seconds исходное значение в секундах
+ * @returns целое число секунд, не меньше нуля
+ */
+function toWholeSeconds(seconds: number): number {
+  return Number.isFinite(seconds) && seconds > 0 ? Math.floor(seconds) : 0
+}
+
+/**
+ * Форматирует секунды в таймкод для показа в панели.
+ * @param seconds позиция в секундах
+ * @returns строку вида `1:07`
+ */
+function formatClock(seconds: number): string {
+  const total = toWholeSeconds(seconds)
+  return `${Math.floor(total / 60)}:${(total % 60).toString().padStart(2, '0')}`
+}
+
+/**
+ * Проговаривает позицию словами для скринридера.
+ * @note таймкод `1:07` читается вслух как «один двоеточие ноль семь»,
+ *       поэтому для `aria-valuetext` нужна отдельная словесная форма
+ * @param seconds позиция в секундах
+ * @returns строку вида «1 минута 7 секунд»
+ */
+function formatSpokenTime(seconds: number): string {
+  const total = toWholeSeconds(seconds)
+  const minutes = Math.floor(total / 60)
+  const rest = total % 60
+  const parts: string[] = []
+  if (minutes > 0) parts.push(`${minutes} ${pluralizeRu(minutes, ['минута', 'минуты', 'минут'])}`)
+  if (rest > 0 || minutes === 0) {
+    parts.push(`${rest} ${pluralizeRu(rest, ['секунда', 'секунды', 'секунд'])}`)
+  }
+  return parts.join(' ')
+}
+
+const currentTimeLabel = computed(() => formatClock(currentTime.value))
+const durationLabel = computed(() => formatClock(duration.value))
+const seekValueText = computed(() =>
+  isSeekable.value
+    ? `${formatSpokenTime(currentTime.value)} из ${formatSpokenTime(duration.value)}`
+    : 'Видео ещё не загружено',
+)
+const volumeValueText = computed(() =>
+  isMuted.value ? 'Звук выключен' : `${volumePercent.value} процентов`,
+)
+
+/**
+ * Гасит все текстовые дорожки ролика.
+ * @note дорожка `captions` остаётся в разметке как текстовая альтернатива,
+ *       но в кадре не должно быть подписей вроде «[Музыка]»; браузер может
+ *       поднять дорожку заново после загрузки метаданных, поэтому вызываем
+ *       и при монтировании, и на `loadedmetadata`
+ * @param video элемент ролика
+ */
+function disableTextTracks(video: HTMLVideoElement) {
+  for (let i = 0; i < video.textTracks.length; i += 1) video.textTracks[i]!.mode = 'disabled'
+}
+
+/**
+ * Подписывается на событие и запоминает отписку.
+ * @param target  элемент или документ
+ * @param type    имя события
+ * @param handler обработчик
+ */
+function bindEvent(target: EventTarget, type: string, handler: EventListener) {
+  target.addEventListener(type, handler)
+  detachListeners.push(() => target.removeEventListener(type, handler))
+}
 
 /**
  * Переключает воспроизведение по кнопке.
@@ -84,16 +269,31 @@ function togglePlayback() {
 }
 
 /**
+ * Сверяет состояние звука в панели с состоянием элемента.
+ */
+function syncVolume() {
+  const video = videoEl.value
+  if (!video) return
+
+  isMuted.value = video.muted
+  volumePercent.value = Math.round(video.volume * 100)
+}
+
+/**
  * Включает и выключает музыку ролика.
  *
+ * Уровень громкости переживает переключение: если ползунок увели в ноль,
+ * при снятии mute возвращаем последнее ненулевое значение.
  * Со звуком ролик всегда играет: если он стоял на паузе, запускаем его.
  */
 function toggleSound() {
   const video = videoEl.value
   if (!video) return
 
-  video.muted = !video.muted
-  isMuted.value = video.muted
+  const nextMuted = !video.muted
+  video.muted = nextMuted
+  if (!nextMuted && video.volume === 0) video.volume = lastVolumePercent / 100
+  syncVolume()
 
   if (!video.muted && video.paused) {
     userPaused = false
@@ -102,11 +302,147 @@ function toggleSound() {
 }
 
 /**
- * Стартует ролик только когда полоса попала в кадр.
+ * Применяет громкость с ползунка.
+ * @note ноль на ползунке равносилен mute, чтобы кнопка и ползунок
+ *       не рассказывали о звуке разное
+ * @param event событие `input` ползунка громкости
+ */
+function onVolumeInput(event: Event) {
+  const video = videoEl.value
+  const next = Number((event.target as HTMLInputElement).value)
+  if (!video || !Number.isFinite(next)) return
+
+  const clamped = Math.min(Math.max(Math.round(next), 0), 100)
+  video.volume = clamped / 100
+  video.muted = clamped === 0
+  if (clamped > 0) lastVolumePercent = clamped
+  syncVolume()
+}
+
+/**
+ * Переводит ролик на выбранную позицию.
+ * @param seconds позиция в секундах, обрезается по длительности
+ */
+function seekTo(seconds: number) {
+  const video = videoEl.value
+  if (!video || !isSeekable.value) return
+
+  const clamped = Math.min(Math.max(seconds, 0), duration.value)
+  currentTime.value = clamped
+  video.currentTime = clamped
+}
+
+/**
+ * Перематывает ролик перетаскиванием и кликом по полосе.
+ * @param event событие `input` полосы прогресса
+ */
+function onSeekInput(event: Event) {
+  const next = Number((event.target as HTMLInputElement).value)
+  if (!Number.isFinite(next)) return
+  seekTo(next)
+}
+
+/**
+ * Перематывает ролик с клавиатуры.
+ * @note нативный шаг полосы задан как `any` ради плавного перетаскивания,
+ *       поэтому стрелки, Home и End обрабатываем сами — иначе одно нажатие
+ *       двигало бы позицию на неразличимую долю секунды
+ * @param event событие клавиатуры на полосе прогресса
+ */
+function onSeekKeydown(event: KeyboardEvent) {
+  if (!isSeekable.value) return
+
+  let next: number | null = null
+  if (event.key === 'ArrowRight' || event.key === 'ArrowUp') {
+    next = currentTime.value + SEEK_STEP_SECONDS
+  }
+  else if (event.key === 'ArrowLeft' || event.key === 'ArrowDown') {
+    next = currentTime.value - SEEK_STEP_SECONDS
+  }
+  else if (event.key === 'Home') next = 0
+  else if (event.key === 'End') next = duration.value
+
+  if (next === null) return
+  event.preventDefault()
+  seekTo(next)
+}
+
+/**
+ * Возвращает элемент, раскрытый на весь экран.
+ * @returns элемент в полноэкранном режиме или `null`
+ */
+function readFullscreenElement(): Element | null {
+  const doc: VendorFullscreenDocument = document
+  return doc.fullscreenElement ?? doc.webkitFullscreenElement ?? null
+}
+
+/**
+ * Сверяет состояние кнопки с реальным полноэкранным режимом.
+ */
+function syncFullscreen() {
+  isFullscreen.value = readFullscreenElement() === videoFrame.value
+}
+
+/**
+ * Раскрывает кадр на весь экран и возвращает обратно.
+ * @note раскрываем именно `.video-band__frame`, а не `<video>`, — тогда
+ *       панель управления остаётся видимой поверх кадра
+ */
+async function toggleFullscreen() {
+  const frame: VendorFullscreenElement | null = videoFrame.value
+  const doc: VendorFullscreenDocument = document
+  if (!frame) return
+
+  try {
+    if (readFullscreenElement()) {
+      if (typeof doc.exitFullscreen === 'function') await doc.exitFullscreen()
+      else if (typeof doc.webkitExitFullscreen === 'function') await doc.webkitExitFullscreen()
+    }
+    else if (typeof frame.requestFullscreen === 'function') await frame.requestFullscreen()
+    else if (typeof frame.webkitRequestFullscreen === 'function') {
+      await frame.webkitRequestFullscreen()
+    }
+  }
+  catch {
+    // Браузер отказал в переходе — актуальное состояние вернёт `fullscreenchange`
+  }
+  syncFullscreen()
+}
+
+/**
+ * Считывает длительность ролика после загрузки метаданных.
+ */
+function syncDuration() {
+  const video = videoEl.value
+  if (!video) return
+
+  duration.value = Number.isFinite(video.duration) ? video.duration : 0
+}
+
+/**
+ * Считывает конец буферизованного отрезка вокруг текущей позиции.
+ * @note `buffered` может содержать несколько разрывных отрезков после перемоток,
+ *       для полосы нужен только тот, в котором сейчас находится воспроизведение
+ */
+function syncBuffered() {
+  const video = videoEl.value
+  if (!video) return
+
+  const ranges = video.buffered
+  let end = 0
+  for (let i = 0; i < ranges.length; i += 1) {
+    if (ranges.start(i) <= video.currentTime && ranges.end(i) > end) end = ranges.end(i)
+  }
+  bufferedTime.value = end
+}
+
+/**
+ * Стартует ролик только когда полоса попала в кадр, и заводит панель управления.
  *
  * `preload="none"` плюс наблюдатель держат 5,8 МБ вне первой загрузки.
  * При `prefers-reduced-motion` и включённой экономии трафика автозапуска нет —
- * остаётся постер и кнопка.
+ * остаётся постер и кнопки; сама панель при этом работает, ролик подгрузится
+ * по нажатию.
  */
 onMounted(() => {
   const video = videoEl.value
@@ -114,7 +450,34 @@ onMounted(() => {
   if (!video || !band) return
 
   video.muted = true
-  for (let i = 0; i < video.textTracks.length; i += 1) video.textTracks[i]!.mode = 'disabled'
+  disableTextTracks(video)
+  syncVolume()
+
+  bindEvent(video, 'loadedmetadata', () => {
+    disableTextTracks(video)
+    syncDuration()
+    syncBuffered()
+  })
+  bindEvent(video, 'durationchange', syncDuration)
+  bindEvent(video, 'timeupdate', () => {
+    if (!isScrubbing.value) currentTime.value = video.currentTime
+    syncBuffered()
+  })
+  bindEvent(video, 'progress', syncBuffered)
+  bindEvent(video, 'volumechange', syncVolume)
+  bindEvent(video, 'ended', () => {
+    // При `loop` событие приходит редко, но если браузер его выдал —
+    // возвращаем панель в исходное состояние
+    isPlaying.value = false
+    currentTime.value = 0
+  })
+
+  const doc: VendorFullscreenDocument = document
+  isFullscreenSupported.value = Boolean(doc.fullscreenEnabled || doc.webkitFullscreenEnabled)
+  if (isFullscreenSupported.value) {
+    bindEvent(document, 'fullscreenchange', syncFullscreen)
+    bindEvent(document, 'webkitfullscreenchange', syncFullscreen)
+  }
 
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
   const saveData = (navigator as Navigator & { connection?: { saveData?: boolean } })
@@ -133,6 +496,12 @@ onMounted(() => {
 onBeforeUnmount(() => {
   bandObserver?.disconnect()
   bandObserver = null
+  if (pointerIdleTimer) {
+    clearTimeout(pointerIdleTimer)
+    pointerIdleTimer = null
+  }
+  for (const detach of detachListeners) detach()
+  detachListeners = []
 })
 
 useSeoMeta({
@@ -314,7 +683,15 @@ useSchemaOrg([
       class="video-band"
       aria-label="Видео с производства"
     >
-      <div class="video-band__frame">
+      <div
+        ref="videoFrame"
+        class="video-band__frame"
+        @pointermove="markPointerActive"
+        @pointerdown="markPointerActive"
+        @pointerleave="forgetPointerActivity"
+        @focusin="isFocusInFrame = true"
+        @focusout="handleFrameFocusOut"
+      >
         <video
           ref="videoEl"
           class="video-band__video"
@@ -340,38 +717,130 @@ useSchemaOrg([
           Ваш браузер не поддерживает воспроизведение видео.
         </video>
 
-        <div class="video-band__controls">
-          <button
-            type="button"
-            class="video-band__button"
-            :aria-label="isPlaying ? 'Поставить видео на паузу' : 'Запустить видео'"
-            @click="togglePlayback"
-          >
-            <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false">
-              <path v-if="isPlaying" fill="currentColor" d="M3.5 2h3.2v12H3.5zm5.8 0h3.2v12H9.3z" />
-              <path v-else fill="currentColor" d="M4 2.2 13.4 8 4 13.8z" />
-            </svg>
-          </button>
-          <button
-            type="button"
-            class="video-band__button"
-            :aria-pressed="!isMuted"
-            aria-label="Звук в видео"
-            @click="toggleSound"
-          >
-            <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false">
-              <path fill="currentColor" d="M1.6 5.8h2.6L7.9 2.6v10.8L4.2 10.2H1.6z" />
-              <g fill="none" stroke="currentColor" stroke-width="1.3">
-                <template v-if="!isMuted">
-                  <path d="M10.2 5.6a3.4 3.4 0 0 1 0 4.8" />
-                  <path d="M12.3 3.6a6.2 6.2 0 0 1 0 8.8" />
-                </template>
-                <template v-else>
-                  <path d="m10.6 5.9 4 4.2m0-4.2-4 4.2" />
-                </template>
-              </g>
-            </svg>
-          </button>
+        <!-- Во время воспроизведения панель уходит с кадра; `data-hidden`
+             гасит её прозрачностью и снимает клики, но фокус с клавиатуры
+             по-прежнему проходит и возвращает панель через `focusin` -->
+        <div
+          class="video-band__controls"
+          :data-hidden="!areControlsVisible"
+          @pointerenter="isPointerOverControls = true"
+          @pointerleave="isPointerOverControls = false"
+        >
+          <div class="video-band__scrub">
+            <span class="video-band__track" aria-hidden="true">
+              <span
+                class="video-band__track-buffer"
+                :style="{ width: `${bufferedPercent}%` }"
+              ></span>
+              <span
+                class="video-band__track-played"
+                :style="{ width: `${playedPercent}%` }"
+              ></span>
+            </span>
+            <!-- Нативный range даёт перетаскивание, клик по полосе и роль slider
+                 с валидными aria-valuemin/max/now; шаг `any` держит перетаскивание
+                 плавным, стрелки и Home/End перехватывает `onSeekKeydown` -->
+            <input
+              class="video-band__slider"
+              type="range"
+              min="0"
+              :max="duration || 1"
+              step="any"
+              :value="currentTime"
+              :disabled="!isSeekable"
+              aria-label="Перемотка видео"
+              :aria-valuetext="seekValueText"
+              @input="onSeekInput"
+              @keydown="onSeekKeydown"
+              @pointerdown="isScrubbing = true"
+              @pointerup="isScrubbing = false"
+              @pointercancel="isScrubbing = false"
+              @change="isScrubbing = false"
+            >
+          </div>
+
+          <div class="video-band__bar">
+            <button
+              type="button"
+              class="video-band__button"
+              :aria-label="isPlaying ? 'Поставить видео на паузу' : 'Запустить видео'"
+              @click="togglePlayback"
+            >
+              <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false">
+                <path v-if="isPlaying" fill="currentColor" d="M3.5 2h3.2v12H3.5zm5.8 0h3.2v12H9.3z" />
+                <path v-else fill="currentColor" d="M4 2.2 13.4 8 4 13.8z" />
+              </svg>
+            </button>
+            <button
+              type="button"
+              class="video-band__button"
+              :aria-pressed="!isMuted"
+              aria-label="Звук в видео"
+              @click="toggleSound"
+            >
+              <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false">
+                <path fill="currentColor" d="M1.6 5.8h2.6L7.9 2.6v10.8L4.2 10.2H1.6z" />
+                <g fill="none" stroke="currentColor" stroke-width="1.3">
+                  <template v-if="!isMuted">
+                    <path d="M10.2 5.6a3.4 3.4 0 0 1 0 4.8" />
+                    <path d="M12.3 3.6a6.2 6.2 0 0 1 0 8.8" />
+                  </template>
+                  <template v-else>
+                    <path d="m10.6 5.9 4 4.2m0-4.2-4 4.2" />
+                  </template>
+                </g>
+              </svg>
+            </button>
+            <div class="video-band__volume">
+              <span class="video-band__track" aria-hidden="true">
+                <span
+                  class="video-band__track-played"
+                  :style="{ width: `${isMuted ? 0 : volumePercent}%` }"
+                ></span>
+              </span>
+              <input
+                class="video-band__slider"
+                type="range"
+                min="0"
+                max="100"
+                step="5"
+                :value="isMuted ? 0 : volumePercent"
+                aria-label="Громкость видео"
+                :aria-valuetext="volumeValueText"
+                @input="onVolumeInput"
+              >
+            </div>
+
+            <!-- Таймкод скрыт от скринридера: позицию и длительность
+                 проговаривает `aria-valuetext` полосы перемотки -->
+            <p class="video-band__time" aria-hidden="true">
+              <span>{{ currentTimeLabel }}</span>
+              <span class="video-band__time-divider">/</span>
+              <span>{{ durationLabel }}</span>
+            </p>
+
+            <button
+              v-if="isFullscreenSupported"
+              type="button"
+              class="video-band__button"
+              :aria-pressed="isFullscreen"
+              aria-label="Полноэкранный режим"
+              @click="toggleFullscreen"
+            >
+              <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false">
+                <path
+                  v-if="isFullscreen"
+                  fill="currentColor"
+                  d="M5.1 2h1.5v4.6H2V5.1h3.1zm5.8 0h-1.5v4.6H14V5.1h-3.1zM5.1 14h1.5V9.4H2v1.5h3.1zm5.8 0h-1.5V9.4H14v1.5h-3.1z"
+                />
+                <path
+                  v-else
+                  fill="currentColor"
+                  d="M2 2h4.6v1.5H3.5v3.1H2zm12 0v4.6h-1.5V3.5H9.4V2zM2 14V9.4h1.5v3.1h3.1V14zm12 0H9.4v-1.5h3.1V9.4H14z"
+                />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -841,16 +1310,40 @@ useSchemaOrg([
   }
 }
 
+/* Панель управления набрана теми же плотными тёмными плитками, что и кнопки:
+   полоса перемотки — отдельная плитка над рядом, иначе на узком кадре
+   всё теснится в одну строку. Кадр панель не перекрывает: две плитки
+   у нижней кромки */
 .video-band__controls {
   position: absolute;
+  right: clamp(16px, 2.2vw, 24px);
   bottom: clamp(16px, 2.2vw, 24px);
   left: clamp(16px, 2.2vw, 24px);
   display: flex;
+  flex-direction: column;
+  gap: 1px;
+  transition:
+    opacity var(--motion-duration-ui) var(--motion-ease-out),
+    translate var(--motion-duration-ui) var(--motion-ease-out);
+}
+
+/* Панель убрана с кадра: клики сквозь неё уходят на видео, а таб-порядок
+   сохраняется — попавший на кнопку фокус вернёт панель обработчиком focusin */
+.video-band__controls[data-hidden='true'] {
+  translate: 0 8px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.video-band__bar {
+  display: flex;
+  align-items: stretch;
   gap: 1px;
 }
 
 .video-band__button {
   display: inline-flex;
+  flex: none;
   align-items: center;
   justify-content: center;
   width: 46px;
@@ -875,6 +1368,183 @@ useSchemaOrg([
     background: var(--color-copper);
     color: var(--color-paper);
   }
+}
+
+.video-band__scrub,
+.video-band__volume {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  background: rgb(18 39 30 / 84%);
+}
+
+.video-band__scrub {
+  height: 34px;
+}
+
+.video-band__volume {
+  flex: none;
+  width: 116px;
+  height: 46px;
+}
+
+/* Три ступени кремового вместо цвета: непройденное — фон дорожки,
+   буферизованное — полутон, пройденное — сплошной кремовый.
+   Медь на этой подложке провалила бы контраст.
+   Отступ 19px = 14px внутреннего поля плитки плюс половина бегунка:
+   так конец заливки совпадает с его центром на всём ходу */
+.video-band__track {
+  position: absolute;
+  top: 50%;
+  right: 19px;
+  left: 19px;
+  height: 4px;
+  margin-top: -2px;
+  background: rgb(243 239 230 / 22%);
+}
+
+.video-band__track-buffer,
+.video-band__track-played {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+}
+
+.video-band__track-buffer {
+  background: rgb(243 239 230 / 42%);
+}
+
+.video-band__track-played {
+  background: var(--color-cream);
+}
+
+/* Высота фиксированная, а не 100%: в плитке громкости ползунок центрируется
+   флексом, и бегунок с дорожкой остаются на одной оси в обеих плитках */
+.video-band__slider {
+  position: relative;
+  width: 100%;
+  height: 34px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.video-band__slider:disabled {
+  cursor: default;
+}
+
+/* Глобальное правило focus-visible в app.vue ловит только a, button и [tabindex],
+   поэтому ползункам кольцо рисуем отдельно теми же токенами.
+   Подложка всегда тёмная — светлого кольца внутри плитки достаточно */
+.video-band__slider:focus-visible {
+  outline: 2px solid var(--color-focus-inner);
+  outline-offset: -2px;
+}
+
+.video-band__slider::-webkit-slider-runnable-track {
+  height: 34px;
+  background: transparent;
+}
+
+.video-band__slider::-moz-range-track {
+  height: 34px;
+  background: transparent;
+}
+
+/* Бегунок выше дорожки: его края выходят на тёмную плитку и остаются
+   различимыми даже там, где он стоит поверх пройденного отрезка */
+.video-band__slider::-webkit-slider-thumb {
+  width: 10px;
+  height: 16px;
+  margin-top: 9px;
+  border: 0;
+  appearance: none;
+  background: var(--color-cream);
+  transition: width var(--motion-duration-ui) var(--motion-ease-out);
+}
+
+.video-band__slider::-moz-range-thumb {
+  width: 10px;
+  height: 16px;
+
+  /* Firefox скругляет бегунок по умолчанию, а углы в системе острые */
+  border: 0;
+  border-radius: 0;
+  background: var(--color-cream);
+  transition: width var(--motion-duration-ui) var(--motion-ease-out);
+}
+
+.video-band__slider:disabled::-webkit-slider-thumb {
+  background: rgb(243 239 230 / 45%);
+}
+
+.video-band__slider:disabled::-moz-range-thumb {
+  background: rgb(243 239 230 / 45%);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .video-band__slider:hover:not(:disabled)::-webkit-slider-thumb {
+    width: 14px;
+  }
+
+  .video-band__slider:hover:not(:disabled)::-moz-range-thumb {
+    width: 14px;
+  }
+}
+
+/* Таймкод отбит в отдельную плитку у правого края: цифры моноширинные,
+   чтобы плитка не дёргалась при смене разрядов */
+.video-band__time {
+  display: flex;
+  flex: none;
+  align-items: center;
+  height: 46px;
+  margin: 0 0 0 auto;
+  padding: 0 13px;
+  gap: 6px;
+  background: rgb(18 39 30 / 84%);
+  color: var(--color-cream);
+  font-family: 'Segoe UI', Arial, sans-serif;
+  font-size: 0.72rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.video-band__time-divider {
+  color: rgb(243 239 230 / 70%);
+}
+
+/* В полноэкранном режиме кадр перестаёт быть врезкой: снимаем пропорции
+   и потолок высоты, ролик вписываем целиком, панель остаётся поверх */
+.video-band__frame:fullscreen {
+  width: 100%;
+  height: 100%;
+  max-height: none;
+  aspect-ratio: auto;
+  background: var(--color-forest-deep);
+}
+
+.video-band__frame:fullscreen .video-band__video {
+  object-fit: contain;
+}
+
+.video-band__frame:-webkit-full-screen {
+  width: 100%;
+  height: 100%;
+  max-height: none;
+  aspect-ratio: auto;
+  background: var(--color-forest-deep);
+}
+
+.video-band__frame:-webkit-full-screen .video-band__video {
+  object-fit: contain;
 }
 
 
@@ -979,6 +1649,16 @@ useSchemaOrg([
     aspect-ratio: 4 / 3;
   }
 
+  /* Ползунок громкости не помещается в ряд — остаётся кнопка mute */
+  .video-band__volume {
+    display: none;
+  }
+
+  .video-band__time {
+    padding: 0 10px;
+    letter-spacing: 0.04em;
+  }
+
   .section-heading {
     margin-bottom: 42px;
   }
@@ -1059,8 +1739,26 @@ useSchemaOrg([
   .button,
   .product-row,
   .product-row__image img,
-  .gallery-card img {
+  .gallery-card img,
+  .video-band__button {
     transform: none;
+    transition: none;
+  }
+
+  /* Панель по-прежнему уходит с кадра, но без сдвига и плавности */
+  .video-band__controls,
+  .video-band__controls[data-hidden='true'] {
+    translate: none;
+    transition: none;
+  }
+
+  /* Вендорные псевдоэлементы нельзя перечислять в одном списке:
+     непонятный селектор обнуляет всё правило целиком */
+  .video-band__slider::-webkit-slider-thumb {
+    transition: none;
+  }
+
+  .video-band__slider::-moz-range-thumb {
     transition: none;
   }
 }

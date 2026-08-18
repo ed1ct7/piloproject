@@ -334,7 +334,10 @@ watch(
   font-family: Georgia, 'Times New Roman', serif;
   letter-spacing: 0.06em;
   transform-origin: center;
-  transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1), background-color 220ms ease;
+  transition:
+    transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 220ms ease,
+    color 220ms ease;
 }
 
 .site-logo__title,
@@ -345,11 +348,19 @@ watch(
   letter-spacing: -0.025em;
 }
 
-.site-shell h1,
-.site-shell h2,
-.site-shell h3 {
-  margin: 0;
-  overflow-wrap: anywhere;
+/* Порядок слоёв Tailwind: объявляем явно, чтобы `utilities` оказался после
+   `base` независимо от того, чей <style> попал в документ первым */
+@layer theme, base, components, utilities;
+
+/* Сброс отступов заголовков живёт в слое `base`: неслоёное правило било бы
+   утилиты из `@layer utilities`, и `mb-*` на h1/h2/h3 переставали работать */
+@layer base {
+  .site-shell h1,
+  .site-shell h2,
+  .site-shell h3 {
+    margin: 0;
+    overflow-wrap: anywhere;
+  }
 }
 
 .site-shell h1 {
@@ -586,6 +597,13 @@ watch(
   .site-logo:hover .site-logo__mark {
     background: var(--color-copper);
     transform: rotate(-3deg) scale(1.04);
+  }
+
+  /* В шапке круг лого кремовый с тёмными буквами, а на hover фон уходит в медь —
+     без светлого текста «ПР» сливается с медью. Селектор со `.site-header`
+     перебивает `.site-header .site-logo__mark` по специфичности */
+  .site-header .site-logo:hover .site-logo__mark {
+    color: var(--color-paper);
   }
 
   .primary-navigation > a:hover {

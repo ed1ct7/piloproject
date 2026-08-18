@@ -3,6 +3,7 @@ import tailwindcss from '@tailwindcss/vite'
 import {
   businessAddress,
   businessEmail,
+  businessMapsUrl,
   businessMaxUrl,
   businessOpeningHoursSpecification,
   businessPhoneInternational,
@@ -125,9 +126,7 @@ export default defineNuxtConfig({
       url: siteUrl,
       telephone: businessPhoneInternational,
       email: businessEmail,
-      // businessMapsUrl не включаем, пока карточка Карт оформлена на другое
-      // наименование: sameAs подтверждает чужую организацию (docs/yandex-seo.md).
-      sameAs: [businessMaxUrl],
+      sameAs: [businessMapsUrl, businessMaxUrl],
       image: `${siteUrl}/images/lentochnaya-pilorama-raspil.jpg`,
       address: {
         '@type': 'PostalAddress',

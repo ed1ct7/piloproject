@@ -30,8 +30,8 @@ export const businessSecondaryPhoneHref = 'tel:+79650810007'
 /** Адрес производственной площадки. */
 export const businessAddress = 'Ленинградская область, Ломоносовский район, Горбунковское сельское поселение, деревня Разбегаево, промзона Большевик, зона 2-й микрорайон'
 
-/** Карточка производственной площадки в Яндекс Картах. */
-export const businessMapsUrl = 'https://yandex.ru/maps/org/pilomaterialy_makoyev_r_a_/213229964032?si=d4wy1vbz26r7ax97ytxj2w38mr'
+/** Карточка производственной площадки в Яндекс Картах (переоформлена 18.08.2026). */
+export const businessMapsUrl = 'https://yandex.ru/maps/org/213229964032/'
 
 /** Режим работы производственной площадки — человекочитаемый текст. */
 export const businessWorkingHours = 'Ежедневно с 9:00 до 19:00'

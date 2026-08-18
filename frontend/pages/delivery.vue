@@ -121,17 +121,6 @@ const deliverySteps = [
   background: var(--color-sand);
 }
 
-.eyebrow {
-  margin-bottom: 1rem;
-  color: var(--color-forest);
-  font-family: "Segoe UI", Arial, sans-serif;
-  font-size: 0.78rem;
-  font-weight: 800;
-  letter-spacing: 0.11em;
-  line-height: 1.4;
-  text-transform: uppercase;
-}
-
 /* Верхняя секция бежевая — как hero на остальных страницах */
 .delivery-hero {
   display: block;

@@ -85,7 +85,7 @@ useSchemaOrg([
       aria-labelledby="landing-title"
     >
       <div class="max-w-[840px]">
-        <p class="mb-3 font-[Segoe_UI,Arial,sans-serif] text-[0.8125rem] font-[760] uppercase tracking-[0.04em] text-(--color-copper)">{{ landing.eyebrow }}</p>
+        <p class="eyebrow">{{ landing.eyebrow }}</p>
         <h1 id="landing-title" class="mb-6">{{ landing.h1 }}</h1>
         <p
           v-for="(paragraph, index) in landing.intro"

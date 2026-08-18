@@ -555,7 +555,7 @@ useSchemaOrg([
   <main class="home-page">
     <section class="hero" aria-labelledby="hero-title">
       <div class="hero__inner">
-        <p class="eyebrow eyebrow--hero">Собственное производство · Разбегаево</p>
+        <p class="eyebrow eyebrow--on-dark">Собственное производство · Разбегаево</p>
         <h1 id="hero-title">Пилорама<br>в Ленинградской области</h1>
 
         <div class="hero__copy">
@@ -659,7 +659,7 @@ useSchemaOrg([
 
     <section class="production" aria-labelledby="production-title">
       <div class="production__heading">
-        <p class="eyebrow eyebrow--light">Собственное производство</p>
+        <p class="eyebrow eyebrow--on-dark">Собственное производство</p>
         <h2 id="production-title">Распил, сушка,<br>строжка, покраска</h2>
       </div>
       <div class="production__body">
@@ -886,21 +886,6 @@ useSchemaOrg([
 <style scoped>
 .home-page {
   background: var(--color-cream);
-}
-
-.eyebrow {
-  margin-bottom: 18px;
-  color: var(--color-copper);
-  font-size: 0.72rem;
-  font-weight: 760;
-  letter-spacing: 0.15em;
-  line-height: 1.4;
-  text-transform: uppercase;
-}
-
-.eyebrow--light,
-.eyebrow--hero {
-  color: #d5a184;
 }
 
 /* Поле героя — тёмно-зелёная крашеная доска, текст лежит прямо на ней.

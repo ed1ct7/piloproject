@@ -33,7 +33,7 @@ useSchemaOrg([
     <section class="max-[840px]:grid-cols-[1fr_0.42fr] max-[560px]:grid-cols-1 max-[560px]:min-h-0 grid min-h-[340px] grid-cols-[minmax(0,0.66fr)_minmax(280px,0.34fr)] border-b border-(--color-ink)">
       <div class="max-[560px]:min-h-0 max-[560px]:px-5 max-[560px]:pb-10 max-[560px]:pt-[34px] flex flex-col justify-center bg-(--color-sand) py-10 pr-10 pl-[max(40px,calc((100vw_-_1280px)/2))]">
         <div aria-hidden="true" />
-        <p class="mb-5 font-[Segoe_UI,Arial,sans-serif] text-sm font-[760] uppercase leading-[1.4] tracking-[0.04em]">Производственная площадка</p>
+        <p class="eyebrow">Производственная площадка</p>
         <h1>Контакты пилорамы в Разбегаево</h1>
       </div>
 
@@ -55,7 +55,7 @@ useSchemaOrg([
 
     <section class="max-[840px]:grid-cols-1 grid grid-cols-[minmax(0,0.58fr)_minmax(280px,0.42fr)] border-b border-(--color-ink)" aria-labelledby="contact-data-title">
       <div class="max-[840px]:border-r-0 max-[840px]:border-b max-[840px]:border-(--color-ink) max-[560px]:px-5 max-[560px]:py-10 border-r border-(--color-ink) bg-(--color-paper) py-[56px] pr-[56px] pl-[max(40px,calc((100vw_-_1280px)/2))]">
-        <p class="mb-4 font-[Segoe_UI,Arial,sans-serif] text-sm font-[760] uppercase leading-[1.4] tracking-[0.04em]">Связь с производством</p>
+        <p class="eyebrow">Связь с производством</p>
         <h2 id="contact-data-title">Позвоните или напишите</h2>
 
         <div class="mb-8 mt-5 max-w-[620px] border border-l-[5px] border-(--color-ink) border-l-(--color-copper) bg-(--color-sand) px-7 py-7 shadow-[0_18px_42px_rgba(32,35,31,0.16)] max-[560px]:px-6 max-[560px]:py-6">

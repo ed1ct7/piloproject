@@ -381,6 +381,28 @@ watch(
   line-height: 1.18;
 }
 
+/* Надзаголовок секции — один вариант на весь сайт.
+   Живёт в слое `components`, поэтому утилиты Tailwind (`mb-0`, `mb-5`)
+   перебивают отступ на местах, где ритм секции требует другого шага */
+@layer components {
+  .eyebrow {
+    margin: 0 0 0.75rem;
+    color: var(--color-copper);
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 0.8125rem;
+    font-weight: 760;
+    letter-spacing: 0.04em;
+    line-height: 1.4;
+    text-transform: uppercase;
+  }
+
+  /* Медь на forest/forest-deep проваливает контраст — на тёмных плашках
+     тот же акцент берётся осветлённым (значение уже было в hero главной) */
+  .eyebrow--on-dark {
+    color: #d5a184;
+  }
+}
+
 .menu-toggle {
   transition: background-color 180ms ease, color 180ms ease, transform 180ms ease;
 }

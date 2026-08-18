@@ -33,7 +33,7 @@ useSchemaOrg([
     <section class="max-[840px]:grid-cols-1 grid min-h-[430px] grid-cols-[minmax(0,0.58fr)_minmax(340px,0.42fr)] border-b border-(--color-ink)">
       <div class="max-[560px]:px-[18px] max-[560px]:py-12 flex flex-col justify-center gap-5 bg-(--color-sand) py-10 pr-10 pl-[max(40px,calc((100vw_-_1280px)/2))]">
         <div class="grid gap-4">
-          <p class="font-[Segoe_UI,Arial,sans-serif] text-[0.8125rem] font-[760] uppercase leading-[1.4] tracking-[0.04em]">Собственное производство</p>
+          <p class="eyebrow mb-0">Собственное производство</p>
           <h1 class="max-w-[700px]">О пилораме в Разбегаево</h1>
         </div>
         <p class="mb-0 max-w-[650px] text-[1.08rem] leading-[1.6] text-(--color-ink)/85">
@@ -59,7 +59,7 @@ useSchemaOrg([
     <section class="border-b border-(--color-ink)" aria-labelledby="production-title">
       <div class="grid gap-5 py-[56px] pr-6 pl-[max(40px,calc((100vw_-_1280px)/2))] max-[560px]:px-[18px] max-[560px]:py-12">
         <div class="grid gap-4">
-          <p class="font-[Segoe_UI,Arial,sans-serif] text-[0.8125rem] font-[760] uppercase leading-[1.4] tracking-[0.04em]">Чем занимаемся</p>
+          <p class="eyebrow mb-0">Чем занимаемся</p>
           <h2 id="production-title">Что делаем</h2>
         </div>
         <div class="grid max-w-[760px] gap-3">
@@ -78,7 +78,7 @@ useSchemaOrg([
 
     <section class="max-[840px]:grid-cols-1 max-[560px]:px-[18px] grid grid-cols-[minmax(300px,0.82fr)_minmax(360px,1.18fr)] gap-[clamp(40px,7vw,104px)] border-b border-(--color-ink) bg-(--color-sand) px-[max(24px,calc((100vw_-_1280px)/2))] py-[72px] max-[560px]:py-14" aria-labelledby="next-step-title">
       <div class="grid content-start gap-4">
-        <p class="font-[Segoe_UI,Arial,sans-serif] text-[0.8125rem] font-[760] uppercase leading-[1.4] tracking-[0.04em]">Фото</p>
+        <p class="eyebrow mb-0">Фото</p>
         <h2 id="next-step-title">Станки, склад и отгрузка</h2>
       </div>
       <div class="grid content-start gap-5">

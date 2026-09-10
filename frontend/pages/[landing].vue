@@ -100,8 +100,9 @@ useSchemaOrg([
       aria-labelledby="landing-products-title"
     >
       <header class="mb-8">
-        <p class="mb-2 font-[Segoe_UI,Arial,sans-serif] text-[0.78rem] font-[760] uppercase tracking-[0.08em] text-(--color-ink)/70">Прайс-лист</p>
-        <h2 id="landing-products-title" class="mb-0">Позиции и цены</h2>
+        <p class="eyebrow">Прайс-лист</p>
+        <h2 id="landing-products-title" class="mb-4">Позиции и цены</h2>
+        <p class="mb-0 max-w-[680px] leading-[1.6] text-(--color-ink)/85">{{ landing.priceIntro }}</p>
       </header>
 
       <div class="grid gap-5">
@@ -163,6 +164,71 @@ useSchemaOrg([
     </section>
 
     <section
+      class="border-b border-(--color-ink) bg-(--color-cream) px-[max(24px,calc((100vw_-_1280px)/2))] py-16 max-[560px]:px-[18px] max-[560px]:py-12"
+      aria-labelledby="landing-practice-title"
+    >
+      <header class="mb-7 max-w-[760px]">
+        <p class="eyebrow">Практика</p>
+        <h2 id="landing-practice-title" class="mb-0">{{ landing.practice.heading }}</h2>
+      </header>
+      <p
+        v-for="(paragraph, index) in landing.practice.paragraphs"
+        :key="index"
+        class="mb-5 max-w-[760px] leading-[1.6] text-(--color-ink)/85 last:mb-0"
+      >{{ paragraph }}</p>
+    </section>
+
+    <section
+      class="border-b border-(--color-ink) bg-(--color-paper) px-[max(24px,calc((100vw_-_1280px)/2))] py-16 max-[560px]:px-[18px] max-[560px]:py-12"
+      aria-labelledby="landing-order-title"
+    >
+      <header class="mb-8 max-w-[680px]">
+        <p class="eyebrow">Порядок работы</p>
+        <h2 id="landing-order-title" class="mb-0">Как заказать</h2>
+      </header>
+
+      <ol class="max-w-[980px] border-t border-(--color-line)">
+        <li
+          v-for="step in landingOrderSteps"
+          :key="step.number"
+          class="grid grid-cols-[clamp(56px,6vw,88px)_minmax(0,1fr)] gap-x-[clamp(20px,3vw,48px)] border-b border-(--color-line) py-7 max-[560px]:grid-cols-[48px_minmax(0,1fr)] max-[560px]:gap-x-4 max-[560px]:py-6"
+        >
+          <span
+            class="font-[Georgia,Times_New_Roman,serif] text-[clamp(1.9rem,2.6vw,2.6rem)] leading-none tracking-[-0.025em] text-(--color-copper-dark)"
+            aria-hidden="true"
+          >{{ step.number }}</span>
+          <div>
+            <h3 class="mb-2">{{ step.title }}</h3>
+            <p class="mb-0 max-w-[640px] leading-[1.6] text-(--color-ink)/85">{{ step.text }}</p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    <section
+      class="border-b border-(--color-ink) bg-(--color-sand) px-[max(24px,calc((100vw_-_1280px)/2))] py-16 max-[560px]:px-[18px] max-[560px]:py-12"
+      aria-labelledby="landing-why-title"
+    >
+      <header class="mb-8 max-w-[680px]">
+        <p class="eyebrow">Производство</p>
+        <h2 id="landing-why-title" class="mb-0">Почему у нас</h2>
+      </header>
+
+      <ul class="grid grid-cols-2 gap-x-[clamp(32px,4vw,72px)] border-t border-(--color-line) max-[840px]:grid-cols-1">
+        <li
+          v-for="item in landing.whyUs"
+          :key="item.title"
+          class="border-b border-(--color-line) py-6 max-[560px]:py-5"
+        >
+          <h3 class="mb-2 max-w-[420px]">{{ item.title }}</h3>
+          <p class="mb-0 max-w-[520px] leading-[1.6] text-(--color-ink)/85">{{ item.text }}</p>
+        </li>
+      </ul>
+
+      <p class="mb-0 mt-8 max-w-[760px] leading-[1.6] text-(--color-ink)/85">{{ landing.geoParagraph }}</p>
+    </section>
+
+    <section
       class="border-b border-(--color-ink) bg-(--color-paper) px-[max(24px,calc((100vw_-_1280px)/2))] py-16 max-[560px]:px-[18px] max-[560px]:py-12"
       aria-labelledby="landing-faq-title"
     >
@@ -179,7 +245,7 @@ useSchemaOrg([
       class="border-b border-(--color-ink) bg-(--color-cream) px-[max(24px,calc((100vw_-_1280px)/2))] py-10 max-[560px]:px-[18px]"
       aria-label="Связанные страницы"
     >
-      <p class="mb-4 font-[Segoe_UI,Arial,sans-serif] text-[0.78rem] font-[760] uppercase tracking-[0.08em] text-(--color-ink)/70">Смотрите также</p>
+      <p class="eyebrow mb-4">Смотрите также</p>
       <nav class="flex flex-wrap gap-x-8 gap-y-3">
         <NuxtLink
           v-for="link in landing.related"

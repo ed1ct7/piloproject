@@ -62,6 +62,22 @@ const deliverySteps = [
       </div>
     </section>
 
+    <section class="delivery-process" aria-labelledby="process-title">
+      <header class="delivery-process__heading">
+        <h2 id="process-title">Как заказать доставку</h2>
+      </header>
+
+      <ol class="delivery-process__list">
+        <li v-for="step in deliverySteps" :key="step.number">
+          <span>{{ step.number }}</span>
+          <div>
+            <h3>{{ step.title }}</h3>
+            <p>{{ step.text }}</p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
     <section class="receiving" aria-labelledby="receiving-title">
       <header class="section-heading">
         <h2 id="receiving-title">Как получить заказ</h2>
@@ -95,22 +111,6 @@ const deliverySteps = [
           </ul>
         </article>
       </div>
-    </section>
-
-    <section class="delivery-process" aria-labelledby="process-title">
-      <header class="delivery-process__heading">
-        <h2 id="process-title">Как заказать доставку</h2>
-      </header>
-
-      <ol class="delivery-process__list">
-        <li v-for="step in deliverySteps" :key="step.number">
-          <span>{{ step.number }}</span>
-          <div>
-            <h3>{{ step.title }}</h3>
-            <p>{{ step.text }}</p>
-          </div>
-        </li>
-      </ol>
     </section>
 
   </main>
@@ -156,11 +156,11 @@ const deliverySteps = [
   line-height: 1.55;
 }
 
-/* Основное тело страницы — кремовое, карточки внутри остаются светлыми */
+/* Вторая секция тела страницы — как на остальных страницах, граница сохраняется на последней секции */
 .receiving {
   padding: 56px 24px;
   border-bottom: 1px solid var(--color-ink);
-  background: var(--color-cream);
+  background: var(--color-sand);
 }
 
 .section-heading {
@@ -274,7 +274,8 @@ const deliverySteps = [
 .delivery-process {
   display: grid;
   grid-template-columns: minmax(360px, 0.82fr) minmax(0, 1.18fr);
-  background: var(--color-sand);
+  border-bottom: 1px solid var(--color-ink);
+  background: var(--color-cream);
   color: var(--color-ink);
 }
 

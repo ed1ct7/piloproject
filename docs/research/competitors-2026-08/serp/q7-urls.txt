@@ -1,0 +1,16 @@
+query: пиломатериалы ленинградская область | 2026-08-22 | total=21 ads=8
+DIRECT:
+6 pilorama98.ru/catalog
+10 78dosok.ru/
+11 lenwood.ru/catalog/doska/
+13 petrovich.ru/catalog/1512/
+14 sofbaz.ru/catalog/pilomaterialy/doska/
+15 gorodmasterptk.ru/
+16 kraskidoski.ru/catalog/pilomaterialy/
+REDIRECT (host|serp title):
+1|-|Купить: пиломатериалы ленинградская область (товарный колдунщик)
+3|tdlesovik.ru|Брус, доска от производителя. Цена от 14800 ₽/м³
+4|sevles-spb.ru|Доска Обрезная 25х150х6000. 266 руб. Хвоя. 1-3 сорт
+5|tdlesovik.ru|Доски, бруски. Цена от 11067 ₽/м³. Доставка по звонку
+7|arhles.net|Доска, брус сухие строганые купить по низкой цене в СПб - АрхЛес
+8|pilomaterial-spb.ru|Может заинтересовать (колдунщик)

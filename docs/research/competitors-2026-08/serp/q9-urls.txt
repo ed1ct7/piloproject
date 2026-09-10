@@ -1,0 +1,11 @@
+query: пилорама ленинградская область | 2026-08-22
+DIRECT:
+3 2gis.ru/spb/search/Пилорамы (агрегатор)
+4 avito.ru/leningradskaya_oblast (агрегатор)
+5 pilorama98.ru/contacts
+7 78dosok.ru/contacts/
+8 lpmspb.ru/
+10 sv-bor.ru/
+11 terrafox.ru/
+12 piloramaspb.ru/
+REDIRECT/колдунщики: 2 Яндекс Карты; 6 arhles.net «Может заинтересовать»; 9 Яндекс Услуги

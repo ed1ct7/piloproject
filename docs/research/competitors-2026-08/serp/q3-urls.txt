@@ -1,0 +1,15 @@
+query: сухая доска спб | pass2 2026-08-22
+DIRECT:
+7 pilorama98.ru/catalog/doska-suhaya
+11 petrovich.ru/catalog/1512/pilomaterialy-suhie-ptq/
+14 alyansles.ru/catalog/doska/f/sukhaya/
+16 kraskidoski.ru/catalog/pilomaterialy/doska/doska_sukhaya_strogannaya_2
+REDIRECT (host|serp title):
+4|lenwood.ru|Доска строганная от производителя! Качество 100%
+5|tdlesovik.ru|Купите сухую строганную доску. Цена от 26563 ₽/м³
+6|tdlesovik.ru|Доска сухая, обрезная в СПб. Цена от 26563 ₽/м³
+8|78dosok.ru|Доска сухая камерная сушки. Купить в СПб
+9|pilomaterial-spb.ru|Может заинтересовать
+12|arhles.net|Доска, брус сухие строганые купить по низкой цене в СПб - АрхЛес
+15|imitaciya-brusa.ru|Доска сухая строганная
+17|vimos.ru|Доска сухая строганная - купить в СПб в ТД ВИМОС

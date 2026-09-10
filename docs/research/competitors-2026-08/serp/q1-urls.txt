@@ -1,0 +1,14 @@
+query: пиломатериалы спб | pass2 2026-08-22
+DIRECT:
+6 pilorama98.ru/catalog
+10 petrovich.ru/catalog/1512/
+12 lenwood.ru/catalog/doska/
+13 kraskidoski.ru/catalog/pilomaterialy/
+14 spb.lemanapro.ru/catalogue/pilomaterialy/
+15 lenwood.ru/
+REDIRECT (host|serp title):
+3|tdlesovik.ru|Купите брус, доску в СПб. Цена от 14800 ₽/м³. Доставка
+4|sevles-spb.ru|Доска сухая строганная 6 м. Хвоя. От 282 руб./шт.
+5|tdlesovik.ru|Доски, бруски. Цена от 11067 ₽/м³. Доставка по звонку
+8|pilomaterial-spb.ru|Может заинтересовать (колдунщик)
+9|imitaciya-brusa.ru|Продажа пиломатериалов в СПб

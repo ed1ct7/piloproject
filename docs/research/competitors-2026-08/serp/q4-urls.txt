@@ -1,0 +1,15 @@
+query: вагонка спб | pass2 2026-08-22
+DIRECT:
+3 kraskidoski.ru/catalog/pilomaterialy/vagonka_1/
+6 petrovich.ru/catalog/21173/
+7 spb.lemanapro.ru/catalogue/vagonka/
+10 imitaciya-brusa.ru/vagonka-evrovagonka-sankt-peterburg
+13 lenwood.ru/catalog/vagonka/
+16 vagonka78.ru/
+REDIRECT (host|serp title):
+4|spb.lesobirzha.ru|Вагонка/
+5|abcsauna.ru|Купить: вагонка спб (товарный колдунщик)
+8|arhles.net|Может заинтересовать (колдунщик)
+11|arhles.net|Вагонка Штиль хвоя купить по низкой цене в СПб - АрхЛес
+14|kronawood.ru|Вагонка купить с доставкой в СПБ и ЛО. Доступная цена за куб...
+15|arhles.net|Вагонка осиновая купить по цене производителя в СПб - АрхЛес

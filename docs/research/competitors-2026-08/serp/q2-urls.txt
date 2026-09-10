@@ -1,0 +1,15 @@
+query: доска обрезная спб | pass2 2026-08-22
+DIRECT:
+3 78dosok.ru/product/doska-obreznaya-50h150h6000/
+5 pilorama98.ru/catalog/doska-obreznaya
+6 lenwood.ru/catalog/doska/doska-obreznaya/
+10 petrovich.ru/catalog/95761838/
+12 petrovich.ru/catalog/783/obreznaya-doska-estestvennoy-vlazhnosti/
+13 lenles.ru/
+15 spb.lemanapro.ru/catalogue/doski/obreznye/
+REDIRECT (host|serp title):
+2|78dosok.ru|Пиломатериалы в наличии от Пилорамы 78 Досок
+4|fanerapiter.ru|Доска обрезная в СПб. Цены за куб. Доставка
+8|pilomaterial-spb.ru|Может заинтересовать
+9|tdlesovik.ru|Купите доску. Ленинградская область. Доставка от 1.500₽
+14|alyansles.ru|Доска обрезная и необрезная. Купить в СПб. Доставка

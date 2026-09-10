@@ -1,0 +1,67 @@
+# cluster|url|source
+ours-home|https://pilorama-razbegaevo.ru/|OURS
+ours-catalog|https://pilorama-razbegaevo.ru/pilomaterialy|OURS
+ours-doska|https://pilorama-razbegaevo.ru/doska|OURS
+ours-suhaya|https://pilorama-razbegaevo.ru/suhaya-doska|OURS
+ours-vagonka|https://pilorama-razbegaevo.ru/vagonka|OURS
+ours-imitatsiya|https://pilorama-razbegaevo.ru/imitatsiya-brusa|OURS
+ours-ognebio|https://pilorama-razbegaevo.ru/ognebiozashchita|OURS
+pilomaterialy|https://pilorama98.ru/catalog|serp-direct q1,q7
+pilomaterialy|https://lenwood.ru/catalog/doska/|serp-direct q1,q7
+pilomaterialy|https://lenwood.ru/|serp-direct q1
+pilomaterialy|https://kraskidoski.ru/catalog/pilomaterialy/|serp-direct q1,q7
+pilomaterialy|https://tdlesovik.ru/catalog/pilomaterialy/|category (serp url hidden) q1,q7
+pilomaterialy|https://sevles-spb.ru/catalog/|category (serp url hidden) q1,q7
+pilomaterialy|https://78dosok.ru/|serp-direct q7
+pilomaterialy|https://sofbaz.ru/catalog/pilomaterialy/doska/|serp-direct q7
+pilomaterialy|https://imitaciya-brusa.ru/pilomaterialy_vlph_kupit_sankt-peterburg_leningradskaya_oblast|resolved-0.7 q1
+pilomaterialy|https://pilomaterial-spb.ru/|one-page site (serp url hidden) q1,q2,q3
+pilomaterialy|https://arhles.net/|home (serp url hidden) q1
+pilomaterialy|https://gorodmasterptk.ru/|serp-direct q7
+pilomaterialy-HYPER|https://petrovich.ru/catalog/1512/|serp-direct q1,q7
+pilomaterialy-HYPER|https://spb.lemanapro.ru/catalogue/pilomaterialy/|serp-direct q1
+doska|https://78dosok.ru/catalog/doska/obreznaya/|category q2 (serp also product page)
+doska|https://78dosok.ru/product/doska-obreznaya-50h150h6000/|serp-direct q2
+doska|https://pilorama98.ru/catalog/doska-obreznaya|serp-direct q2
+doska|https://lenwood.ru/catalog/doska/doska-obreznaya/|serp-direct q2
+doska|https://fanerapiter.ru/doska-obreznaya-kupit/|category (serp url hidden) q2
+doska|https://www.alyansles.ru/catalog/doska_obreznaya/|category (serp url hidden) q2
+doska|https://tdlesovik.ru/catalog/pilomaterialy/doska/doska_estestvennoy_vlazhnosti/|category (serp url hidden) q2
+doska|https://lenles.ru/|serp-direct q2
+doska-HYPER|https://petrovich.ru/catalog/783/obreznaya-doska-estestvennoy-vlazhnosti/|serp-direct q2
+doska-HYPER|https://spb.lemanapro.ru/catalogue/doski/obreznye/|serp-direct q2
+suhaya|https://pilorama98.ru/catalog/doska-suhaya|serp-direct q3
+suhaya|https://www.alyansles.ru/catalog/doska/f/sukhaya/|serp-direct q3
+suhaya|https://kraskidoski.ru/catalog/pilomaterialy/doska/doska_sukhaya_strogannaya_2|serp-direct q3
+suhaya|https://arhles.net/doska-brus/doska-brus-suhie-stroganye|resolved-1 q3,q7
+suhaya|https://imitaciya-brusa.ru/doska-sukhaya-strogannaya-sankt-peterburg|resolved-1 q3
+suhaya|https://78dosok.ru/catalog/doska/suhaya/|category (serp url hidden) q3
+suhaya|https://lenwood.ru/catalog/doska/doska-strogannaya-sukhaya/|category (serp url hidden) q3
+suhaya|https://tdlesovik.ru/catalog/pilomaterialy/doska/doska_sukhaya_strogannaya/|category (serp url hidden) q3
+suhaya-HYPER|https://petrovich.ru/catalog/1512/pilomaterialy-suhie-ptq/|serp-direct q3
+vagonka|https://kraskidoski.ru/catalog/pilomaterialy/vagonka_1/|serp-direct q4
+vagonka|https://imitaciya-brusa.ru/vagonka-evrovagonka-sankt-peterburg|serp-direct q4
+vagonka|https://lenwood.ru/catalog/vagonka/|serp-direct q4
+vagonka|https://vagonka78.ru/|serp-direct q4
+vagonka|https://arhles.net/evrovagonka/vagonka-shtil-hvoya|resolved-1 q4
+vagonka|https://arhles.net/materialy-dlya-bani-i-sauny/vagonka-osinovaya|resolved-1 q4
+vagonka|https://www.kronawood.ru/cat/evrovagonka|resolved-1 q4
+vagonka|https://spb.lesobirzha.ru/katalog/evrovagonka/|category guess (serp url hidden) q4
+vagonka-HYPER|https://petrovich.ru/catalog/21173/|serp-direct q4
+vagonka-HYPER|https://spb.lemanapro.ru/catalogue/vagonka/|serp-direct q4
+imitatsiya|https://spb.lesobirzha.ru/katalog/imitacya-brusa/|serp-direct q5
+imitatsiya|https://vrz-spb.ru/imitacziya-brusa/|serp-direct q5
+imitatsiya|https://arhles.net/imitaciya-brusa/imitaciya-brusa-classic|serp-direct q5
+imitatsiya|https://veles-wood.ru/imitaciya-brusa|serp-direct q5
+imitatsiya|https://tdlesovik.ru/catalog/pilomaterialy/profilirovannye_izdeliya/imitatsiya_brusa/|serp-direct(trunc) q5
+imitatsiya|https://lenwood.ru/catalog/imitatsiya-brusa/|category (serp url hidden) q5
+imitatsiya|https://kraskidoski.ru/catalog/luchshaya_tsena/imitatsiya_brusa_2/|resolver pick (serp url hidden) q5
+imitatsiya|https://imitaciya-brusa.ru/|home (serp url hidden) q5
+imitatsiya|https://faneraosb.ru/category/pilomaterialy/|serp-direct q5
+imitatsiya-HYPER|https://petrovich.ru/catalog/136205271/|serp-direct q5
+ognebio|https://lenles.ru/product/antiseptirovanie-s-ogne-bio-zashhitoj/|serp-direct q6
+ognebio|https://www.kronawood.ru/services/ognebiozashita-pilomaterialov|serp-direct q6
+ognebio|https://sevles-spb.ru/uslugi/antiseptirovanie/|serp-direct q6
+ognebio|https://pilomaterialyvspb.ru/antiseptirovanie_pokraska_ognezaschita.php|serp-direct q6
+ognebio|https://tdlesovik.ru/service/antiseptirovanie-pilomaterialov/|nav (not in serp top) ref
+ognebio-HYPER|https://spb.lemanapro.ru/catalogue/ognebiozashchita/|serp-direct q6

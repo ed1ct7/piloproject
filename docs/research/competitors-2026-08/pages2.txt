@@ -1,0 +1,16 @@
+# cluster|url|source
+pilorama|https://pilorama98.ru/catalog|serp-direct q8 (уже в основном наборе)
+pilorama|https://78dosok.ru/|serp-direct q8 (уже в основном наборе)
+pilorama|https://pilorama.spb.ru/|serp-direct q8
+pilorama|https://terrafox.ru/|serp-direct q8,q9
+pilorama|https://pilomat-pro.ru/|serp-direct q8
+pilorama|https://xn--80aawmgkel.com/|serp-direct q8 (пилорама.com)
+pilorama|https://pilorama-78.ru/|serp-direct q8
+pilorama|https://lpmspb.ru/|home (serp url hidden) q8,q9
+pilorama|https://sv-bor.ru/|serp-direct q9; реклама в сессии пользователя q8
+pilorama|https://piloramaspb.ru/|serp-direct q9
+pilorama|https://pilorama98.ru/contacts|serp-direct q9
+pilorama|https://78dosok.ru/contacts/|serp-direct q9
+pilorama-ADS|https://baza-murino.ru/|реклама (сессия пользователя q8; q1,q3,q5 у меня)
+pilorama-ADS|https://xn--80aaaa2bseeqhhh.xn--p1ai/|реклама q8,q9 (рамапилорама.рф)
+pilorama-ADS|https://proizvodstvo-pilomaterialov.ru/|реклама q8,q5

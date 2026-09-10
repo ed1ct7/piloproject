@@ -1,0 +1,15 @@
+query: имитация бруса спб | pass2 2026-08-22
+DIRECT:
+4 spb.lesobirzha.ru/katalog/imitacya-brusa/
+11 vrz-spb.ru/imitacziya-brusa/
+12 faneraosb.ru/category/pilomaterialy/
+13 arhles.net/imitaciya-brusa/imitaciya-brusa-classic
+14 petrovich.ru/catalog/136205271/
+15 veles-wood.ru/imitaciya-brusa
+16 tdlesovik.ru/catalog/pilomaterialy/profilirovannye_izdeliya/imitatsiya_brus...
+REDIRECT (host|serp title):
+3|lenwood.ru|Имитация бруса в СПб. В наличии с доставкой
+5|baza-murino.ru|Купить: имитация бруса спб (товарный колдунщик)
+6|kraskidoski.ru|Отделочная имитация бруса от производителя в СПб
+8|arhles.net|Может заинтересовать (колдунщик)
+9|imitaciya-brusa.ru|Имитатор бруса в Санкт-Петербурге и Ленинградской...

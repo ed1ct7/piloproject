@@ -1,0 +1,17 @@
+query: пилорама спб | 2026-08-22
+DIRECT:
+4 pilorama98.ru/catalog
+7 78dosok.ru/
+8 pilorama.spb.ru/
+10 terrafox.ru/
+11 2gis.ru/spb/search/Пилорамы (агрегатор)
+13 pilomat-pro.ru/
+14 xn--80aawmgkel.com/ (пилорама.com)
+16 pilorama-78.ru/
+REDIRECT (host|serp title):
+5|yandex.ru|Пилорама в Санкт-Петербурге на карте рядом со мной (Карты, колдунщик)
+6|рамапилорама.рф|Купить: пилорама спб (товарная галерея, промо)
+9|derevovdom.ru|Может заинтересовать (колдунщик)
+12|lpmspb.ru|Брус рейка купить с доставкой
+15|uslugi.yandex.ru|Пилорама в Санкт-Петербурге: 18 исполнителей (Услуги, колдунщик)
+USER SCREENSHOT (другая сессия, тот же день): реклама sv-bor.ru, baza-murino.ru, рамапилорама.рф; органика pilorama98.ru, Карты, 78dosok.ru

@@ -1,0 +1,9 @@
+query: пиломатериалы ленинградская область | lr=2 | 2026-08-22 | total=21 ads=8
+(direct-href organic only; items with yandex redirect href not captured in this pass)
+6 pilorama98.ru/catalog
+10 78dosok.ru/
+11 lenwood.ru/catalog/doska/
+13 petrovich.ru/catalog/1512/
+14 sofbaz.ru/catalog/pilomaterialy/doska/
+15 gorodmasterptk.ru/
+16 kraskidoski.ru/catalog/pilomaterialy/

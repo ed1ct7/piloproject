@@ -642,7 +642,7 @@ useSchemaOrg([
             Четыре востребованных материала с актуальными минимальными ценами.
             Сечения и наличие конкретной партии подтвердит менеджер.
           </p>
-          <NuxtLink class="text-link" to="/pilomaterialy">Весь каталог и цены</NuxtLink>
+          <NuxtLink class="text-link" to="/pilomaterialy">Пиломатериалы: каталог и цены</NuxtLink>
         </div>
       </header>
 

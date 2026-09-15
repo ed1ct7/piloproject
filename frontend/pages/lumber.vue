@@ -212,10 +212,10 @@ onBeforeUnmount(() => {
 })
 
 useSeoMeta({
-  title: 'Пиломатериалы в СПб и Ленобласти: цены за м³',
-  description: 'Каталог пилорамы в Разбегаево: доска обрезная естественной влажности по сортам, сухая и строганая доска, огнебиозащита, имитация бруса и вагонка. Цены за м³, доставка по СПб и Ленобласти.',
-  ogTitle: 'Пиломатериалы в СПб и Ленобласти — каталог с ценами',
-  ogDescription: 'Актуальные группы пиломатериалов с минимальными ценами за м³ и штуку от производителя из Разбегаево.',
+  title: 'Купить пиломатериалы в Ленобласти — цены',
+  description: 'Доска, вагонка и имитация бруса с производства в Разбегаево. Продажа оптом и в розницу, цены за м³ и штуку. Доставка по Ленобласти и СПб, самовывоз.',
+  ogTitle: 'Купить пиломатериалы в Ленобласти — каталог и цены',
+  ogDescription: 'Доска, вагонка и имитация бруса оптом и в розницу. Цены за м³ и штуку, доставка по Ленобласти и Санкт-Петербургу, самовывоз из Разбегаево.',
   ogImage: `${siteUrl}/images/sawn-board-stack-2025-04-02.jpg`,
   ogType: 'website',
   ogUrl: `${siteUrl}/pilomaterialy`,
@@ -264,10 +264,15 @@ useSchemaOrg([
     <section class="max-[840px]:min-h-0 max-[560px]:px-[18px] max-[560px]:pb-9 max-[560px]:pt-8 grid min-h-[280px] items-end border-b border-[#171916] bg-(--color-sand) px-[max(24px,calc((100vw_-_1280px)/2))] pb-12 pt-14 max-[560px]:[&_h1]:!text-[2.75rem] max-[390px]:[&_h1]:!text-[2.55rem]">
       <div class="max-w-[860px] [&_h1]:mb-0">
         <p class="eyebrow">Цены производства</p>
-        <h1>Пиломатериалы в СПб и Ленинградской области</h1>
+        <h1>Купить пиломатериалы в Ленинградской области</h1>
         <p class="mb-0 mt-4 max-w-[680px] leading-[1.6] text-(--color-ink)/85">
-          Пилим, сушим и обрабатываем на собственной площадке в Разбегаево, Ломоносовский район.
-          Доставка по Санкт-Петербургу и Ленинградской области, самовывоз с производства.
+          Доска, вагонка и имитация бруса с собственного производства в Разбегаево — оптом и в розницу.
+          Выберите материал: цены указаны за кубометр или штуку. Доставляем по Ленобласти и Санкт-Петербургу;
+          доступен самовывоз с площадки в Ломоносовском районе.
+        </p>
+        <p class="mb-0 mt-4 max-w-[680px] leading-[1.6] text-(--color-ink)/85">
+          Наличие и итоговую стоимость партии подтвердит менеджер. Оплата — по факту отгрузки.
+          <a href="#purchase-conditions" class="underline underline-offset-4">Как оформить заказ</a>
         </p>
       </div>
     </section>
@@ -330,7 +335,14 @@ useSchemaOrg([
               <h2 class="mb-0 !text-[clamp(1.15rem,1.35vw,1.45rem)] !leading-[1.12]">{{ product.displayTitle }}</h2>
             </header>
 
-            <div class="grid gap-3 border-t border-(--color-line) pt-4">
+            <dl class="product-card__specs mb-5 grid gap-2 text-[0.88rem] leading-[1.5] text-(--color-ink)/85">
+              <div v-for="[label, value] in product.specs" :key="label">
+                <dt class="font-semibold">{{ label }}</dt>
+                <dd class="m-0">{{ value }}</dd>
+              </div>
+            </dl>
+
+            <div class="mt-auto grid gap-3 border-t border-(--color-line) pt-4">
               <div>
                 <p class="mb-1 font-[Segoe_UI,Arial,sans-serif] text-[0.72rem] font-[760] uppercase tracking-[0.06em] text-(--color-ink)/70">Цена за 1 {{ product.unit }}</p>
                 <p class="mb-0 whitespace-nowrap font-[Segoe_UI,Arial,sans-serif] text-[clamp(1.18rem,1.5vw,1.45rem)] font-extrabold leading-none text-(--color-copper)">{{ formatProductPrice(product) }}</p>
@@ -372,6 +384,43 @@ useSchemaOrg([
           :to="topic.to"
         >{{ topic.label }}</NuxtLink>
       </nav>
+    </section>
+
+    <section id="purchase-conditions" class="catalog-purchase" aria-labelledby="purchase-title">
+      <header>
+        <p class="eyebrow">Заказ с производства</p>
+        <h2 id="purchase-title">Как купить пиломатериалы</h2>
+      </header>
+      <ol class="catalog-purchase__steps">
+        <li>
+          <h3>Выберите материал</h3>
+          <p>Добавьте позиции в предварительную заявку. У доски и имитации бруса количество считается в м³, у вагонки — в штуках. Подготовьте нужные сечения, длины и объём партии.</p>
+        </li>
+        <li>
+          <h3>Передайте список менеджеру</h3>
+          <p>Откройте <NuxtLink to="/cart">предварительную заявку</NuxtLink>, скопируйте список и самостоятельно отправьте его в MAX. Также можно позвонить и назвать материалы и размеры.</p>
+        </li>
+        <li>
+          <h3>Согласуйте получение и оплату</h3>
+          <p>Менеджер подтвердит наличие, итоговую цену и условия получения. Заказ считается подтверждённым после его звонка. Оплата — по факту отгрузки.</p>
+        </li>
+      </ol>
+      <div class="catalog-purchase__delivery">
+        <div>
+          <h3>Доставка по Ленобласти и Санкт-Петербургу</h3>
+          <p>Стоимость доставки рассчитывается по адресу и объёму партии. Машину и день доставки согласуем с менеджером. Можно забрать материал самостоятельно с производства в Разбегаево.</p>
+          <nav aria-label="Условия получения пиломатериалов">
+            <NuxtLink to="/dostavka">Условия доставки</NuxtLink>
+            <NuxtLink to="/kontakty">Адрес и самовывоз</NuxtLink>
+          </nav>
+        </div>
+        <div>
+          <p class="font-semibold">Уточнить наличие и стоимость</p>
+          <a :href="businessPhoneHref">{{ businessPhone }}</a>
+          <p>{{ businessWorkingHours }}</p>
+          <a :href="businessMaxUrl" target="_blank" rel="noopener noreferrer">Обсудить заказ в MAX</a>
+        </div>
+      </div>
     </section>
 
     <dialog
@@ -450,6 +499,42 @@ useSchemaOrg([
 </template>
 
 <style scoped>
+.catalog-purchase {
+  scroll-margin-top: 140px;
+  border-block: 1px solid var(--color-line);
+  padding: 56px max(24px, calc((100vw - 1280px) / 2));
+  background: var(--color-sand);
+}
+.catalog-purchase h2 { margin-bottom: 32px; }
+.catalog-purchase h3 { margin-bottom: 16px; font-size: 1.3rem; }
+.catalog-purchase p { margin-bottom: 16px; line-height: 1.6; }
+.catalog-purchase__steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 32px;
+  margin-bottom: 32px;
+  padding-left: 24px;
+  list-style: decimal;
+}
+.catalog-purchase__steps li { padding-left: 8px; }
+.catalog-purchase__steps li::marker { font-weight: 800; }
+.catalog-purchase__delivery {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  gap: 40px;
+  border-top: 1px solid var(--color-line);
+  padding-top: 32px;
+}
+.catalog-purchase a { color: var(--color-forest); text-decoration: underline; text-underline-offset: 4px; }
+.catalog-purchase nav { display: flex; flex-wrap: wrap; gap: 12px 24px; }
+.catalog-purchase nav a, .catalog-purchase__delivery > div > a { display: inline-flex; min-height: 44px; align-items: center; }
+@media (max-width: 840px) {
+  .catalog-purchase__steps, .catalog-purchase__delivery { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+}
+@media (max-width: 560px) {
+  .catalog-purchase { padding: 40px 18px; }
+}
+
 .product-card {
   transition: transform 200ms cubic-bezier(0.23, 1, 0.32, 1);
 }

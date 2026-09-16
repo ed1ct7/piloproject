@@ -20,6 +20,9 @@ const products = landing.productIds
   .map((id) => priceListProducts.find((product) => product.id === id))
   .filter((product): product is PriceListProduct => product !== undefined)
 
+/** Размерные таблицы позиций посадочной; пусто у вагонки — она уже за штуку. */
+const sizeTables = getSizeTablesForProducts(landing.productIds)
+
 useSeoMeta({
   title: landing.title,
   description: landing.metaDescription,
@@ -144,6 +147,31 @@ useSchemaOrg([
             </div>
           </div>
         </article>
+      </div>
+    </section>
+
+    <section
+      v-if="sizeTables.length"
+      class="border-b border-(--color-ink) bg-(--color-paper) px-[max(24px,calc((100vw_-_1280px)/2))] py-16 max-[560px]:px-[18px] max-[560px]:py-12"
+      aria-labelledby="landing-sizes-title"
+    >
+      <header class="mb-8 max-w-[760px]">
+        <p class="eyebrow">Сечения и расчёт</p>
+        <h2 id="landing-sizes-title" class="mb-4">Цена за куб и за штуку</h2>
+        <p class="mb-0 leading-[1.6] text-(--color-ink)/85">
+          Цена за кубометр одна для всех сечений позиции. Объём штуки — толщина × ширина × длина в метрах,
+          цена за штуку — объём × цена м³, округлённая вверх до рубля. Все цены «от».
+        </p>
+      </header>
+
+      <div class="grid gap-10">
+        <ProductSizeTable v-for="table in sizeTables" :key="table.id" :table="table" />
+      </div>
+
+      <p v-if="landing.sizeNote" class="mb-0 mt-6 max-w-[760px] leading-[1.6] text-(--color-ink)/85">{{ landing.sizeNote }}</p>
+
+      <div class="mt-12 border-t border-(--color-line) pt-10">
+        <ProductCalculator :tables="sizeTables" />
       </div>
     </section>
 

@@ -17,6 +17,8 @@ const { addProduct, totalQuantity } = useCart()
 const productDialog = useTemplateRef<HTMLDialogElement>('product-dialog')
 const closeDialogButton = useTemplateRef<HTMLButtonElement>('close-dialog-button')
 const catalogFilterScroll = useTemplateRef<HTMLDivElement>('catalog-filter-scroll')
+/** Размерные таблицы всех позиций с ценой за кубометр — компактно, под сеткой каталога. */
+const sizeTables = getSizeTablesForProducts(priceListProducts.map((product) => product.id))
 const catalogStatusMessage = ref('')
 const dialogStatusMessage = ref('')
 const filterCanScrollForward = ref(false)
@@ -384,6 +386,32 @@ useSchemaOrg([
           :to="topic.to"
         >{{ topic.label }}</NuxtLink>
       </nav>
+    </section>
+
+    <section
+      id="sizes"
+      class="border-t border-(--color-line) bg-(--color-paper) px-[max(24px,calc((100vw_-_1280px)/2))] py-14 max-[560px]:px-[18px] max-[560px]:py-10"
+      aria-labelledby="catalog-sizes-title"
+    >
+      <header class="mb-8 max-w-[760px]">
+        <p class="eyebrow">Сечения и расчёт</p>
+        <h2 id="catalog-sizes-title" class="mb-4">Цена за куб и за штуку</h2>
+        <p class="mb-0 leading-[1.6] text-(--color-ink)/85">
+          Цена за кубометр одна для всех сечений позиции. Объём штуки — толщина × ширина × длина в метрах,
+          цена за штуку — объём × цена м³, округлённая вверх до рубля. Все цены «от», сухая доска с огнебиозащитой и вагонка
+          считаются отдельно: первая — по запросу, вторая — сразу за штуку.
+        </p>
+      </header>
+
+      <div class="grid gap-8">
+        <ProductSizeTable v-for="table in sizeTables" :key="table.id" :table="table" compact />
+      </div>
+
+      <p class="mb-0 mt-6 max-w-[760px] leading-[1.6] text-(--color-ink)/85">{{ timberNote }}</p>
+
+      <div class="mt-10 border-t border-(--color-line) pt-8">
+        <ProductCalculator :tables="sizeTables" />
+      </div>
     </section>
 
     <section id="purchase-conditions" class="catalog-purchase" aria-labelledby="purchase-title">

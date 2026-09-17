@@ -81,6 +81,9 @@ export default defineNuxtConfig({
         '/not-found',
         '/robots.txt',
         '/sitemap.xml',
+        // YML-фид товаров для источника «YML-фид» рекламной подписки Яндекс
+        // Бизнеса. Не входит в sitemap и не является публичной страницей.
+        '/yandex-business-feed.xml',
       ],
     },
   },

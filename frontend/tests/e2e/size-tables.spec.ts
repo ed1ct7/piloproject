@@ -7,34 +7,46 @@ test.describe('размерные таблицы без JavaScript', () => {
   test('посадочная /doska отдаёт таблицу сечений и строку о брусе в HTML', async ({ page }) => {
     await page.goto('/doska')
 
-    const sizes = page.locator('section[aria-labelledby="landing-sizes-title"]')
-    await expect(sizes.getByRole('heading', { level: 2 })).toHaveText('Цена за куб и за штуку')
+    const sizes = page.locator('#sizes')
+    await expect(sizes).toHaveCount(1)
+    await expect(sizes.getByRole('heading', { level: 2 })).toHaveText('Сечения доски и цена за штуку')
 
     const table = sizes.locator('table').first()
     await expect(table.locator('thead')).toContainText('I сорт')
     await expect(table.locator('thead')).toContainText('III сорт')
     await expect(table.locator('tbody tr')).toHaveCount(9)
 
-    const row = table.locator('tbody tr').filter({ has: page.getByRole('rowheader', { name: '50×150', exact: true }) })
+    const row = sizes.locator('tr#size-50x150x6000')
     await expect(row).toContainText('6000')
     await expect(row).toContainText('0,0450')
     await expect(row.locator('td').nth(2)).toHaveText(/от 810 ₽/)
 
     await expect(sizes).toContainText('Другие сечения и длины — под заказ')
-    await expect(sizes).toContainText('Брус естественной влажности I сорта — от 18 000 ₽/м³')
+    await expect(page.locator('#brus')).toContainText('Брус естественной влажности I сорта — от 18 000 ₽/м³')
   })
 
   test('каталог, сухая доска, огнебиозащита и имитация бруса содержат таблицы', async ({ page }) => {
     await page.goto('/pilomaterialy')
-    const catalogSizes = page.locator('section[aria-labelledby="catalog-sizes-title"]')
-    await expect(catalogSizes.locator('table')).toHaveCount(5)
+    // Пять полных таблиц каталога заменены компактным блоком ссылок на разделы
+    // размеров посадочных — дубли с /doska и другими страницами убраны.
+    const catalogSizes = page.locator('#sizes')
+    await expect(catalogSizes.locator('table')).toHaveCount(0)
+    await expect(catalogSizes.getByRole('link', { name: /Доска обрезная/ })).toHaveAttribute('href', '/doska#sizes')
+    await expect(catalogSizes.getByRole('link', { name: /Сухая и строганая доска/ })).toHaveAttribute('href', '/suhaya-doska#sizes')
+    await expect(catalogSizes.getByRole('link', { name: /огнебиозащит/i })).toHaveAttribute('href', '/ognebiozashchita#sizes')
+    await expect(catalogSizes.getByRole('link', { name: /Имитация бруса/ })).toHaveAttribute('href', '/imitatsiya-brusa#sizes')
     await expect(catalogSizes).toContainText('Брус естественной влажности I сорта')
 
     await page.goto('/suhaya-doska')
     const drySizes = page.locator('section[aria-labelledby="landing-sizes-title"]')
+    await expect(drySizes.getByRole('heading', { level: 2 })).toHaveText('Сечения сухой и строганой доски')
     await expect(drySizes.locator('table')).toHaveCount(2)
     await expect(drySizes.locator('table').nth(1).locator('tbody tr')).toHaveCount(12)
     await expect(drySizes).not.toContainText('огнебиозащит')
+    // Брусок и рейка — новые позиции посадочной, таблицы сечений у них нет,
+    // но в блоке позиций они должны быть видны.
+    await expect(page.getByRole('heading', { name: 'Брусок 45×45' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Рейка 20×45' })).toBeVisible()
 
     await page.goto('/ognebiozashchita')
     const fireSizes = page.locator('section[aria-labelledby="landing-sizes-title"]')
@@ -47,7 +59,14 @@ test.describe('размерные таблицы без JavaScript', () => {
     await expect(claddingSizes).toContainText('нижняя оценка')
 
     await page.goto('/vagonka')
-    await expect(page.locator('section[aria-labelledby="landing-sizes-title"]')).toHaveCount(0)
+    // У вагонки нет таблицы сечений (цена сразу за штуку), но появились расход
+    // материала на площадь и сравнение профилей — секция размеров есть.
+    const vagonkaSizes = page.locator('section[aria-labelledby="landing-sizes-title"]')
+    await expect(vagonkaSizes).toHaveCount(1)
+    await expect(vagonkaSizes.locator('table')).toHaveCount(2)
+    await expect(vagonkaSizes).toContainText('Сколько вагонки уйдёт на 10, 20 и 30 м²')
+    await expect(vagonkaSizes).toContainText('Евровагонка или «Штиль»: что выбрать')
+    await expect(vagonkaSizes).toContainText('нижняя оценка')
   })
 })
 

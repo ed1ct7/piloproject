@@ -14,6 +14,19 @@ useHead({
   htmlAttrs: { lang: 'ru' },
   link: [{ rel: 'canonical', href: `${siteUrl}/politika-konfidencialnosti` }],
 })
+
+useSchemaOrg([
+  defineBreadcrumb({
+    itemListElement: [
+      { name: 'Главная', item: '/' },
+      { name: 'Политика конфиденциальности', item: '/politika-konfidencialnosti' },
+    ],
+  }),
+  defineWebPage({
+    name: 'Политика конфиденциальности сайта',
+    description: 'Сведения о данных при использовании сайта пилорамы в Разбегаево.',
+  }),
+])
 </script>
 
 <template>

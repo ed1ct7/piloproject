@@ -5,20 +5,66 @@ definePageMeta({
   path: '/pilomaterialy',
 })
 
-type CatalogFilterValue = 'all' | 'natural' | 'fireProtection' | 'dryBoard' | 'planedBoard' | 'imitatsiyaBrusa' | 'vagonka'
+type CatalogFilterValue = 'all' | 'natural' | 'fireProtection' | 'dryBoard' | 'planedBoard' | 'brusokReika' | 'imitatsiyaBrusa' | 'vagonka'
 
 const selectedCategory = ref<CatalogFilterValue>('all')
-const filteredProducts = computed(() => priceListProducts.filter((product) =>
+const filteredProducts = computed<PriceListProduct[]>(() => priceListProducts.filter((product) =>
   isProductInSelectedFilter(product, selectedCategory.value),
 ))
 const filteredProductsCount = computed(() => filteredProducts.value.length)
+
+/** Группы карточек каталога с собственным H2 (контракт п.5): пустые группы после фильтра скрываются. */
+const catalogProductGroups: { id: string, heading: string, categories: PriceListProduct['category'][] }[] = [
+  { id: 'ev-group', heading: 'Доска естественной влажности', categories: ['doska-estestvennoi-vlazhnosti', 'doska-ev-ognebio'] },
+  { id: 'dry-group', heading: 'Сухая и строганая доска', categories: ['doska-suhaya', 'doska-suhaya-ognebio', 'doska-suhaya-stroganaya'] },
+  { id: 'brusok-group', heading: 'Брусок и рейка', categories: ['brusok-i-reika'] },
+  { id: 'finish-group', heading: 'Отделочные материалы', categories: ['imitatsiya-brusa', 'vagonka'] },
+]
+
+const groupedFilteredProducts = computed(() => catalogProductGroups
+  .map((group) => ({
+    id: group.id,
+    heading: group.heading,
+    // Тип параметра указан явно: вывод типов здесь замыкается на саму
+    // `groupedFilteredProducts` и без аннотации даёт `any`.
+    products: filteredProducts.value.filter((product: PriceListProduct) => group.categories.includes(product.category)),
+  }))
+  .filter((group) => group.products.length > 0))
+
 const selectedProduct = ref<PriceListProduct | null>(null)
 const { addProduct, totalQuantity } = useCart()
 const productDialog = useTemplateRef<HTMLDialogElement>('product-dialog')
 const closeDialogButton = useTemplateRef<HTMLButtonElement>('close-dialog-button')
 const catalogFilterScroll = useTemplateRef<HTMLDivElement>('catalog-filter-scroll')
-/** Размерные таблицы всех позиций с ценой за кубометр — компактно, под сеткой каталога. */
+/** Размерные таблицы всех позиций — калькулятору по-прежнему нужны все сразу. */
 const sizeTables = getSizeTablesForProducts(priceListProducts.map((product) => product.id))
+
+/**
+ * Компактные ссылки на секции размеров посадочных вместо пяти полных таблиц
+ * каталога (контракт: дубли таблиц между /pilomaterialy и посадочными).
+ * @note цена «от» за куб — минимум по позициям группы, посчитан из products.ts,
+ *       а не переписан числом, чтобы не разойтись с прайсом при его изменении
+ */
+interface CatalogSizeLink {
+  label: string
+  to: string
+  priceFrom: number
+}
+
+const catalogSizeLinkGroups: { label: string, to: string, productIds: string[] }[] = [
+  { label: 'Доска обрезная естественной влажности', to: '/doska#sizes', productIds: ['doska-ev-sort-1', 'doska-ev-sort-2', 'doska-ev-sort-3'] },
+  { label: 'Сухая и строганая доска, брусок и рейка', to: '/suhaya-doska#sizes', productIds: ['doska-suhaya-kamernoi-sushki', 'doska-suhaya-stroganaya', 'brusok-45x45', 'reika-20x45'] },
+  { label: 'Доска с огнебиозащитой', to: '/ognebiozashchita#sizes', productIds: ['doska-ev-ognebio-sort-1', 'doska-ev-ognebio-sort-2', 'doska-ev-ognebio-sort-3'] },
+  { label: 'Имитация бруса', to: '/imitatsiya-brusa#sizes', productIds: ['imitatsiya-brusa-20x145'] },
+]
+
+const catalogSizeLinks: CatalogSizeLink[] = catalogSizeLinkGroups.flatMap(({ label, to, productIds }) => {
+  const prices = productIds
+    .map((id) => priceListProducts.find((product) => product.id === id)?.price)
+    .filter((price): price is number => typeof price === 'number')
+
+  return prices.length ? [{ label, to, priceFrom: Math.min(...prices) }] : []
+})
 const catalogStatusMessage = ref('')
 const dialogStatusMessage = ref('')
 const filterCanScrollForward = ref(false)
@@ -44,43 +90,61 @@ const categoryFilterOptions: { label: string, value: CatalogFilterValue }[] = [
   { label: 'Огнебио', value: 'fireProtection' },
   { label: 'Сухая', value: 'dryBoard' },
   { label: 'Строганая', value: 'planedBoard' },
+  { label: 'Брусок и рейка', value: 'brusokReika' },
   { label: 'Имитация бруса', value: 'imitatsiyaBrusa' },
   { label: 'Вагонка', value: 'vagonka' },
 ]
 
-type ProductCategoryGroup = 'ev' | 'evOgnebio' | 'dryBoard' | 'imitatsiyaBrusa' | 'vagonka'
+type ProductCategoryGroup = 'ev' | 'evOgnebio' | 'dryBoard' | 'brusokReika' | 'imitatsiyaBrusa' | 'vagonka'
 
 /** Текстовый ярлык категории на карточке: категорию кодирует подпись, не цвет фона. */
 const productCategoryLabels: Record<ProductCategoryGroup, string> = {
   ev: 'Доска ЕВ',
   evOgnebio: 'ЕВ · огнебио',
   dryBoard: 'Сухая доска',
+  brusokReika: 'Брусок и рейка',
   imitatsiyaBrusa: 'Имитация бруса',
   vagonka: 'Вагонка',
 }
 
+/** Ярлык категории ведёт на посадочную страницу кластера (контракт п.5). */
+const productCategoryLandingRoutes: Record<ProductCategoryGroup, string> = {
+  ev: '/doska',
+  evOgnebio: '/ognebiozashchita',
+  dryBoard: '/suhaya-doska',
+  brusokReika: '/suhaya-doska',
+  imitatsiyaBrusa: '/imitatsiya-brusa',
+  vagonka: '/vagonka',
+}
+
+/**
+ * Сопоставление категории прайса (`utils/products.ts`) с группой ярлыка каталога.
+ * @note группа определяется по `product.category`, а не по префиксу `id`: раньше
+ *       любой id, не начинавшийся на известный префикс, молча получал ярлык
+ *       «Вагонка». `Record<ProductCategory, …>` требует ветку для каждой категории —
+ *       новая категория без записи здесь не скомпилируется, а не тихо съедет в vagonka.
+ */
+const categoryGroupByCategory: Record<PriceListProduct['category'], ProductCategoryGroup> = {
+  'doska-estestvennoi-vlazhnosti': 'ev',
+  'doska-ev-ognebio': 'evOgnebio',
+  'doska-suhaya': 'dryBoard',
+  'doska-suhaya-ognebio': 'dryBoard',
+  'doska-suhaya-stroganaya': 'dryBoard',
+  'brusok-i-reika': 'brusokReika',
+  'imitatsiya-brusa': 'imitatsiyaBrusa',
+  'vagonka': 'vagonka',
+}
+
 function getProductCategoryGroup(product: PriceListProduct): ProductCategoryGroup {
-  if (product.id.startsWith('doska-ev-ognebio')) {
-    return 'evOgnebio'
-  }
-
-  if (product.id.startsWith('doska-ev-')) {
-    return 'ev'
-  }
-
-  if (product.id.startsWith('doska-suhaya')) {
-    return 'dryBoard'
-  }
-
-  if (product.id.startsWith('imitatsiya-brusa')) {
-    return 'imitatsiyaBrusa'
-  }
-
-  return 'vagonka'
+  return categoryGroupByCategory[product.category]
 }
 
 function getProductCategoryLabel(product: PriceListProduct): string {
   return productCategoryLabels[getProductCategoryGroup(product)]
+}
+
+function getProductCategoryLink(product: PriceListProduct): string {
+  return productCategoryLandingRoutes[getProductCategoryGroup(product)]
 }
 
 function getProductDialogImageSrcset(product: PriceListProduct): string {
@@ -110,6 +174,10 @@ function isProductInSelectedFilter(product: PriceListProduct, filter: CatalogFil
 
   if (filter === 'planedBoard') {
     return product.category === 'doska-suhaya-stroganaya'
+  }
+
+  if (filter === 'brusokReika') {
+    return product.category === 'brusok-i-reika'
   }
 
   if (filter === 'imitatsiyaBrusa') {
@@ -214,10 +282,11 @@ onBeforeUnmount(() => {
 })
 
 useSeoMeta({
-  title: 'Купить пиломатериалы в Ленобласти — цены',
-  description: 'Доска, вагонка и имитация бруса с производства в Разбегаево. Продажа оптом и в розницу, цены за м³ и штуку. Доставка по Ленобласти и СПб, самовывоз.',
-  ogTitle: 'Купить пиломатериалы в Ленобласти — каталог и цены',
-  ogDescription: 'Доска, вагонка и имитация бруса оптом и в розницу. Цены за м³ и штуку, доставка по Ленобласти и Санкт-Петербургу, самовывоз из Разбегаево.',
+  // Тексты 8.2 аудита: страница переведена в прайс-лист под покупательский запрос.
+  title: 'Каталог пиломатериалов: цены за куб и за штуку',
+  description: 'Прайс-лист пилорамы в Разбегаево: 14 позиций — доска, сухая и строганая, огнебиозащита, брусок, рейка, имитация бруса, вагонка. Цены за м³ и за штуку, калькулятор объёма.',
+  ogTitle: 'Каталог пиломатериалов от производителя — цены за куб и за штуку',
+  ogDescription: 'Доска, сухая и строганая, брусок, рейка, имитация бруса и вагонка с производства в Разбегаево. Цены от производителя, доставка по Ленобласти и Санкт-Петербургу.',
   ogImage: `${siteUrl}/images/sawn-board-stack-2025-04-02.jpg`,
   ogType: 'website',
   ogUrl: `${siteUrl}/pilomaterialy`,
@@ -237,26 +306,28 @@ useSchemaOrg([
   }),
   defineItemList({
     name: 'Пиломатериалы пилорамы в Разбегаево',
-    itemListElement: priceListProducts.map((product, index) => ({
-      '@type': 'ListItem',
-      position: index + 1,
-      item: {
-        '@type': 'Product',
-        name: product.title,
-        description: product.description,
-        image: `${siteUrl}${product.image}`,
-        offers: product.price === null
-          ? undefined
-          : {
-              // AggregateOffer с lowPrice — это цена «от …» из прайса.
-              '@type': 'AggregateOffer',
-              lowPrice: product.price,
-              priceCurrency: 'RUB',
-              availability: 'https://schema.org/InStock',
-              url: `${siteUrl}/pilomaterialy`,
-            },
-      },
-    })),
+    // Позиции с ценой «по запросу» (price: null) исключены: Product без offers —
+    // ошибка структурированных данных в Google, а не просто пустое поле.
+    itemListElement: priceListProducts
+      .filter((product): product is PriceListProduct & { price: number } => product.price !== null)
+      .map((product, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        item: {
+          '@type': 'Product',
+          name: product.title,
+          description: product.description,
+          image: `${siteUrl}${product.image}`,
+          offers: {
+            // AggregateOffer с lowPrice — это цена «от …» из прайса.
+            '@type': 'AggregateOffer',
+            lowPrice: product.price,
+            priceCurrency: 'RUB',
+            availability: 'https://schema.org/InStock',
+            url: `${siteUrl}/pilomaterialy`,
+          },
+        },
+      })),
   }),
 ])
 </script>
@@ -266,10 +337,11 @@ useSchemaOrg([
     <section class="max-[840px]:min-h-0 max-[560px]:px-[18px] max-[560px]:pb-9 max-[560px]:pt-8 grid min-h-[280px] items-end border-b border-[#171916] bg-(--color-sand) px-[max(24px,calc((100vw_-_1280px)/2))] pb-12 pt-14 max-[560px]:[&_h1]:!text-[2.75rem] max-[390px]:[&_h1]:!text-[2.55rem]">
       <div class="max-w-[860px] [&_h1]:mb-0">
         <p class="eyebrow">Цены производства</p>
-        <h1>Купить пиломатериалы в Ленинградской области</h1>
+        <h1>Каталог пиломатериалов и цены за куб и за штуку</h1>
         <p class="mb-0 mt-4 max-w-[680px] leading-[1.6] text-(--color-ink)/85">
-          Доска, вагонка и имитация бруса с собственного производства в Разбегаево — оптом и в розницу.
-          Выберите материал: цены указаны за кубометр или штуку. Доставляем по Ленобласти и Санкт-Петербургу;
+          Купить пиломатериалы от производителя в Разбегаево: доска обрезная от 4 500 ₽/м³,
+          сухая и строганая доска, брусок и рейка, имитация бруса и вагонка от 125 ₽/шт.
+          Работаем оптом и в розницу, доставляем по Санкт-Петербургу и Ленинградской области;
           доступен самовывоз с площадки в Ломоносовском районе.
         </p>
         <p class="mb-0 mt-4 max-w-[680px] leading-[1.6] text-(--color-ink)/85">
@@ -312,67 +384,80 @@ useSchemaOrg([
         </div>
       </div>
 
-      <TransitionGroup name="catalog-products" tag="div" class="grid auto-rows-fr grid-cols-4 gap-5 py-10 max-[1180px]:grid-cols-3 max-[900px]:grid-cols-2 max-[560px]:grid-cols-1 max-[560px]:py-8">
-        <article
-          v-for="product in filteredProducts"
-          :key="product.id"
-          class="product-card flex h-full min-w-0 flex-col border border-(--color-line) bg-(--color-paper)"
+      <div class="catalog-groups grid gap-14 py-10 max-[560px]:gap-10 max-[560px]:py-8">
+        <section
+          v-for="group in groupedFilteredProducts"
+          :key="group.id"
+          :aria-labelledby="group.id"
         >
-          <figure data-parallax="6" class="h-[165px] overflow-hidden border-b border-(--color-line) bg-(--color-sand) max-[900px]:h-[185px] max-[560px]:h-[190px] [&_img]:h-full [&_img]:w-full [&_img]:object-cover">
-            <NuxtImg
-              :src="product.image"
-              :alt="product.alt"
-              width="900"
-              height="1200"
-              sizes="xs:100vw sm:50vw md:40vw lg:34vw xl:26vw xxl:22vw"
-              densities="1 2"
-              format="webp"
-              loading="lazy"
-            />
-          </figure>
+          <h2 :id="group.id" class="catalog-group__title">{{ group.heading }}</h2>
 
-          <div class="flex flex-1 flex-col px-4 pb-4 pt-4">
-            <header class="mb-3 min-h-[50px] max-[560px]:min-h-0">
-              <p class="mb-1.5 font-[Segoe_UI,Arial,sans-serif] text-[0.68rem] font-[760] uppercase tracking-[0.08em] text-(--color-ink)/70">{{ getProductCategoryLabel(product) }}</p>
-              <h2 class="mb-0 !text-[clamp(1.15rem,1.35vw,1.45rem)] !leading-[1.12]">{{ product.displayTitle }}</h2>
-            </header>
+          <TransitionGroup name="catalog-products" tag="div" class="grid auto-rows-fr grid-cols-4 gap-5 max-[1180px]:grid-cols-3 max-[900px]:grid-cols-2 max-[560px]:grid-cols-1">
+            <article
+              v-for="product in group.products"
+              :key="product.id"
+              class="product-card flex h-full min-w-0 flex-col border border-(--color-line) bg-(--color-paper)"
+            >
+              <figure data-parallax="6" class="h-[165px] overflow-hidden border-b border-(--color-line) bg-(--color-sand) max-[900px]:h-[185px] max-[560px]:h-[190px] [&_img]:h-full [&_img]:w-full [&_img]:object-cover">
+                <NuxtImg
+                  :src="product.image"
+                  :alt="product.alt"
+                  width="900"
+                  height="506"
+                  sizes="xs:100vw sm:50vw md:40vw lg:34vw xl:26vw xxl:22vw"
+                  densities="1 2"
+                  format="webp"
+                  loading="lazy"
+                />
+              </figure>
 
-            <dl class="product-card__specs mb-5 grid gap-2 text-[0.88rem] leading-[1.5] text-(--color-ink)/85">
-              <div v-for="[label, value] in product.specs" :key="label">
-                <dt class="font-semibold">{{ label }}</dt>
-                <dd class="m-0">{{ value }}</dd>
-              </div>
-            </dl>
+              <div class="flex flex-1 flex-col px-4 pb-4 pt-4">
+                <header class="mb-3 min-h-[50px] max-[560px]:min-h-0">
+                  <NuxtLink
+                    :to="getProductCategoryLink(product)"
+                    class="mb-1.5 inline-block font-[Segoe_UI,Arial,sans-serif] text-[0.68rem] font-[760] uppercase tracking-[0.08em] text-(--color-ink)/70 no-underline transition-colors duration-150 hover:text-(--color-copper)"
+                  >{{ getProductCategoryLabel(product) }}</NuxtLink>
+                  <h3 class="mb-0 !text-[clamp(1.15rem,1.35vw,1.45rem)] !leading-[1.12]">{{ product.displayTitle }}</h3>
+                </header>
 
-            <div class="mt-auto grid gap-3 border-t border-(--color-line) pt-4">
-              <div>
-                <p class="mb-1 font-[Segoe_UI,Arial,sans-serif] text-[0.72rem] font-[760] uppercase tracking-[0.06em] text-(--color-ink)/70">Цена за 1 {{ product.unit }}</p>
-                <p class="mb-0 whitespace-nowrap font-[Segoe_UI,Arial,sans-serif] text-[clamp(1.18rem,1.5vw,1.45rem)] font-extrabold leading-none text-(--color-copper)">{{ formatProductPrice(product) }}</p>
+                <dl class="product-card__specs mb-5 grid gap-2 text-[0.88rem] leading-[1.5] text-(--color-ink)/85">
+                  <div v-for="[label, value] in product.specs" :key="label">
+                    <dt class="font-semibold">{{ label }}</dt>
+                    <dd class="m-0">{{ value }}</dd>
+                  </div>
+                </dl>
+
+                <div class="mt-auto grid gap-3 border-t border-(--color-line) pt-4">
+                  <div>
+                    <p class="mb-1 font-[Segoe_UI,Arial,sans-serif] text-[0.72rem] font-[760] uppercase tracking-[0.06em] text-(--color-ink)/70">Цена за 1 {{ product.unit }}</p>
+                    <p class="mb-0 whitespace-nowrap font-[Segoe_UI,Arial,sans-serif] text-[clamp(1.18rem,1.5vw,1.45rem)] font-extrabold leading-none text-(--color-copper)">{{ formatProductPrice(product) }}</p>
+                  </div>
+                  <div class="flex items-center justify-between gap-4">
+                    <button
+                      class="catalog-card-action inline-flex min-h-11 w-max items-center border-0 border-b-2 border-current bg-transparent px-1 font-[Segoe_UI,Arial,sans-serif] text-[0.88rem] font-[760] text-(--color-ink) transition-colors duration-150 hover:text-(--color-copper)"
+                      type="button"
+                      @click="openProductDetails(product, $event)"
+                    >Подробнее</button>
+                    <button
+                      v-if="product.price !== null"
+                      class="catalog-card-action inline-flex min-h-11 w-max shrink-0 cursor-pointer items-center border-0 border-b-2 border-current bg-transparent px-2 font-[Segoe_UI,Arial,sans-serif] text-[0.9rem] font-extrabold leading-none text-(--color-copper) transition-colors duration-150 hover:text-(--color-copper-dark)"
+                      :class="{ 'recently-added-action': isProductRecentlyAdded(product.id, 'catalog') }"
+                      type="button"
+                      :aria-label="`Добавить в заявку: ${product.title}`"
+                      @click="addProductWithFeedback(product, 'catalog')"
+                    ><span aria-hidden="true">{{ isProductRecentlyAdded(product.id, 'catalog') ? 'Добавлено ✓' : 'В заявку' }}</span></button>
+                    <NuxtLink
+                      v-else
+                      class="catalog-card-action inline-flex min-h-11 w-max shrink-0 items-center border-0 border-b-2 border-current bg-transparent px-1 font-[Segoe_UI,Arial,sans-serif] text-[0.88rem] font-[760] text-(--color-copper) no-underline transition-colors duration-150 hover:text-(--color-copper-dark)"
+                      to="/kontakty"
+                    >Уточнить цену</NuxtLink>
+                  </div>
+                </div>
               </div>
-              <div class="flex items-center justify-between gap-4">
-                <button
-                  class="catalog-card-action inline-flex min-h-11 w-max items-center border-0 border-b-2 border-current bg-transparent px-1 font-[Segoe_UI,Arial,sans-serif] text-[0.88rem] font-[760] text-(--color-ink) transition-colors duration-150 hover:text-(--color-copper)"
-                  type="button"
-                  @click="openProductDetails(product, $event)"
-                >Подробнее</button>
-                <button
-                  v-if="product.price !== null"
-                  class="catalog-card-action inline-flex min-h-11 w-max shrink-0 cursor-pointer items-center border-0 border-b-2 border-current bg-transparent px-2 font-[Segoe_UI,Arial,sans-serif] text-[0.9rem] font-extrabold leading-none text-(--color-copper) transition-colors duration-150 hover:text-(--color-copper-dark)"
-                  :class="{ 'recently-added-action': isProductRecentlyAdded(product.id, 'catalog') }"
-                  type="button"
-                  :aria-label="`Добавить в заявку: ${product.title}`"
-                  @click="addProductWithFeedback(product, 'catalog')"
-                ><span aria-hidden="true">{{ isProductRecentlyAdded(product.id, 'catalog') ? 'Добавлено ✓' : 'В заявку' }}</span></button>
-                <NuxtLink
-                  v-else
-                  class="catalog-card-action inline-flex min-h-11 w-max shrink-0 items-center border-0 border-b-2 border-current bg-transparent px-1 font-[Segoe_UI,Arial,sans-serif] text-[0.88rem] font-[760] text-(--color-copper) no-underline transition-colors duration-150 hover:text-(--color-copper-dark)"
-                  to="/kontakty"
-                >Уточнить цену</NuxtLink>
-              </div>
-            </div>
-          </div>
-        </article>
-      </TransitionGroup>
+            </article>
+          </TransitionGroup>
+        </section>
+      </div>
 
       <div class="mt-7 flex justify-end max-[560px]:justify-start">
         <NuxtLink class="w-max cursor-pointer border-0 border-b-2 border-current bg-transparent px-0 pb-[3px] font-[Segoe_UI,Arial,sans-serif] font-[760] text-(--color-forest) no-underline transition-colors duration-150 hover:text-(--color-copper) disabled:cursor-not-allowed disabled:opacity-50" to="/kontakty">Уточнить наличие</NuxtLink>
@@ -395,17 +480,19 @@ useSchemaOrg([
     >
       <header class="mb-8 max-w-[760px]">
         <p class="eyebrow">Сечения и расчёт</p>
-        <h2 id="catalog-sizes-title" class="mb-4">Цена за куб и за штуку</h2>
+        <h2 id="catalog-sizes-title" class="mb-4">Сечения и цена за штуку</h2>
         <p class="mb-0 leading-[1.6] text-(--color-ink)/85">
-          Цена за кубометр одна для всех сечений позиции. Объём штуки — толщина × ширина × длина в метрах,
-          цена за штуку — объём × цена м³, округлённая вверх до рубля. Все цены «от», сухая доска с огнебиозащитой и вагонка
-          считаются отдельно: первая — по запросу, вторая — сразу за штуку.
+          Полные таблицы сечений с ценой за штуку — на странице каждого материала. Здесь —
+          минимальная цена за кубометр по группе и ссылка на нужную таблицу.
         </p>
       </header>
 
-      <div class="grid gap-8">
-        <ProductSizeTable v-for="table in sizeTables" :key="table.id" :table="table" compact />
-      </div>
+      <ul class="catalog-size-links">
+        <li v-for="link in catalogSizeLinks" :key="link.to">
+          <NuxtLink :to="link.to">{{ link.label }}</NuxtLink>
+          <span>от {{ formatRoubles(link.priceFrom) }}/м³</span>
+        </li>
+      </ul>
 
       <p class="mb-0 mt-6 max-w-[760px] leading-[1.6] text-(--color-ink)/85">{{ timberNote }}</p>
 
@@ -561,6 +648,53 @@ useSchemaOrg([
 }
 @media (max-width: 560px) {
   .catalog-purchase { padding: 40px 18px; }
+}
+
+/* Заголовок группы карточек — тот же Georgia через глобальный `.site-shell h2`,
+   но мельче: на странице их четыре подряд, полноразмерный h2 был бы избыточен */
+.catalog-group__title {
+  margin-bottom: 24px;
+  font-size: clamp(1.5rem, 2vw, 2rem);
+  font-weight: 400;
+}
+
+/* Компактный список ссылок на секции размеров посадочных вместо пяти таблиц */
+.catalog-size-links {
+  display: grid;
+  max-width: 760px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--color-line);
+}
+
+.catalog-size-links li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--color-line);
+}
+
+.catalog-size-links a {
+  color: var(--color-forest);
+  font-weight: 740;
+  text-decoration: none;
+  border-bottom: 1px solid currentcolor;
+  transition: color 160ms ease;
+}
+
+.catalog-size-links a:hover {
+  color: var(--color-copper);
+}
+
+.catalog-size-links span {
+  flex: none;
+  color: var(--color-copper-dark);
+  font-weight: 800;
+  white-space: nowrap;
 }
 
 .product-card {

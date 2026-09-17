@@ -219,6 +219,12 @@ test('мобильные действия каталога имеют доста
   await expectMinimumTargetSize(page.getByRole('button', { name: /Добавить в заявку/ }).first(), 44)
 })
 
+test('посадочная ссылается в каталог одной ссылкой вместо повторов «Выбрать в каталоге»', async ({ page }) => {
+  await page.goto('/doska')
+  await expect(page.getByRole('link', { name: 'Выбрать в каталоге' })).toHaveCount(0)
+  await expect(page.getByRole('link', { name: 'Все 14 позиций и цены в каталоге' })).toHaveCount(1)
+})
+
 test('текстовые блоки сохраняют вертикальный ритм', async ({ page }) => {
   await page.goto('/o-nas')
 

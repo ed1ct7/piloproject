@@ -14,3 +14,11 @@ export const indexableRoutes = [
   { loc: '/kontakty', changefreq: 'monthly' as const, priority: 0.8 as const },
   { loc: '/politika-konfidencialnosti', changefreq: 'yearly' as const, priority: 0.3 as const },
 ]
+
+/**
+ * Слаги посадочных страниц для `validate` в `pages/[landing].vue`.
+ * @note список продублирован из `utils/seo-landings.ts` намеренно: он
+ *       используется на клиенте для проверки маршрута, а импорт самого
+ *       `seo-landings.ts` (тексты посадочных) в общий JS-бандл не нужен
+ */
+export const landingSlugs = ['doska', 'suhaya-doska', 'vagonka', 'imitatsiya-brusa', 'ognebiozashchita'] as const

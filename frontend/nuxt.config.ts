@@ -65,6 +65,12 @@ export default defineNuxtConfig({
 
   // SSG: `nuxt generate` пререндерит каждый маршрут в статический HTML.
   ssr: true,
+  // `useAsyncData` на сайте не используется: без выгрузки payload каждая
+  // страница переставала запрашивать несуществующий `_payload.json` (лишний
+  // запрос и 404 весом 51 КБ на каждой странице).
+  experimental: {
+    payloadExtraction: false,
+  },
   nitro: {
     prerender: {
       crawlLinks: true,
@@ -72,6 +78,7 @@ export default defineNuxtConfig({
         ...indexableRoutes.map((route) => route.loc),
         '/cart',
         '/korzina',
+        '/not-found',
         '/robots.txt',
         '/sitemap.xml',
       ],
@@ -98,9 +105,11 @@ export default defineNuxtConfig({
   },
 
   sitemap: {
-    // Корзина закрыта noindex; noindex-страница в sitemap — ошибка в Вебмастере.
-    exclude: ['/cart', '/korzina'],
-    autoLastmod: true,
+    // Корзина и страница 404 закрыты noindex; noindex-страница в sitemap — ошибка в Вебмастере.
+    exclude: ['/cart', '/korzina', '/not-found'],
+    // `lastmod` брал mtime файлов из tar-архива деплоя и совпадал у всех
+    // адресов сразу — поле не несло информации, отключаем.
+    autoLastmod: false,
     credits: false,
   },
 
@@ -120,7 +129,10 @@ export default defineNuxtConfig({
   schemaOrg: {
     identity: {
       '@id': `${siteUrl}/#localbusiness`,
-      '@type': 'HomeAndConstructionBusiness',
+      // Массив, а не строка: на главной `defineLocalBusiness` добавляет
+      // `LocalBusiness` к типу, и без этой строки узел `#localbusiness`
+      // на главной и на остальных страницах отличался бы составом @type.
+      '@type': ['HomeAndConstructionBusiness', 'LocalBusiness'],
       name: 'Пилорама Разбегаево',
       legalName: businessRequisites.fullName,
       url: siteUrl,
@@ -136,6 +148,9 @@ export default defineNuxtConfig({
         addressCountry: 'RU',
       },
       openingHoursSpecification: businessOpeningHoursSpecification,
+      // Ссылка на карточку в Яндекс Картах для разметки LocalBusiness.
+      // `postalCode`, `geo` и `priceRange` не добавляем — данных нет.
+      hasMap: businessMapsUrl,
       areaServed: [
         'Разбегаево',
         'Ломоносовский район',

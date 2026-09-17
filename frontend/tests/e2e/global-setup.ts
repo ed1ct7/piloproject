@@ -40,6 +40,30 @@ export default async function startStaticServer(): Promise<() => Promise<void>> 
       response.end(content)
     }
     catch {
+      // Имитирует `error_page 404 /not-found/index.html;` из nginx: сначала
+      // отдаём тело SSR-страницы `pages/not-found.vue`, при её отсутствии —
+      // старый `404.html` из `nuxt generate`, и только потом — текстовую
+      // заглушку. Статус во всех трёх случаях остаётся 404.
+      try {
+        const notFoundBody = await readFile(join(outputRoot, 'not-found', 'index.html'))
+        response.writeHead(404, { 'Content-Type': 'text/html; charset=utf-8' })
+        response.end(notFoundBody)
+        return
+      }
+      catch {
+        // Страницы `/not-found` ещё нет в сборке — пробуем следующий вариант.
+      }
+
+      try {
+        const legacyBody = await readFile(join(outputRoot, '404.html'))
+        response.writeHead(404, { 'Content-Type': 'text/html; charset=utf-8' })
+        response.end(legacyBody)
+        return
+      }
+      catch {
+        // Ни SSR-страницы, ни стандартного `404.html` нет — прежний текстовый ответ.
+      }
+
       response.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' })
       response.end('Not found')
     }

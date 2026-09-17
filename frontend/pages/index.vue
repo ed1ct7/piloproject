@@ -508,19 +508,29 @@ onBeforeUnmount(() => {
  * Вопросы и ответы внизу главной — общие для всего производства.
  * @note факты только из `utils/products.ts`, `utils/business.ts` и посадочных;
  *       цены с пометкой «от», итог подтверждает менеджер
+ * @note `links` — ссылки под ответом, выводятся обычными NuxtLink; в разметку
+ *       FAQPage уходит только текст `answer`, ссылки в `acceptedAnswer` не попадают
  */
 const homeFaq = [
   {
     question: 'Где находится пилорама и как забрать заказ?',
     answer: 'Производственная площадка — деревня Разбегаево, Ломоносовский район Ленинградской области, промзона Большевик. Работаем ежедневно с 9:00 до 19:00. Самовывоз: сообщим, когда заказ готов, согласуем время приезда и погрузим материал в вашу машину. Адрес и проезд — на странице контактов.',
+    links: [{ label: 'Контакты и схема проезда', to: '/kontakty' }],
   },
   {
     question: 'Что есть в наличии и сколько это стоит?',
     answer: 'Доска естественной влажности трёх сортов — от 4 500 ₽/м³, сухая доска камерной сушки — от 20 500 ₽/м³, сухая строганая — от 27 000 ₽/м³, имитация бруса 20×145 мм — от 33 000 ₽/м³, евровагонка — от 125 ₽/шт., вагонка «Штиль» — от 145 ₽/шт. Цены минимальные, с пометкой «от»; наличие сечений и итог по партии подтверждает менеджер.',
+    links: [
+      { label: 'Доска обрезная', to: '/doska' },
+      { label: 'Сухая и строганая доска', to: '/suhaya-doska' },
+      { label: 'Вагонка', to: '/vagonka' },
+      { label: 'Имитация бруса', to: '/imitatsiya-brusa' },
+    ],
   },
   {
     question: 'Возите ли пиломатериалы по Санкт-Петербургу и области?',
     answer: 'Да. Доставляем по Санкт-Петербургу и Ленинградской области: по Ломоносовскому району, в Красное Село, Ропшу, Петергоф, Стрельну и Гатчину. Транспорт подбираем под объём, стоимость зависит от адреса и объёма партии, дату согласуем заранее, перед выездом водитель свяжется с вами.',
+    links: [{ label: 'Условия доставки', to: '/dostavka' }],
   },
   {
     question: 'Как оформить заказ и когда он считается подтверждённым?',
@@ -533,12 +543,14 @@ const homeFaq = [
 ]
 
 useSeoMeta({
-  title: 'Пилорама в Ломоносовском районе: доска, вагонка',
+  // Тексты 8.2 аудита: главная переведена под покупательский запрос
+  // «пиломатериалы от производителя», слово «пилорама» остаётся в надзаголовке.
+  title: 'Пиломатериалы от производителя: Ленобласть и СПб',
   description:
-    'Пилорама в Разбегаево, Ломоносовский район: доска обрезная и сухая, строганая доска, имитация бруса, вагонка, огнебиозащита. Цены производителя, доставка по СПб и Ленинградской области.',
-  ogTitle: 'Пилорама в Ленинградской области — Разбегаево',
+    'Купить пиломатериалы от производителя: доска обрезная от 4 500 ₽/м³, сухая и строганая, вагонка от 125 ₽/шт., имитация бруса. Пилорама в Разбегаево, доставка по СПб и ЛО.',
+  ogTitle: 'Пиломатериалы от производителя — Ленобласть и СПб',
   ogDescription:
-    'Доска, имитация бруса и вагонка с собственного производства. Цены за м³, доставка по Санкт-Петербургу и Ленинградской области.',
+    'Доска обрезная, сухая и строганая, вагонка и имитация бруса с собственного производства в Разбегаево. Цены от производителя, доставка по Санкт-Петербургу и Ленинградской области.',
   ogImage: `${siteUrl}/images/og/glavnaya.jpg`,
   ogType: 'website',
   ogUrl: `${siteUrl}/`,
@@ -550,13 +562,16 @@ useHead({
 })
 
 useSchemaOrg([
+  // `@id` совпадает с identity в nuxt.config.ts — узел LocalBusiness общий для
+  // всех страниц. Здесь не повторяем `@type` и `image`: они уже заданы в
+  // identity, а дублирование с другим значением давало на главной второй,
+  // расходящийся узел `#localbusiness`. name/url/telephone/address оставлены
+  // такими же, как в identity, — резолвер требует их для валидного LocalBusiness.
   defineLocalBusiness({
     '@id': `${siteUrl}/#localbusiness`,
-    '@type': 'HomeAndConstructionBusiness',
     name: 'Пилорама Разбегаево',
     url: `${siteUrl}/`,
     telephone: businessPhoneInternational,
-    image: `${siteUrl}/images/brushing-1.jpg`,
     address: {
       '@type': 'PostalAddress',
       streetAddress: businessAddress,
@@ -590,14 +605,14 @@ useSchemaOrg([
   <main class="home-page">
     <section class="hero" aria-labelledby="hero-title">
       <div class="hero__inner">
-        <p class="eyebrow eyebrow--on-dark">Собственное производство · Разбегаево</p>
-        <h1 id="hero-title">Пилорама<br>в Ленинградской области</h1>
+        <p class="eyebrow eyebrow--on-dark">Пилорама в Ломоносовском районе · Разбегаево</p>
+        <h1 id="hero-title">Пиломатериалы от производителя — пилорама в Ленинградской области</h1>
 
         <div class="hero__copy">
           <p class="hero__lead">
-            Производим доску, вагонку и имитацию бруса в Разбегаево под Санкт-Петербургом.
-            Пилим, сушим, строгаем и красим на своей площадке, доставляем
-            по СПб и Ленинградской области.
+            Купить пиломатериалы от производителя в Разбегаево: доска обрезная от 4 500 ₽/м³,
+            сухая и строганая доска, вагонка от 125 ₽/шт. и имитация бруса. Доставляем
+            по Санкт-Петербургу и Ленинградской области, самовывоз с площадки ежедневно.
           </p>
 
           <div class="hero__actions">
@@ -695,7 +710,7 @@ useSchemaOrg([
     <section class="production" aria-labelledby="production-title">
       <div class="production__heading">
         <p class="eyebrow eyebrow--on-dark">Собственное производство</p>
-        <h2 id="production-title">Распил, сушка,<br>строжка, покраска</h2>
+        <h2 id="production-title">Распил, сушка, <br>строжка, покраска</h2>
       </div>
       <div class="production__body">
         <p class="production__lead">
@@ -705,7 +720,10 @@ useSchemaOrg([
           <div><dt>01</dt><dd>Распил и сортировка древесины</dd></div>
           <div><dt>02</dt><dd>Камерная сушка материала</dd></div>
           <div><dt>03</dt><dd>Строгание и профилирование</dd></div>
-          <div><dt>04</dt><dd>Покраска и огнебиозащита</dd></div>
+          <div>
+            <dt>04</dt>
+            <dd><NuxtLink class="production__steps-link" to="/ognebiozashchita">Покраска и огнебиозащита</NuxtLink></dd>
+          </div>
         </dl>
         <NuxtLink class="text-link text-link--light" to="/o-nas">
           Подробнее о производстве
@@ -888,6 +906,7 @@ useSchemaOrg([
       <header class="section-heading section-heading--gallery">
         <div>
           <h2 id="gallery-title">Фото производства</h2>
+          <p class="section-heading__note">Кадры площадки в Разбегаево: распил, крытый склад, готовая продукция и отгрузка.</p>
         </div>
         <NuxtLink class="text-link" to="/foto">Все фотографии</NuxtLink>
       </header>
@@ -928,6 +947,9 @@ useSchemaOrg([
         <div v-for="item in homeFaq" :key="item.question" class="home-faq__item">
           <h3>{{ item.question }}</h3>
           <p>{{ item.answer }}</p>
+          <p v-if="item.links" class="home-faq__links">
+            <NuxtLink v-for="link in item.links" :key="link.to" class="text-link" :to="link.to">{{ link.label }}</NuxtLink>
+          </p>
         </div>
       </div>
     </section>
@@ -963,16 +985,20 @@ useSchemaOrg([
   padding: clamp(44px, 6vh, 72px) max(24px, calc((100vw - 1320px) / 2)) 0;
 }
 
+/* Заголовок стал длиннее (был «Пилорама в Ленинградской области»,
+   стало «Пиломатериалы от производителя — пилорама…»), поэтому кегль
+   уменьшен и `<br>` убран — строка сама переносится по словам на нужную
+   ширину и на 1280px, и на мобильных, без ручной разбивки */
 .hero h1 {
   position: relative;
   z-index: 1;
   margin: 0;
   overflow-wrap: normal;
   color: var(--color-paper);
-  font-size: clamp(3.1rem, 6.2vw, 6.1rem);
+  font-size: clamp(2.3rem, 3.6vw, 4.1rem);
   font-weight: 400;
   hyphens: none;
-  line-height: 1.02;
+  line-height: 1.08;
   word-break: normal;
 }
 
@@ -1098,6 +1124,15 @@ useSchemaOrg([
 .section-heading__aside p {
   max-width: 460px;
   margin-bottom: 24px;
+  color: rgb(32 35 31 / 85%);
+}
+
+/* Строка под заголовком секции: по шаблону аудита заголовок не должен стоять
+   над одной галереей без текста. */
+.section-heading__note {
+  max-width: 560px;
+  margin: 14px 0 0;
+  line-height: 1.55;
   color: rgb(32 35 31 / 85%);
 }
 
@@ -1236,6 +1271,19 @@ useSchemaOrg([
 
 .production__steps dd {
   margin: 0;
+}
+
+/* Ссылка внутри плитки шага — тот же цвет, что у текста шага, подчёркивание
+   вместо смены цвета: медь на forest не проходит контраст ниже 1rem */
+.production__steps-link {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color var(--motion-duration-ui) var(--motion-ease-out);
+}
+
+.production__steps-link:hover {
+  color: #d5a184;
 }
 
 .section-heading--gallery {
@@ -1600,7 +1648,7 @@ useSchemaOrg([
   }
 
   .hero h1 {
-    font-size: clamp(3rem, 10.5vw, 5.4rem);
+    font-size: clamp(2.1rem, 6.6vw, 3.4rem);
   }
 
   .hero__copy {
@@ -1642,7 +1690,7 @@ useSchemaOrg([
 
   .hero h1 {
     overflow-wrap: normal;
-    font-size: clamp(2.45rem, 11.8vw, 3.4rem);
+    font-size: clamp(1.9rem, 8.6vw, 2.6rem);
     hyphens: none;
     word-break: normal;
   }
@@ -1826,6 +1874,13 @@ useSchemaOrg([
   margin: 0;
   line-height: 1.6;
   color: rgb(32 35 31 / 85%);
+}
+
+.home-faq__item .home-faq__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 22px;
+  margin-top: 14px;
 }
 
 @media (max-width: 840px) {

@@ -49,7 +49,11 @@ const footnote = computed(() => [
           </tr>
         </thead>
         <tbody>
-          <tr v-for="row in rows" :key="`${formatSection(row.section)}-${row.lengthMm}`">
+          <tr
+            v-for="row in rows"
+            :id="`size-${row.section[0]}x${row.section[1]}x${row.lengthMm}`"
+            :key="`${formatSection(row.section)}-${row.lengthMm}`"
+          >
             <th scope="row">{{ formatSection(row.section) }}</th>
             <td>{{ row.lengthMm }}</td>
             <td>{{ formatVolume(row.pieceVolume) }}</td>

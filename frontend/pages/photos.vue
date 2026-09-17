@@ -36,77 +36,77 @@ const photos: ProductionPhoto[] = [
   {
     image: '/images/sklad-obrabotannoi-doski.jpg',
     alt: 'Штабели обработанной доски на крытом складе пилорамы',
-    caption: 'Крытый склад обработанной доски',
+    caption: 'Крытый склад: доска после обработки',
     width: 960,
     height: 1280,
   },
   {
     image: '/images/shtabel-suhoi-doski.jpg',
     alt: 'Штабели сухой доски в пачках на складе',
-    caption: 'Пачки сухой доски на складе',
+    caption: 'Сухая доска камерной сушки в пачках',
     width: 960,
     height: 1280,
   },
   {
     image: '/images/bruski-na-sklade.jpg',
     alt: 'Штабели строганого бруска на складе производства',
-    caption: 'Строганый брусок в штабелях',
+    caption: 'Брусок строганый 45×45 мм в штабелях',
     width: 719,
     height: 1280,
   },
   {
     image: '/images/pachki-reiki-i-bruska.jpg',
     alt: 'Пачки рейки и бруска, подготовленные к отгрузке',
-    caption: 'Рейка и брусок в пачках',
+    caption: 'Пачки строганой рейки 20×45 мм и бруска',
     width: 719,
     height: 1280,
   },
   {
     image: '/images/imitatsiya-brusa-upakovka.jpg',
     alt: 'Имитация бруса в защитной упаковке на складе',
-    caption: 'Имитация бруса в упаковке',
+    caption: 'Имитация бруса 20×145 мм в упаковке',
     width: 960,
     height: 1280,
   },
   {
     image: '/images/doska-s-ognebiozashchitoi.jpg',
     alt: 'Штабель доски, обработанной огнебиозащитным составом',
-    caption: 'Доска после обработки огнебиозащитой',
+    caption: 'Доска естественной влажности с огнебиозащитой',
     width: 1600,
     height: 1200,
   },
   {
     image: '/images/ploshchadka-otgruzka-pilomaterialov.jpg',
     alt: 'Производственная площадка с партией доски и машиной на отгрузке',
-    caption: 'Комплектование партии на площадке',
+    caption: 'Комплектование партии перед отгрузкой',
     width: 899,
     height: 1599,
   },
   {
     image: '/images/dostavka-pilomaterialov.jpg',
     alt: 'Машина с пиломатериалами на доставке у участка заказчика',
-    caption: 'Доставка заказа на участок',
+    caption: 'Доставка заказа на объект заказчика',
     width: 2048,
     height: 1538,
   },
   {
     image: '/images/brushing-1.jpg',
     alt: 'Крупный план обработанной хвойной доски на производственной линии',
-    caption: 'Поверхность доски после обработки',
+    caption: 'Крупный план доски после обработки',
     width: 2560,
     height: 3409,
   },
   {
     image: '/images/lumber-stack-2025-03-07.jpg',
     alt: 'Партия окрашенных досок на производственной линии',
-    caption: 'Партия доски перед комплектованием',
+    caption: 'Партия доски на производственной линии',
     width: 2560,
     height: 3409,
   },
   {
     image: '/images/sawn-board-stack-2025-04-02.jpg',
     alt: 'Штабель распиленной доски на площадке',
-    caption: 'Штабель распиленной доски',
+    caption: 'Штабель доски естественной влажности',
     width: 770,
     height: 1439,
   },
@@ -120,14 +120,14 @@ const photos: ProductionPhoto[] = [
   {
     image: '/images/timber-order-2025-05-16.jpg',
     alt: 'Образцы окрашенной древесины с различными вариантами покрытия',
-    caption: 'Образцы вариантов покрытия',
+    caption: 'Образцы вариантов покраски древесины',
     width: 972,
     height: 1296,
   },
   {
     image: '/images/sawmill-yard-1.jpg',
     alt: 'Образцы досок с разными вариантами окрашенной поверхности',
-    caption: 'Варианты обработки поверхности',
+    caption: 'Образцы окрашенной поверхности доски',
     width: 1080,
     height: 708,
   },
@@ -263,9 +263,16 @@ useSchemaOrg([
 <template>
   <main>
     <section class="max-[840px]:min-h-0 max-[560px]:px-[18px] max-[560px]:pb-10 max-[560px]:pt-[34px] grid min-h-[310px] items-center border-b border-(--color-ink) bg-(--color-sand) px-[max(24px,calc((100vw_-_1280px)/2))] pb-10 pt-14">
-      <div class="max-w-[760px] [&_h1]:mb-0">
+      <div class="max-w-[820px]">
         <p class="eyebrow">Производственная площадка</p>
-        <h1>Фото пилорамы и склада</h1>
+        <h1 class="mb-5">Фото пилорамы и склада</h1>
+        <p class="mb-4 max-w-[740px] text-[clamp(1.04rem,1.35vw,1.25rem)] leading-[1.55] text-(--color-ink)/85">
+          Здесь кадры нашей площадки в Разбегаево, а не стоковые фотографии: ленточная пилорама с бревном на подаче, крытый склад, пачки сухой доски, бруска и рейки, имитация бруса в упаковке и доска после огнебиозащитной обработки.
+        </p>
+        <p class="mb-0 max-w-[740px] leading-[1.6] text-(--color-ink)/85">
+          По ним видно, что материал проходит весь путь на одной территории — от распила до погрузки в машину. Подписи под кадрами называют позицию и сечение, чтобы было понятно, что именно лежит на складе. Любой кадр открывается во весь экран по клику, а цены на эти позиции собраны
+          в <NuxtLink to="/pilomaterialy" class="font-semibold underline underline-offset-4">каталоге пиломатериалов</NuxtLink>: наличие сечений подтверждает менеджер.
+        </p>
       </div>
     </section>
 

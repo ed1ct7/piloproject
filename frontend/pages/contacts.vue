@@ -147,7 +147,7 @@ useSchemaOrg([
         <ul class="m-0 grid max-w-[680px] list-disc gap-2 pl-5 leading-[1.55] text-(--color-ink)/85">
           <li>материал, сечение и длину;</li>
           <li>объём в кубометрах или количество штук;</li>
-          <li>нужна ли огнебиозащитная обработка;</li>
+          <li>нужна ли <NuxtLink to="/ognebiozashchita" class="font-semibold underline underline-offset-4">огнебиозащитная обработка</NuxtLink>;</li>
           <li>самовывоз из Разбегаево или адрес доставки.</li>
         </ul>
         <p class="mb-0 max-w-[680px] leading-[1.55] text-(--color-ink)/70">

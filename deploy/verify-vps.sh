@@ -24,12 +24,28 @@ require_status() {
 
 # В ответе на $2 (обычный GET) должен присутствовать заголовок $1
 # (сравнение регистронезависимое, как и у самих HTTP-заголовков).
+#
+# Сопоставление средствами bash, без `printf … | grep -q`: при `pipefail`
+# grep выходит по первому совпадению, `printf` получает SIGPIPE и возвращает
+# 141, и пайплайн считается упавшим, хотя строка нашлась. На больших телах
+# (страница 404 весит 75 КБ) это срабатывает стабильно.
 require_header() {
   local header="$1" url="$2" headers
   headers="$(curl --fail --silent --show-error -D - -o /dev/null "$url")" \
     || fail "не удалось получить $url для проверки заголовка $header"
-  printf '%s' "$headers" | tr -d '\r' | grep -qi "^${header}:" \
-    || fail "заголовок $header отсутствует в ответе $url"
+  headers=$'\n'"${headers//$'\r'/}"
+  shopt -s nocasematch
+  if [[ $headers != *$'\n'"$header":* ]]; then
+    shopt -u nocasematch
+    fail "заголовок $header отсутствует в ответе $url"
+  fi
+  shopt -u nocasematch
+}
+
+# Тело ответа $1 должно содержать подстроку $2, иначе падаем с текстом $3.
+require_body_contains() {
+  local body="$1" needle="$2" message="$3"
+  [[ $body == *"$needle"* ]] || fail "$message"
 }
 
 test "$(systemctl is-active nginx)" = active || fail "nginx не активен"
@@ -55,11 +71,17 @@ js_url="$base${js_file#"$site"}"
 
 js_headers="$(curl --fail --silent --show-error -D - -o /dev/null -H 'Accept-Encoding: gzip' "$js_url")" \
   || fail "не удалось получить $js_url с Accept-Encoding: gzip"
-printf '%s' "$js_headers" | tr -d '\r' | grep -qi '^Content-Encoding: *gzip' \
-  || fail "нет Content-Encoding: gzip на $js_url (Accept-Encoding: gzip)"
+js_headers="${js_headers//$'\r'/}"
+shopt -s nocasematch
+if [[ $js_headers != *"content-encoding: gzip"* ]]; then
+  shopt -u nocasematch
+  fail "нет Content-Encoding: gzip на $js_url (Accept-Encoding: gzip)"
+fi
+shopt -u nocasematch
 
-openssl s_client -alpn h2 -connect pilorama-razbegaevo.ru:443 -servername pilorama-razbegaevo.ru \
-  </dev/null 2>/dev/null | grep -q 'ALPN protocol: h2' \
+alpn_output="$(openssl s_client -alpn h2 -connect pilorama-razbegaevo.ru:443 \
+  -servername pilorama-razbegaevo.ru </dev/null 2>/dev/null || true)"
+[[ $alpn_output == *"ALPN protocol: h2"* ]] \
   || fail "ALPN не подтвердил h2 — HTTP/2 недоступен на 443"
 
 # --- Security-заголовки, включая /_nuxt/ и /_ipx/ (docs/security.md) ---
@@ -90,10 +112,9 @@ require_status "$base/not-found/index.html" 301
 missing_url="$base/no-such-page-check"
 require_status "$missing_url" 404
 missing_body="$(curl --silent "$missing_url")"
-printf '%s' "$missing_body" | grep -qi '<title' \
-  || fail "тело 404 без <title> на $missing_url"
-printf '%s' "$missing_body" | grep -q '/pilomaterialy' \
-  || fail "тело 404 без ссылки на /pilomaterialy на $missing_url"
+require_body_contains "$missing_body" '<title' "тело 404 без <title> на $missing_url"
+require_body_contains "$missing_body" '/pilomaterialy' \
+  "тело 404 без ссылки на /pilomaterialy на $missing_url"
 
 # --- Cache-Control на картинках (docs/seo-audit-2026-09-16.md, раздел 4) ---
 
@@ -103,7 +124,7 @@ require_header 'Cache-Control' "$base/images/video-poster.jpg"
 
 sitemap_body="$(curl --fail --silent "$base/sitemap.xml")" \
   || fail "не удалось получить $base/sitemap.xml"
-if printf '%s' "$sitemap_body" | grep -qi '<lastmod>'; then
+if [[ $sitemap_body == *"<lastmod>"* ]]; then
   fail "sitemap.xml содержит <lastmod> — autoLastmod должен быть выключен"
 fi
 

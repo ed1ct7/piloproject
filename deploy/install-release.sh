@@ -6,13 +6,17 @@ www_domain="www.pilorama-razbegaevo.ru"
 certbot_email="${CERTBOT_EMAIL:-shidov_roman@mail.ru}"
 site="/var/www/piloproject"
 
-cat > "$site/index.html" <<'HTML'
+if [ ! -s "/etc/letsencrypt/live/$domain/fullchain.pem" ]; then
+  # Заглушка нужна только до выпуска сертификата: certbot проверяет домен по
+  # HTTP, и в каталоге сайта должен быть хоть какой-то index.html. Раньше она
+  # писалась безусловно — на уже работающем сайте повторный запуск скрипта
+  # затирал главную страницу текстом «Сайт устанавливается».
+  cat > "$site/index.html" <<'HTML'
 <!doctype html>
 <html lang="ru"><meta charset="utf-8"><title>Установка сайта</title><p>Сайт устанавливается.</p>
 HTML
-chown -R www-data:www-data "$site"
+  chown -R www-data:www-data "$site"
 
-if [ ! -s "/etc/letsencrypt/live/$domain/fullchain.pem" ]; then
   cat > /etc/nginx/sites-available/piloproject <<EOF
 server {
     listen 80;

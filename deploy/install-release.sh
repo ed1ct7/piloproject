@@ -31,6 +31,12 @@ EOF
     -d "$domain" -d "$www_domain"
 fi
 
+# Security-заголовки — отдельным include-файлом, устанавливаем ДО основного
+# конфига: он на него ссылается через `include`, и без снипета `nginx -t`
+# упадёт с ошибкой отсутствующего файла.
+install -d -o root -g root -m 0755 /etc/nginx/snippets
+install -o root -g root -m 0644 /root/nginx-security-headers.conf /etc/nginx/snippets/piloproject-security-headers.conf
+
 install -o root -g root -m 0644 /root/nginx-piloproject.conf /etc/nginx/sites-available/piloproject
 ln -sfn /etc/nginx/sites-available/piloproject /etc/nginx/sites-enabled/piloproject
 rm -f /etc/nginx/sites-enabled/default

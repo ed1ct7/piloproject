@@ -13,7 +13,8 @@
 ## Сервер
 
 - HTTPS и security headers задаёт Nginx;
-- известное ограничение: в `location /_nuxt/` и `/_ipx/` есть собственные `add_header Cache-Control`, из-за правил наследования Nginx security-заголовки (включая CSP) на этих путях не отдаются — требуется дублирование заголовков в этих `location`;
+- все security-заголовки (CSP, `Permissions-Policy`, `Referrer-Policy`, `X-Content-Type-Options`, `X-Frame-Options`, `Strict-Transport-Security`) вынесены в отдельный include-файл `deploy/nginx-security-headers.conf` (на сервере — `/etc/nginx/snippets/piloproject-security-headers.conf`) и подключаются директивой `include` и в основном `server`, и повторно в каждом `location`, где есть свой `add_header` (`/_nuxt/`, `/_ipx/` и файлы с собственным `Cache-Control`). Nginx наследует `add_header` от родительского уровня только если в текущем блоке нет ни одного собственного `add_header`; `include` подставляет строки файла как часть текущего блока ещё до применения этого правила наследования, поэтому заголовки отдаются одинаково везде, включая `/_nuxt/` и `/_ipx/`;
+- HSTS: `Strict-Transport-Security: max-age=2592000` (30 дней), без `preload` и без `includeSubDomains`. Срок короткий, а не год и не `preload`, — сайт и его TLS/nginx-конфиг ещё меняются, а `preload` и `includeSubDomains` практически необратимы (домен из preload-списка браузеров быстро не убрать, а `includeSubDomains` требует, чтобы HTTPS уже работал на всех будущих поддоменах). Срок можно наращивать постепенно после того, как текущий конфиг отработает стабильно;
 - access log отключён;
 - error log ограничен уровнем `crit`;
 - в репозитории нет секретов и production-значений.

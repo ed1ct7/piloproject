@@ -4,7 +4,7 @@ test.use({ javaScriptEnabled: false })
 
 test('каталог содержит предложение, характеристики и условия покупки без JavaScript', async ({ page }) => {
   await page.goto('/pilomaterialy')
-  await expect(page).toHaveTitle('Каталог пиломатериалов: цены за куб и за штуку · Пилорама Разбегаево')
+  await expect(page).toHaveTitle('Пиломатериалы в СПб и ЛО: цены за куб и за штуку · Пилорама Разбегаево')
   await expect(page.locator('h1')).toHaveText('Каталог пиломатериалов и цены за куб и за штуку')
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', 'https://pilorama-razbegaevo.ru/pilomaterialy')
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /^index, follow/)

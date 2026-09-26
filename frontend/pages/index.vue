@@ -606,7 +606,7 @@ useSchemaOrg([
     <section class="hero" aria-labelledby="hero-title">
       <div class="hero__inner">
         <p class="eyebrow eyebrow--on-dark">Пилорама в Ломоносовском районе · Разбегаево</p>
-        <h1 id="hero-title">Пиломатериалы от производителя — пилорама в Ленинградской области</h1>
+        <h1 id="hero-title">Пиломатериалы от производителя в СПб и Ленинградской области</h1>
 
         <div class="hero__copy">
           <p class="hero__lead">

@@ -10,9 +10,18 @@ import type { NuxtError } from '#app'
  * п. 9. Общий компонент не выносим: правки в `frontend/components/` вне
  * задачи этого релиза.
  */
-defineProps<{
+const props = defineProps<{
   error: NuxtError
 }>()
+
+/**
+ * Настоящая «страница не найдена» — только ответ 404. Любая другая ошибка
+ * (прежде всего сбой загрузки JS-чанка при старте, когда Nuxt вызывает
+ * `showError` из `router.isReady()`) случается поверх уже отданной
+ * пререндеренной страницы, и `noindex` с чужим title в этом случае выбивал
+ * рабочие страницы из поиска Яндекса, см. `docs/seo-plan-2026-09.md`, §11.
+ */
+const isNotFound = computed(() => (props.error.statusCode ?? props.error.status) === 404)
 
 // `error.vue` заменяет собой `app.vue` целиком (см. `NuxtRoot`), поэтому
 // глобальные `htmlAttrs.lang` и `titleTemplate` из `app.vue` здесь не
@@ -21,10 +30,17 @@ useHead({
   htmlAttrs: { lang: 'ru' },
 })
 
+// Title и robots меняем только для 404; для остальных ошибок остаются
+// значения из пререндеренного HTML страницы.
 useSeoMeta({
-  title: 'Страница не найдена · Пилорама Разбегаево',
-  robots: 'noindex, nofollow',
+  title: () => isNotFound.value ? 'Страница не найдена · Пилорама Разбегаево' : undefined,
+  robots: () => isNotFound.value ? 'noindex, nofollow' : undefined,
 })
+
+/** Перезагружает текущую страницу после сбоя, отличного от 404. */
+function reloadPage(): void {
+  window.location.reload()
+}
 
 /** Те же пять посадочных, что в подменю шапки и в `pages/not-found.vue`. */
 const landingLinks: { label: string, to: string }[] = [
@@ -51,13 +67,22 @@ async function goTo(path: string): Promise<void> {
   <NuxtLayout>
     <main>
       <section class="max-[560px]:px-[18px] max-[560px]:pb-9 max-[560px]:pt-8 border-b border-(--color-ink) bg-(--color-sand) px-[max(24px,calc((100vw_-_1280px)/2))] pb-12 pt-14" aria-labelledby="error-title">
-        <div class="max-w-[680px]">
-          <p class="eyebrow">Ошибка {{ error.statusCode ?? error.status ?? 404 }}</p>
+        <div v-if="isNotFound" class="max-w-[680px]">
+          <p class="eyebrow">Ошибка 404</p>
           <h1 id="error-title" class="mb-6">Страница не найдена</h1>
           <p class="mb-0 max-w-[560px] text-[clamp(1.04rem,1.35vw,1.25rem)] leading-[1.55] text-(--color-ink)/85">
             Такой страницы нет — возможно, адрес устарел или введён с ошибкой. Ниже — каталог,
             посадочные страницы и контакты пилорамы в Разбегаево.
           </p>
+        </div>
+        <div v-else class="max-w-[680px]">
+          <p class="eyebrow">Ошибка загрузки</p>
+          <h1 id="error-title" class="mb-6">Не удалось загрузить страницу</h1>
+          <p class="mb-6 max-w-[560px] text-[clamp(1.04rem,1.35vw,1.25rem)] leading-[1.55] text-(--color-ink)/85">
+            Часть страницы не загрузилась — обычно из-за перебоя связи. Обновите страницу
+            или перейдите в нужный раздел по ссылкам ниже.
+          </p>
+          <button type="button" class="w-max cursor-pointer border-0 border-b-2 border-current bg-transparent px-0 pb-[3px] font-[Segoe_UI,Arial,sans-serif] font-[760] text-(--color-forest) transition-colors duration-150 hover:text-(--color-copper)" @click="reloadPage">Обновить страницу</button>
         </div>
       </section>
 

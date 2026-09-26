@@ -124,6 +124,35 @@ if errors:
 PY
 
 mv "$public" "$staging"
+
+# Старые файлы /_nuxt/ переносим в новый релиз и держим 30 дней с момента,
+# когда их перестала использовать сборка. Иначе HTML, скачанный до деплоя
+# (кэш браузера, отложенный JS-рендер робота Яндекса), ссылается на удалённые
+# чанки — Nuxt падает при старте, см. docs/seo-plan-2026-09.md, §11.
+# Список перенесённых файлов лежит вне корня сайта: у файла из списка уже
+# стоит mtime «перестал использоваться», у файла прошлой сборки его ставим
+# сейчас, и по нему же считаем 30 дней.
+carried_list="/var/www/.piloproject-carried-assets"
+new_carried_list="$work_dir/carried-assets"
+: > "$new_carried_list"
+while IFS= read -r -d '' old_file; do
+  name="${old_file#"$site/_nuxt/"}"
+  case "$name" in (builds/latest.json) continue ;; esac
+  target="$staging/_nuxt/$name"
+  test -e "$target" && continue
+  mkdir -p "$(dirname "$target")"
+  cp -p "$old_file" "$target"
+  if ! grep -qxF "$name" "$carried_list" 2>/dev/null; then
+    touch "$target"
+  fi
+  if [ -n "$(find "$target" -mtime +30)" ]; then
+    rm -f -- "$target"
+  else
+    printf '%s\n' "$name" >> "$new_carried_list"
+  fi
+done < <(find "$site/_nuxt" -type f -print0)
+printf 'Carried over %s old /_nuxt files\n' "$(wc -l < "$new_carried_list")"
+
 nginx -t
 
 mv "$site" "$backup"
@@ -164,6 +193,7 @@ done
 ls -d /var/www/piloproject.backup-* 2>/dev/null | sort | head -n -3 | xargs -r rm -rf --
 
 printf '%s\n' "$commit" > /var/www/.piloproject-deployed-commit
+cp "$new_carried_list" "$carried_list"
 rm -rf -- "$work_dir"
 trap - EXIT
 

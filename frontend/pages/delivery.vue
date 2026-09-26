@@ -5,7 +5,7 @@ definePageMeta({
 
 useSeoMeta({
   title: 'Доставка пиломатериалов по СПб и Ленобласти',
-  description: 'Куда возим пиломатериалы из Разбегаево: Санкт-Петербург, Ломоносовский район, Красное Село, Ропша, Петергоф, Стрельна, Гатчина. Порядок доставки и самовывоза.',
+  description: 'Доставка пиломатериалов из Разбегаево по Санкт-Петербургу и всей Ленинградской области. Адрес, стоимость и сроки — по телефону. Порядок доставки и самовывоза.',
   ogTitle: 'Доставка пиломатериалов из Разбегаево',
   ogDescription: 'Порядок самовывоза и согласования доставки доски, вагонки и других пиломатериалов.',
   ogImage: `${siteUrl}/images/og/dostavka.jpg`,
@@ -44,22 +44,6 @@ const deliverySteps = [
     text: 'Подготовим и погрузим пиломатериалы, перед выездом водитель свяжется с вами. Оплата — по факту отгрузки.',
   },
 ]
-
-/**
- * Куда возим заказы — список строго из `areaServed` в `nuxt.config.ts`.
- * @note новые населённые пункты добавляются сначала туда, иначе разметка
- *       LocalBusiness и текст страницы разойдутся
- */
-const deliveryAreas = [
-  'Санкт-Петербург',
-  'Ломоносовский район',
-  'Разбегаево',
-  'Красное Село',
-  'Ропша',
-  'Петергоф',
-  'Стрельна',
-  'Гатчина',
-]
 </script>
 
 <template>
@@ -70,40 +54,12 @@ const deliveryAreas = [
           <p class="eyebrow">Получение заказа</p>
           <h1 id="delivery-title">Доставка пиломатериалов и&nbsp;самовывоз</h1>
           <p class="delivery-hero__lead">
-            Привезём заказ по Санкт-Петербургу и Ленинградской области или подготовим
-            его к самовывозу с производства в Разбегаево.
+            Привезём заказ по Санкт-Петербургу и всей Ленинградской области или подготовим
+            его к самовывозу с производства в Разбегаево. Адрес, стоимость и сроки
+            доставки согласуем по телефону.
           </p>
         </div>
 
-      </div>
-    </section>
-
-    <section class="delivery-area" aria-labelledby="area-title">
-      <header class="section-heading">
-        <h2 id="area-title">Куда возим пиломатериалы</h2>
-      </header>
-
-      <div class="delivery-area__body">
-        <p>
-          Площадка стоит в деревне Разбегаево, Горбунковское сельское поселение
-          Ломоносовского района. Отсюда возим доску, брусок, рейку, имитацию бруса
-          и вагонку по Санкт-Петербургу и Ленинградской области — чаще всего
-          в ближние к площадке районы и посёлки:
-        </p>
-
-        <ul class="delivery-area__list">
-          <li v-for="area in deliveryAreas" :key="area">{{ area }}</li>
-        </ul>
-
-        <p>
-          Если вашего адреса в списке нет, назовите его менеджеру: маршрут и
-          стоимость он считает по каждому заказу отдельно, вместе с объёмом партии.
-        </p>
-        <p>
-          Учитывайте длину материала при выборе машины: доска идёт длиной 6 метров,
-          имитация бруса — 3 и 6 метров, вагонка — 3 метра. Под самую длинную позицию
-          в заказе и подбирается транспорт.
-        </p>
       </div>
     </section>
 
@@ -202,56 +158,6 @@ const deliveryAreas = [
   color: rgb(32 35 31 / 85%);
   font-size: clamp(1.04rem, 1.35vw, 1.25rem);
   line-height: 1.55;
-}
-
-/* Секция географии доставки — светлая плашка между hero и порядком заказа */
-.delivery-area {
-  padding: 56px 24px;
-  border-bottom: 1px solid var(--color-ink);
-  background: var(--color-paper);
-}
-
-.delivery-area__body {
-  display: grid;
-  max-width: 1200px;
-  margin: 0 auto;
-  gap: 1rem;
-}
-
-.delivery-area__body p {
-  max-width: 760px;
-  margin-bottom: 0;
-  color: rgb(32 35 31 / 85%);
-  line-height: 1.55;
-}
-
-.delivery-area__list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 0 clamp(20px, 3vw, 48px);
-  max-width: 1000px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.delivery-area__list li {
-  position: relative;
-  padding: 0.6rem 0 0.6rem 1.35rem;
-  border-bottom: 1px solid var(--color-line);
-  color: rgb(32 35 31 / 85%);
-  font-size: 0.98rem;
-  line-height: 1.45;
-}
-
-.delivery-area__list li::before {
-  position: absolute;
-  top: 1.05rem;
-  left: 0;
-  width: 6px;
-  height: 6px;
-  background: var(--color-copper);
-  content: "";
 }
 
 /* Вторая секция тела страницы — как на остальных страницах, граница сохраняется на последней секции */
@@ -437,7 +343,6 @@ const deliveryAreas = [
     padding-block: 64px;
   }
 
-  .delivery-area,
   .receiving {
     padding-block: 56px;
   }
@@ -488,7 +393,6 @@ const deliveryAreas = [
     font-size: 1rem;
   }
 
-  .delivery-area,
   .receiving {
     padding: 44px 18px;
   }

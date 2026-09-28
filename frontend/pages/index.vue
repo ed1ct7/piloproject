@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { PriceListProduct } from '~/utils/products'
+
 const featuredProductIds = new Set([
   'doska-ev-sort-2',
   'doska-suhaya-kamernoi-sushki',
@@ -579,17 +581,31 @@ useSchemaOrg([
       addressRegion: 'Ленинградская область',
       addressCountry: 'RU',
     },
-    makesOffer: priceListProducts.filter((product) => product.price !== null).map((product) =>
-      defineOffer({
-        price: product.price ?? undefined,
-        priceCurrency: 'RUB',
-        itemOffered: defineProduct({
+    // Каталог организации: у каждого Product своя цена «от …» (AggregateOffer с
+    // lowPrice, как на /pilomaterialy). Прежняя схема makesOffer → Offer →
+    // itemOffered → Product оставляла Product без `offers`, и Search Console
+    // помечал все позиции главной критической ошибкой в «Сниппетах товаров».
+    // Позиции с ценой «по запросу» (price: null) исключены по той же причине.
+    hasOfferCatalog: {
+      '@type': 'OfferCatalog',
+      name: 'Пиломатериалы пилорамы в Разбегаево',
+      url: `${siteUrl}/pilomaterialy`,
+      itemListElement: priceListProducts
+        .filter((product): product is PriceListProduct & { price: number } => product.price !== null)
+        .map((product) => ({
+          '@type': 'Product',
           name: product.title,
           description: product.description,
           image: `${siteUrl}${product.image}`,
-        }),
-      }),
-    ),
+          offers: {
+            '@type': 'AggregateOffer',
+            lowPrice: product.price,
+            priceCurrency: 'RUB',
+            availability: 'https://schema.org/InStock',
+            url: `${siteUrl}/pilomaterialy`,
+          },
+        })),
+    },
   }),
   defineWebPage({
     '@type': ['WebPage', 'FAQPage'],

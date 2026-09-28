@@ -122,7 +122,15 @@ watch(
     <header class="site-header sticky top-0 z-30 min-h-[76px]" @keydown.esc="handleNavigationEscape">
       <div class="max-[1100px]:grid-cols-[minmax(220px,1fr)_auto] max-[840px]:min-h-16 max-[840px]:w-[calc(100%-32px)] max-[840px]:grid-cols-[1fr_auto_auto] max-[560px]:grid-cols-[1fr_auto] relative mx-auto grid min-h-[76px] w-[min(1320px,calc(100%_-_48px))] grid-cols-[minmax(255px,1fr)_auto_auto_auto] items-center">
         <NuxtLink class="site-logo max-[560px]:gap-[9px] inline-flex min-w-0 w-max items-center gap-[13px] no-underline" to="/" aria-label="Пилорама Разбегаево, главная страница">
-          <span class="site-logo__mark max-[840px]:size-9 grid size-11 place-items-center text-sm text-(--color-paper)" aria-hidden="true">ПР</span>
+          <!-- Знак из favicon.svg — три доски в штабеле. Фон у span, а не в SVG:
+               на него завязан hover (медь) и обводка в шапке. -->
+          <span class="site-logo__mark max-[840px]:size-9 grid size-11 place-items-center" aria-hidden="true">
+            <svg class="size-full" viewBox="0 0 64 64" focusable="false">
+              <rect class="fill-(--color-cream)" x="11" y="15" width="42" height="9" rx="4.5" />
+              <rect class="fill-(--color-sand)" x="17" y="27.5" width="36" height="9" rx="4.5" />
+              <rect class="fill-(--color-cream)" x="11" y="40" width="42" height="9" rx="4.5" />
+            </svg>
+          </span>
           <span class="grid leading-[1.05]">
             <strong class="site-logo__title max-[360px]:text-[0.98rem] text-[1.08rem] font-normal">Пилорама Разбегаево</strong>
             <small class="max-[360px]:hidden mt-1 text-[0.68rem] font-semibold uppercase tracking-[0.13em] text-(--color-ink)/70">Собственное производство</small>
@@ -328,16 +336,14 @@ watch(
   pointer-events: none;
 }
 
+/* Скругление как у favicon.svg: rx 14 на стороне 64. */
 .site-logo__mark {
   background: var(--color-forest);
-  border-radius: 50%;
-  font-family: Georgia, 'Times New Roman', serif;
-  letter-spacing: 0.06em;
+  border-radius: 22%;
   transform-origin: center;
   transition:
     transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
-    background-color 220ms ease,
-    color 220ms ease;
+    background-color 220ms ease;
 }
 
 .site-logo__title,
@@ -554,9 +560,10 @@ watch(
   transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+/* Фон знака (#183126) почти совпадает с фоном шапки (#12271e) — светлая
+   внутренняя обводка держит форму квадрата, не меняя его размер. */
 .site-header .site-logo__mark {
-  background: var(--color-cream);
-  color: var(--color-forest-deep);
+  box-shadow: inset 0 0 0 1px var(--color-line-light);
 }
 
 .site-header .site-logo small {
@@ -619,13 +626,6 @@ watch(
   .site-logo:hover .site-logo__mark {
     background: var(--color-copper);
     transform: rotate(-3deg) scale(1.04);
-  }
-
-  /* В шапке круг лого кремовый с тёмными буквами, а на hover фон уходит в медь —
-     без светлого текста «ПР» сливается с медью. Селектор со `.site-header`
-     перебивает `.site-header .site-logo__mark` по специфичности */
-  .site-header .site-logo:hover .site-logo__mark {
-    color: var(--color-paper);
   }
 
   .primary-navigation > a:hover {

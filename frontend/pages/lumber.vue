@@ -392,7 +392,10 @@ useSchemaOrg([
         >
           <h2 :id="group.id" class="catalog-group__title">{{ group.heading }}</h2>
 
-          <TransitionGroup name="catalog-products" tag="div" class="grid auto-rows-fr grid-cols-4 gap-5 max-[1180px]:grid-cols-3 max-[900px]:grid-cols-2 max-[560px]:grid-cols-1">
+          <!-- Без `name`: SSR Vue выводит все props TransitionGroup, кроме `tag`,
+               атрибутами обёртки, и `<div name="…">` — ошибка валидатора W3C.
+               Классы анимации — стандартные `v-*`, см. стили ниже. -->
+          <TransitionGroup tag="div" class="grid auto-rows-fr grid-cols-4 gap-5 max-[1180px]:grid-cols-3 max-[900px]:grid-cols-2 max-[560px]:grid-cols-1">
             <article
               v-for="product in group.products"
               :key="product.id"
@@ -714,14 +717,16 @@ useSchemaOrg([
   background-color: var(--color-forest);
 }
 
-.catalog-products-enter-active,
-.catalog-products-leave-active,
-.catalog-products-move {
+/* Классы TransitionGroup каталога без `name` (см. шаблон); `scoped` не даёт
+   им задеть другие переходы — у тех свои имена. */
+.v-enter-active,
+.v-leave-active,
+.v-move {
   transition: opacity 180ms cubic-bezier(0.23, 1, 0.32, 1), transform 180ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 
-.catalog-products-enter-from,
-.catalog-products-leave-to {
+.v-enter-from,
+.v-leave-to {
   opacity: 0;
   transform: scale(0.985);
 }
@@ -738,14 +743,14 @@ useSchemaOrg([
     transition-property: color, background-color;
   }
 
-  .catalog-products-enter-active,
-  .catalog-products-leave-active,
-  .catalog-products-move {
+  .v-enter-active,
+  .v-leave-active,
+  .v-move {
     transition: opacity 160ms ease;
   }
 
-  .catalog-products-enter-from,
-  .catalog-products-leave-to {
+  .v-enter-from,
+  .v-leave-to {
     transform: none;
   }
 }

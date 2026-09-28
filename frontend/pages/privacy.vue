@@ -11,7 +11,7 @@ useSeoMeta({
 })
 
 useHead({
-  htmlAttrs: { lang: 'ru' },
+  htmlAttrs: { lang: 'ru-RU' },
   link: [{ rel: 'canonical', href: `${siteUrl}/politika-konfidencialnosti` }],
 })
 

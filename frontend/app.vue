@@ -3,7 +3,7 @@ const route = useRoute()
 
 useHead({
   htmlAttrs: {
-    lang: 'ru',
+    lang: 'ru-RU',
   },
   titleTemplate: (title) => {
     if (!title) {

@@ -27,7 +27,7 @@ const isNotFound = computed(() => (props.error.statusCode ?? props.error.status)
 // глобальные `htmlAttrs.lang` и `titleTemplate` из `app.vue` здесь не
 // применяются — оба задаём на месте, title сразу с суффиксом бренда.
 useHead({
-  htmlAttrs: { lang: 'ru' },
+  htmlAttrs: { lang: 'ru-RU' },
 })
 
 // Title и robots меняем только для 404; для остальных ошибок остаются

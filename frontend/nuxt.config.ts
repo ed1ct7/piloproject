@@ -45,7 +45,7 @@ export default defineNuxtConfig({
   site: {
     url: siteUrl,
     name: 'Пилорама Разбегаево',
-    defaultLocale: 'ru',
+    defaultLocale: 'ru-RU',
   },
 
   app: {

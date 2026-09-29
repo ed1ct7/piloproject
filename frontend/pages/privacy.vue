@@ -43,7 +43,7 @@ useSchemaOrg([
       <p>Настоящая политика относится к сайту <a :href="siteUrl">pilorama-razbegaevo.ru</a>.</p>
 
       <h2>1. Владелец сайта</h2>
-      <p><strong>{{ businessRequisites.fullName }}</strong><br>ИНН: {{ businessRequisites.inn }}<br>ОГРНИП: {{ businessRequisites.ogrnip }}</p>
+      <p><span class="font-bold">{{ businessRequisites.fullName }}</span><br>ИНН: {{ businessRequisites.inn }}<br>ОГРНИП: {{ businessRequisites.ogrnip }}</p>
       <p>Зарегистрирован: {{ businessRequisites.registrationAuthority }}, дата регистрации {{ businessRequisites.registrationDate }}.</p>
       <p>Адрес производственной площадки: {{ businessAddress }}.</p>
       <p>Режим работы: {{ businessWorkingHours.toLowerCase() }}.</p>

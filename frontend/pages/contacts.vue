@@ -39,9 +39,9 @@ useSchemaOrg([
 
       <address class="max-[560px]:min-h-0 max-[560px]:border-l-0 max-[560px]:border-t max-[560px]:border-(--color-ink) max-[560px]:px-5 max-[560px]:py-[34px] flex flex-col justify-center border-l border-(--color-ink) bg-(--color-copper) px-8 py-10 text-(--color-paper)">
         <span class="mb-5 font-[Segoe_UI,Arial,sans-serif] text-sm font-[760] uppercase leading-[1.4] tracking-[0.04em]">Адрес</span>
-        <strong class="mb-1">Производственная площадка</strong>
+        <span class="mb-1 font-bold">Производственная площадка</span>
         <span>{{ businessAddress }}</span>
-        <strong class="mb-1 mt-5">Режим работы</strong>
+        <span class="mb-1 mt-5 font-bold">Режим работы</span>
         <span>{{ businessWorkingHours }}</span>
         <a
           class="mt-6 inline-flex min-h-12 w-max items-center justify-center border border-(--color-paper) px-5 py-3 font-[Segoe_UI,Arial,sans-serif] font-[760] text-(--color-paper) no-underline transition-colors duration-150 hover:bg-(--color-paper) hover:text-(--color-copper)"

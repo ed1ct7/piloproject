@@ -132,7 +132,7 @@ watch(
             </svg>
           </span>
           <span class="grid leading-[1.05]">
-            <strong class="site-logo__title max-[360px]:text-[0.98rem] text-[1.08rem] font-normal">Пилорама Разбегаево</strong>
+            <span class="site-logo__title max-[360px]:text-[0.98rem] text-[1.08rem] font-normal">Пилорама Разбегаево</span>
             <small class="max-[360px]:hidden mt-1 text-[0.68rem] font-semibold uppercase tracking-[0.13em] text-(--color-ink)/70">Собственное производство</small>
           </span>
         </NuxtLink>
@@ -222,7 +222,7 @@ watch(
 
     <footer class="site-footer max-[840px]:grid-cols-2 max-[840px]:gap-10 max-[560px]:grid-cols-1 max-[560px]:px-5 max-[560px]:pt-12 grid grid-cols-[1.6fr_0.8fr_0.8fr] gap-16 bg-(--color-forest-deep) px-[max(24px,calc((100vw_-_1320px)/2))] pb-6 pt-16 text-(--color-paper)">
       <div class="max-[840px]:col-span-full max-[560px]:col-auto">
-        <strong class="site-footer__title block max-w-[560px] text-[clamp(2rem,3vw,3.5rem)] font-normal leading-[1.02]">Пилорама<br>Разбегаево</strong>
+        <span class="site-footer__title block max-w-[560px] text-[clamp(2rem,3vw,3.5rem)] font-normal leading-[1.02]">Пилорама<br>Разбегаево</span>
       </div>
 
       <nav class="flex flex-col items-start gap-3 [&_a]:no-underline [&_a]:text-(--color-sand) [&_a:hover]:text-(--color-copper)" aria-label="Навигация в подвале">

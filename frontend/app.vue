@@ -1,13 +1,24 @@
 <script setup lang="ts">
 const route = useRoute()
 
+/**
+ * Title из пререндеренного HTML — запас, когда страница свой title не задала.
+ * Так бывает у робота при сбое чанка лейаута: Nuxt оставляет боту SSR-разметку,
+ * но `useSeoMeta` страницы не регистрируется, и title падал до «Пилорама
+ * Разбегаево» (/doska и /imitatsiya-brusa в поиске Яндекса 21.09.2026). Тот же
+ * запас держит title страницы под не-404 ошибкой из `error.vue`. Только для
+ * адреса первой загрузки: после клиентского перехода он чужой.
+ */
+const prerenderedTitle = import.meta.client ? document.title : ''
+const prerenderedPath = route.path
+
 useHead({
   htmlAttrs: {
     lang: 'ru-RU',
   },
   titleTemplate: (title) => {
     if (!title) {
-      return 'Пилорама Разбегаево'
+      return prerenderedTitle && route.path === prerenderedPath ? prerenderedTitle : 'Пилорама Разбегаево'
     }
 
     return title.includes('Пилорама Разбегаево') ? title : `${title} · Пилорама Разбегаево`

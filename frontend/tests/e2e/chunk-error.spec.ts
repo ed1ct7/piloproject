@@ -34,6 +34,52 @@ for (const { path, title } of routes) {
   })
 }
 
+/**
+ * Роботу Nuxt страницу ошибки не показывает (проверка User-Agent на бота):
+ * при сбое чанка лейаута SSR-разметка остаётся, но `useSeoMeta` страницы не
+ * регистрируется. До фикса в `app.vue` title падал до «Пилорама Разбегаево» —
+ * с таким title `/doska` и `/imitatsiya-brusa` попали в поиск Яндекса
+ * 21.09.2026. Обрываем по очереди каждый чанк, кроме entry.
+ */
+test.describe('робот: сбой любого чанка не меняет title', () => {
+  test.use({ userAgent: 'Mozilla/5.0 (compatible; YandexBot/3.0; +http://yandex.com/bots)' })
+
+  for (const path of ['/', '/doska', '/pilomaterialy']) {
+    test(`${path}: title и robots как в пререндере`, async ({ page, context }) => {
+      test.setTimeout(90_000)
+      const chunks = new Set<string>()
+      page.on('request', (request) => {
+        const { pathname } = new URL(request.url())
+        if (pathname.startsWith('/_nuxt/') && pathname.endsWith('.js')) {
+          chunks.add(pathname)
+        }
+      })
+      const response = await page.goto(path, { waitUntil: 'networkidle' })
+      const entry = ((await response?.text()) ?? '').match(/<script type="module" src="(\/_nuxt\/[^"]+\.js)"/)?.[1]
+      const title = await page.title()
+      expect(entry, 'entry-скрипт в HTML').toBeTruthy()
+      expect(chunks.size, 'динамические чанки').toBeGreaterThan(1)
+
+      for (const chunk of chunks) {
+        if (chunk === entry) {
+          continue
+        }
+        const broken = await context.newPage()
+        await broken.route('**/_nuxt/*.js', (route) => {
+          return new URL(route.request().url()).pathname === chunk ? route.abort() : route.continue()
+        })
+        await broken.goto(path, { waitUntil: 'networkidle' })
+        await expect(broken, `title при сбое ${chunk}`).toHaveTitle(title)
+        const robots = await broken.locator('meta[name="robots"]').evaluateAll((elements) => {
+          return elements.map((element) => element.getAttribute('content') ?? '')
+        })
+        expect(robots.join(' | '), `meta robots при сбое ${chunk}`).not.toContain('noindex')
+        await broken.close()
+      }
+    })
+  }
+})
+
 test('несуществующая посадочная при клиентском переходе — 404 с noindex', async ({ page }) => {
   await page.goto('/')
   await page.waitForFunction(() => Boolean((document.querySelector('#__nuxt') as { __vue_app__?: unknown } | null)?.__vue_app__))

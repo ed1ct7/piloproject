@@ -214,6 +214,8 @@ const deliveryAreas = [
 
 .delivery-area__body {
   display: grid;
+  /* minmax(0, 1fr): иначе колонку раздувает список auto-fill и на телефоне текст обрезается */
+  grid-template-columns: minmax(0, 1fr);
   max-width: 1200px;
   margin: 0 auto;
   gap: 1rem;

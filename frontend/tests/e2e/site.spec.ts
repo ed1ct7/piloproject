@@ -337,6 +337,22 @@ test('главные страницы сохраняют reflow на узком 
   }
 })
 
+test('список направлений на /dostavka не шире экрана на телефоне', async ({ page }) => {
+  // Обрезанный текст не даёт горизонтальной прокрутки, поэтому сверяем края блоков с секцией.
+  await page.setViewportSize({ width: 320, height: 720 })
+  await page.goto('/dostavka')
+
+  const overflow = await page.evaluate(() => {
+    const body = document.querySelector('.delivery-area__body')
+    if (!body) return ['нет .delivery-area__body']
+    const right = body.getBoundingClientRect().right
+    return [...body.children]
+      .filter((child) => child.getBoundingClientRect().right > right + 1)
+      .map((child) => child.tagName)
+  })
+  expect(overflow).toEqual([])
+})
+
 test('видео имеет русскую текстовую альтернативу звуковой дорожке', async ({ page }) => {
   await page.goto('/')
 

@@ -12,6 +12,99 @@ const featuredProducts = priceListProducts.filter((product) =>
 )
 
 /**
+ * Обзор ассортимента для текстового блока «Какие пиломатериалы можно купить».
+ * @note сечения и цены здесь не повторяем: каталог их уже показывает, а ссылки
+ *       ведут на страницы, где лежат подробные таблицы
+ */
+const lumberTypes = [
+  {
+    title: 'Доска обрезная естественной влажности',
+    to: '/doska',
+    text: 'Обрезная доска I, II и III сорта без сушки в камере. Её берут для каркасов, стропил, опалубки и обрешётки — туда, где материал не остаётся на виду.',
+  },
+  {
+    title: 'Сухая доска камерной сушки и строганая доска',
+    to: '/suhaya-doska',
+    text: 'Сухая доска камерной сушки подходит для работ, где важна стабильность размеров. Сухая строганая доска с гладкой поверхностью нужна для пола, мебели и видимых конструкций.',
+  },
+  {
+    title: 'Брусок и рейка',
+    to: '/pilomaterialy',
+    text: 'Строганый брусок 45×45 мм и строганая рейка 20×45 мм берут для обрешётки, контробрешётки и каркаса под обшивку. Длину уточняйте у менеджера.',
+  },
+  {
+    title: 'Имитация бруса',
+    to: '/imitatsiya-brusa',
+    text: 'Профилированная доска 20×145 мм длиной 3 и 6 метров: стены, потолки и фасады, обшитые ею, получают вид бруса.',
+  },
+  {
+    title: 'Евровагонка и вагонка «Штиль»',
+    to: '/vagonka',
+    text: 'Хвойная вагонка толщиной 12,5 мм: евровагонка шириной 95 мм и «Штиль» шириной 120 мм, длина 3 метра. Считается в штуках и подходит для отделки стен и потолков.',
+  },
+  {
+    title: 'Огнебиозащитная обработка',
+    to: '/ognebiozashchita',
+    text: 'Обработка защищает древесину от возгорания и биологического поражения. Выполняем её на своей площадке при отгрузке партии — например, для стропильных систем и кровли.',
+  },
+  {
+    title: 'Брус под заказ',
+    to: '/pilomaterialy',
+    text: 'Брус естественной влажности I сорта делаем под заказ. Сечения для вашего проекта уточняет менеджер.',
+  },
+]
+
+/** Позиция прайса с известной ценой: «цена по запросу» в таблицу не попадает. */
+type PricedProduct = PriceListProduct & { price: number }
+
+/**
+ * Строки таблицы цен на главной: какие позиции прайса сводятся в одну строку.
+ * @note цифры в тексте не пишем — минимум по группе считается из `priceListProducts`,
+ *       поэтому таблица всегда совпадает с прайсом. Единица измерения берётся у самой
+ *       дешёвой позиции, поэтому в одну группу собираем позиции с одной единицей
+ */
+const homePriceGroups: Array<{
+  /** Подпись строки; без неё берётся название самой дешёвой позиции группы. */
+  label?: string
+  matches: (product: PriceListProduct) => boolean
+}> = [
+  {
+    label: 'Доска обрезная естественной влажности, I–III сорт',
+    matches: (product) => product.category === 'doska-estestvennoi-vlazhnosti',
+  },
+  {
+    label: 'Доска естественной влажности с огнебиозащитой',
+    matches: (product) => product.category === 'doska-ev-ognebio',
+  },
+  { matches: (product) => product.category === 'doska-suhaya' },
+  {
+    label: 'Доска сухая строганая',
+    matches: (product) => product.category === 'doska-suhaya-stroganaya',
+  },
+  { matches: (product) => product.id === 'brusok-45x45' },
+  { matches: (product) => product.id === 'reika-20x45' },
+  { matches: (product) => product.category === 'imitatsiya-brusa' },
+  { matches: (product) => product.id === 'evrovagonka-12-5x95x3000' },
+  { matches: (product) => product.id === 'vagonka-shtil-12-5x120x3000' },
+]
+
+const homePriceRows = homePriceGroups.flatMap((group) => {
+  const cheapest = priceListProducts
+    .filter((product): product is PricedProduct => product.price !== null && group.matches(product))
+    .reduce<PricedProduct | undefined>(
+      (lowest, product) => (!lowest || product.price < lowest.price ? product : lowest),
+      undefined,
+    )
+  if (!cheapest) return []
+
+  return [{
+    label: group.label ?? cheapest.title,
+    price: `от ${cheapest.price.toLocaleString('ru-RU')} ₽`,
+    unit: cheapest.unit,
+  }]
+})
+
+/**
  * `sizes` считается от реальной ширины карточки в сетке `.gallery__grid`:
  * при контенте 1320px колонка равна 93px, поэтому широкий кадр занимает ~874px,
  * а обычный — ~428px. Без `xl`/`xxl` браузер брал бы самый крупный кандидат
@@ -723,6 +816,129 @@ useSchemaOrg([
       </nav>
     </section>
 
+    <section class="home-text" aria-labelledby="home-types-title">
+      <div class="home-text__heading">
+        <p class="eyebrow">Ассортимент</p>
+        <h2 id="home-types-title">Какие пиломатериалы можно купить на пилораме</h2>
+      </div>
+      <div class="home-text__body">
+        <p>
+          Мы пилим хвойную древесину на собственной пилораме, поэтому в одном месте
+          можно купить пиломатериалы и для чернового каркаса, и для чистовой отделки.
+          Ниже — чем отличаются позиции и для каких работ их обычно берут.
+        </p>
+        <div class="home-text__list">
+          <div v-for="item in lumberTypes" :key="item.title" class="home-text__item">
+            <h3><NuxtLink class="home-text__link" :to="item.to">{{ item.title }}</NuxtLink></h3>
+            <p>{{ item.text }}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="home-text home-text--paper" aria-labelledby="home-prices-title">
+      <div class="home-text__heading">
+        <p class="eyebrow">Прайс</p>
+        <h2 id="home-prices-title">Цены на пиломатериалы за куб и за штуку</h2>
+      </div>
+      <div class="home-text__body">
+        <p>
+          Цена за куб указана для доски, бруска, рейки и имитации бруса, а вагонка продаётся
+          по цене за штуку. В таблице — минимальная цена каждой позиции: итог зависит от
+          сорта, сечения и длины, поэтому перед каждой суммой стоит «от».
+        </p>
+
+        <div
+          class="price-table"
+          tabindex="0"
+          role="region"
+          aria-labelledby="home-prices-title"
+        >
+          <table>
+            <caption class="sr-only">Минимальные цены на пиломатериалы по позициям прайса</caption>
+            <thead>
+              <tr>
+                <th scope="col">Позиция</th>
+                <th scope="col">Цена</th>
+                <th scope="col">Единица</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="row in homePriceRows" :key="row.label">
+                <th scope="row">{{ row.label }}</th>
+                <td class="price-table__price">{{ row.price }}</td>
+                <td>{{ row.unit }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p class="home-text__note">
+          Итоговую стоимость партии и наличие сечений подтверждает менеджер.
+          Доставка считается отдельно.
+        </p>
+        <p>
+          Хотите купить пиломатериалы и заранее прикинуть сумму? В каталоге есть калькулятор
+          объёма и стоимости, а для досок и имитации бруса — таблицы сечений с ценой за штуку.
+        </p>
+        <NuxtLink class="text-link" to="/pilomaterialy">Весь каталог пиломатериалов и цены</NuxtLink>
+      </div>
+    </section>
+
+    <section class="home-text" aria-labelledby="home-choice-title">
+      <div class="home-text__heading">
+        <p class="eyebrow">Подбор</p>
+        <h2 id="home-choice-title">Как выбрать пиломатериалы под задачу</h2>
+      </div>
+      <div class="home-text__body">
+        <h3>Влажность и обработка</h3>
+        <p>Начните с вопроса, где будет работать материал.</p>
+        <ul class="home-text__bullets">
+          <li>
+            Доска естественной влажности — для черновых и каркасных работ, опалубки и обрешётки.
+          </li>
+          <li>
+            Доска камерной сушки — для внутренних работ и столярки, где важна стабильность размеров.
+          </li>
+          <li>
+            Строганая доска — для чистовой отделки, пола, мебели и конструкций, которые остаются на виду.
+          </li>
+        </ul>
+        <p>
+          Сравнить позиции и сечения можно на страницах
+          <NuxtLink class="home-text__link" to="/doska">обрезной доски</NuxtLink>
+          и <NuxtLink class="home-text__link" to="/suhaya-doska">сухой и строганой доски</NuxtLink>.
+        </p>
+
+        <h3>Какой сорт выбрать</h3>
+        <p>
+          Чем выше сорт, тем меньше недостатков древесины и тем аккуратнее доска.
+          I сорт берут там, где важны внешний вид и прочность. II сорт — рабочий вариант
+          для каркаса и стропил. III сорт подходит для опалубки, временных и других
+          черновых работ.
+        </p>
+
+        <div class="home-text__callout">
+          <h3>Как рассчитать объём</h3>
+          <p>
+            Объём доски — это толщина, умноженная на ширину и на длину в метрах. Возьмём
+            доску 50×150×6000 мм:
+          </p>
+          <p class="home-text__formula">0,05 × 0,15 × 6 = 0,045&nbsp;м³</p>
+          <p>
+            Значит, в кубометре помещается примерно 22 такие доски (1 ÷ 0,045 ≈ 22,2). Чтобы
+            рассчитать партию, поделите нужный объём на объём одной доски и округлите
+            результат вверх. Цену штуки получают так же: цену за куб умножают на объём доски.
+          </p>
+        </div>
+
+        <p class="home-text__after">
+          Не уверены в размере — опишите задачу, и менеджер подскажет сечение и длину.
+          Чтобы заказать, назовите сорт, сечение, длину и объём.
+        </p>
+      </div>
+    </section>
+
     <section class="production" aria-labelledby="production-title">
       <div class="production__heading">
         <p class="eyebrow eyebrow--on-dark">Собственное производство</p>
@@ -916,6 +1132,81 @@ useSchemaOrg([
       <p id="video-audio-description" class="sr-only">
         В ролике нет речи — только музыка.
       </p>
+    </section>
+
+    <section class="home-text home-text--paper" aria-labelledby="home-producer-title">
+      <div class="home-text__heading">
+        <p class="eyebrow">Производитель</p>
+        <h2 id="home-producer-title">Почему пиломатериалы выгодно брать у производителя</h2>
+      </div>
+      <div class="home-text__body">
+        <p>
+          Покупая пиломатериалы от производителя, вы имеете дело с теми, кто сам пилит,
+          сушит и обрабатывает древесину. Вот что это даёт.
+        </p>
+        <dl class="home-text__facts">
+          <div>
+            <dt>Всё на одной площадке</dt>
+            <dd>
+              Своя ленточная пилорама, камерная сушка, строгание и профилирование, покраска
+              и огнебиозащита.
+            </dd>
+          </div>
+          <div>
+            <dt>Крытый склад</dt>
+            <dd>Сухая доска хранится под крышей и ждёт отгрузки.</dd>
+          </div>
+          <div>
+            <dt>Учёт в ЛесЕГАИС</dt>
+            <dd>
+              Древесина учитывается в ЛесЕГАИС — государственной системе учёта древесины
+              и сделок с ней.
+            </dd>
+          </div>
+          <div>
+            <dt>Оптом и в розницу</dt>
+            <dd>Продаём от одной позиции до партии на объект.</dd>
+          </div>
+          <div>
+            <dt>Оплата по факту отгрузки</dt>
+            <dd>
+              Заказ подтверждается звонком менеджера, а платите вы при отгрузке партии.
+            </dd>
+          </div>
+          <div>
+            <dt>Цена от пилорамы</dt>
+            <dd>Цену назначает сама пилорама, без перекупщиков.</dd>
+          </div>
+        </dl>
+        <p>
+          Чтобы купить пиломатериалы у производителя, откройте каталог или позвоните менеджеру:
+          он рассчитает стоимость партии и подтвердит наличие сечений.
+        </p>
+        <NuxtLink class="text-link" to="/pilomaterialy">Пиломатериалы: каталог и цены</NuxtLink>
+      </div>
+    </section>
+
+    <section class="home-text" aria-labelledby="home-delivery-title">
+      <div class="home-text__heading">
+        <p class="eyebrow">Получение заказа</p>
+        <h2 id="home-delivery-title">Доставка пиломатериалов по Санкт-Петербургу и Ленинградской области</h2>
+      </div>
+      <div class="home-text__body">
+        <h3>Доставка до объекта</h3>
+        <p>
+          Привозим заказ по Санкт-Петербургу и Ленинградской области. Машину подбираем под
+          объём партии: небольшому заказу и крупной поставке нужен разный транспорт.
+          Стоимость и сроки доставки менеджер называет по телефону после расчёта партии.
+        </p>
+
+        <h3>Самовывоз с площадки</h3>
+        <p>
+          Забрать заказ можно самостоятельно — с производственной площадки в деревне
+          Разбегаево Ломоносовского района, ежедневно с 9:00 до 19:00. Материал погрузим
+          в машину покупателя.
+        </p>
+        <NuxtLink class="text-link" to="/dostavka">Условия доставки и самовывоза</NuxtLink>
+      </div>
     </section>
 
     <section class="gallery" aria-labelledby="gallery-title">
@@ -1912,6 +2203,260 @@ useSchemaOrg([
 
   .home-faq__item {
     padding: 22px 0;
+  }
+}
+
+/* Текстовые блоки главной: заголовок слева, текст справа — та же сетка, что у
+   «Производства», но на светлом фоне. Заголовки длинные (поисковые формулировки),
+   поэтому кегль меньше, чем у больших заголовков секций выше */
+.home-text {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.8fr) minmax(0, 1.2fr);
+  gap: clamp(32px, 7vw, 120px);
+  padding: 96px max(24px, calc((100vw - 1320px) / 2));
+  background: var(--color-cream);
+}
+
+.home-text--paper {
+  background: var(--color-paper);
+}
+
+.home-text__heading h2 {
+  max-width: 460px;
+  font-size: clamp(1.8rem, 2.6vw, 2.7rem);
+  line-height: 1.12;
+}
+
+.home-text__body {
+  min-width: 0;
+  max-width: 760px;
+}
+
+.home-text__body p {
+  max-width: 720px;
+  margin: 0 0 16px;
+  line-height: 1.65;
+  color: rgb(32 35 31 / 85%);
+}
+
+.home-text__body h3 {
+  margin: 32px 0 10px;
+  font-size: clamp(1.1rem, 1.3vw, 1.3rem);
+  line-height: 1.25;
+}
+
+.home-text__body > :first-child {
+  margin-top: 0;
+}
+
+/* Ссылка внутри абзаца или заголовка позиции: наследует кегль, различима подчёркиванием */
+.home-text__link {
+  color: var(--color-forest);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+.home-text__link:hover {
+  color: var(--color-copper-dark);
+}
+
+.home-text__list {
+  margin-top: 28px;
+  border-top: 1px solid var(--color-line);
+}
+
+.home-text__item {
+  padding: 22px 0;
+  border-bottom: 1px solid var(--color-sand);
+}
+
+.home-text__item h3 {
+  margin: 0 0 8px;
+}
+
+.home-text__item p {
+  margin: 0;
+}
+
+.home-text__bullets {
+  margin: 0 0 16px;
+  padding: 0;
+  list-style: none;
+}
+
+.home-text__bullets li {
+  position: relative;
+  margin-bottom: 10px;
+  padding-left: 22px;
+  line-height: 1.6;
+  color: rgb(32 35 31 / 85%);
+}
+
+.home-text__bullets li::before {
+  position: absolute;
+  top: 0.78em;
+  left: 0;
+  width: 10px;
+  height: 2px;
+  background: var(--color-copper);
+  content: '';
+}
+
+/* Врезка с примером расчёта: светлая плашка с медной кромкой, как акцент в шапке */
+.home-text__callout {
+  margin: 32px 0 24px;
+  padding: 26px 28px 10px;
+  border-left: 3px solid var(--color-copper);
+  background: var(--color-paper);
+}
+
+.home-text__callout h3 {
+  margin-top: 0;
+}
+
+.home-text__body .home-text__formula {
+  margin-bottom: 16px;
+  color: var(--color-ink);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(1.3rem, 2vw, 1.7rem);
+  line-height: 1.3;
+}
+
+.home-text__body .home-text__after {
+  margin-top: 8px;
+}
+
+.home-text__body .home-text__note {
+  margin-top: 16px;
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+.home-text__facts {
+  margin: 24px 0 28px;
+  border-top: 1px solid var(--color-line);
+}
+
+.home-text__facts > div {
+  display: grid;
+  grid-template-columns: minmax(150px, 0.5fr) minmax(0, 1fr);
+  gap: 8px 28px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--color-sand);
+}
+
+.home-text__facts dt {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.12rem;
+  line-height: 1.3;
+}
+
+.home-text__facts dd {
+  margin: 0;
+  line-height: 1.6;
+  color: rgb(32 35 31 / 85%);
+}
+
+/* Таблица цен — тот же вид, что у таблиц сечений (`ProductSizeTable`): рамка,
+   строгая шапка, зебра. Цена и единица не переносятся, подпись позиции переносится;
+   прокрутка рамки нужна лишь на случай, если подпись не поместится и в перенесённом виде */
+.price-table {
+  max-width: 100%;
+  margin: 28px 0 0;
+  overflow-x: auto;
+  border: 1px solid var(--color-line);
+  background: var(--color-paper);
+}
+
+.price-table table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  font-size: 0.94rem;
+  line-height: 1.4;
+  font-variant-numeric: tabular-nums;
+}
+
+.price-table th,
+.price-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--color-line);
+  text-align: left;
+  vertical-align: top;
+}
+
+.price-table thead th {
+  border-bottom: 1px solid var(--color-ink);
+  font-size: 0.72rem;
+  font-weight: 760;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.price-table tbody th {
+  overflow-wrap: anywhere;
+  font-weight: 600;
+}
+
+.price-table td {
+  white-space: nowrap;
+}
+
+.price-table tbody tr:nth-child(even) {
+  background: var(--color-cream);
+}
+
+.price-table tbody tr:last-child th,
+.price-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.price-table__price {
+  color: var(--color-copper-dark);
+  font-weight: 800;
+}
+
+@media (max-width: 840px) {
+  .home-text {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    padding: 72px 24px;
+  }
+
+  .home-text__heading h2 {
+    max-width: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .home-text {
+    padding: 56px 18px;
+  }
+
+  .home-text__callout {
+    padding: 22px 18px 8px;
+  }
+
+  .home-text__facts > div {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  /* На 320px шапка «Единица» и цена забирают почти полэкрана — ужимаем их,
+     чтобы названия позиций не рвались посреди слова */
+  .price-table table {
+    font-size: 0.84rem;
+  }
+
+  .price-table th,
+  .price-table td {
+    padding: 10px 6px;
+  }
+
+  .price-table thead th {
+    font-size: 0.64rem;
+    letter-spacing: 0.02em;
   }
 }
 </style>

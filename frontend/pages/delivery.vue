@@ -5,7 +5,7 @@ definePageMeta({
 
 useSeoMeta({
   title: 'Доставка пиломатериалов по СПб и Ленобласти',
-  description: 'Доставка пиломатериалов из Разбегаево по Санкт-Петербургу и всей Ленинградской области. Адрес, стоимость и сроки — по телефону. Порядок доставки и самовывоза.',
+  description: 'Доставка пиломатериалов по всему Санкт-Петербургу и Ленобласти, в том числе в Ломоносов, Петергоф, Красное Село и Гатчину. Стоимость и сроки — по телефону.',
   ogTitle: 'Доставка пиломатериалов из Разбегаево',
   ogDescription: 'Порядок самовывоза и согласования доставки доски, вагонки и других пиломатериалов.',
   ogImage: `${siteUrl}/images/og/dostavka.jpg`,
@@ -44,6 +44,22 @@ const deliverySteps = [
     text: 'Подготовим и погрузим пиломатериалы, перед выездом водитель свяжется с вами. Оплата — по факту отгрузки.',
   },
 ]
+
+/**
+ * Примеры направлений доставки, а не граница зоны: возим по всему СПб и всей ЛО.
+ * @note `areaServed` в `nuxt.config.ts` остаётся «Санкт-Петербург» и
+ *       «Ленинградская область» — они уже покрывают каждый пункт списка
+ */
+const deliveryAreas = [
+  'Санкт-Петербург, все районы',
+  'Ломоносов и Ломоносовский район',
+  'Петергоф и Стрельна',
+  'Красное Село',
+  'Ропша и Кипень',
+  'Гатчина и Гатчинский район',
+  'Сосновый Бор',
+  'Всеволожский район',
+]
 </script>
 
 <template>
@@ -60,6 +76,35 @@ const deliverySteps = [
           </p>
         </div>
 
+      </div>
+    </section>
+
+    <section class="delivery-area" aria-labelledby="area-title">
+      <header class="section-heading">
+        <h2 id="area-title">Куда возим пиломатериалы</h2>
+      </header>
+
+      <div class="delivery-area__body">
+        <p>
+          Возим доску, брусок, рейку, имитацию бруса и вагонку по всему
+          Санкт-Петербургу и всей Ленинградской области. Площадка стоит в деревне
+          Разбегаево Ломоносовского района, но заказ привезём в любой район города
+          и области, в том числе:
+        </p>
+
+        <ul class="delivery-area__list">
+          <li v-for="area in deliveryAreas" :key="area">{{ area }}</li>
+        </ul>
+
+        <p>
+          Если вашего города или посёлка нет в списке, это не значит, что мы туда
+          не возим: список не полный. Назовите адрес менеджеру — маршрут и стоимость
+          он посчитает вместе с объёмом партии.
+        </p>
+        <p>
+          Машину подбираем под самую длинную позицию в заказе: доска и имитация
+          бруса идут длиной до 6 метров, вагонка — 3 метра.
+        </p>
       </div>
     </section>
 
@@ -158,6 +203,56 @@ const deliverySteps = [
   color: rgb(32 35 31 / 85%);
   font-size: clamp(1.04rem, 1.35vw, 1.25rem);
   line-height: 1.55;
+}
+
+/* Секция географии доставки — светлая плашка между hero и порядком заказа */
+.delivery-area {
+  padding: 56px 24px;
+  border-bottom: 1px solid var(--color-ink);
+  background: var(--color-paper);
+}
+
+.delivery-area__body {
+  display: grid;
+  max-width: 1200px;
+  margin: 0 auto;
+  gap: 1rem;
+}
+
+.delivery-area__body p {
+  max-width: 760px;
+  margin-bottom: 0;
+  color: rgb(32 35 31 / 85%);
+  line-height: 1.55;
+}
+
+.delivery-area__list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 0 clamp(20px, 3vw, 48px);
+  max-width: 1000px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.delivery-area__list li {
+  position: relative;
+  padding: 0.6rem 0 0.6rem 1.35rem;
+  border-bottom: 1px solid var(--color-line);
+  color: rgb(32 35 31 / 85%);
+  font-size: 0.98rem;
+  line-height: 1.45;
+}
+
+.delivery-area__list li::before {
+  position: absolute;
+  top: 1.05rem;
+  left: 0;
+  width: 6px;
+  height: 6px;
+  background: var(--color-copper);
+  content: "";
 }
 
 /* Вторая секция тела страницы — как на остальных страницах, граница сохраняется на последней секции */
@@ -343,6 +438,7 @@ const deliverySteps = [
     padding-block: 64px;
   }
 
+  .delivery-area,
   .receiving {
     padding-block: 56px;
   }
@@ -393,6 +489,7 @@ const deliverySteps = [
     font-size: 1rem;
   }
 
+  .delivery-area,
   .receiving {
     padding: 44px 18px;
   }

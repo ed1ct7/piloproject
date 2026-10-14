@@ -55,7 +55,10 @@ test.describe('размерные таблицы без JavaScript', () => {
 
     await page.goto('/imitatsiya-brusa')
     const claddingSizes = page.locator('section[aria-labelledby="landing-sizes-title"]')
-    await expect(claddingSizes.locator('tbody tr')).toHaveCount(2)
+    // Вторая таблица секции — сравнение с вагонкой, строки сечений считаем только в первой.
+    await expect(claddingSizes.locator('table')).toHaveCount(2)
+    await expect(claddingSizes.locator('table').first().locator('tbody tr')).toHaveCount(2)
+    await expect(claddingSizes).toContainText('Имитация бруса или вагонка: что выбрать')
     await expect(claddingSizes).toContainText('нижняя оценка')
 
     await page.goto('/vagonka')

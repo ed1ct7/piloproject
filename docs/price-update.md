@@ -8,8 +8,14 @@
    Поле `price` — число без пробелов (`18000`), `price: null` — «цена по запросу».
    `pricePrefix: 'от'` выводит цену как минимальную.
 2. **Посадочные SEO-страницы** — `frontend/utils/seo-landings.ts`. Цены здесь
-   продублированы текстом в `title`, `metaDescription`, `intro`, `details` и `faq`.
+   продублированы текстом в `title`, `metaDescription`, `intro`, `details`, `faq`,
+   а с 15.10.2026 также в `comparison`, `scenarios` и `practice`:
+   - брусок и рейка на `/imitatsiya-brusa`;
+   - пример на комнату 42 м² и цена за м² на `/vagonka` — они посчитаны от цены за штуку.
+
    **При каждом изменении прайса сверять вручную** — автоматической синхронизации нет.
+   Таблица цен на главной (`frontend/pages/index.vue`, `homePriceRows`) считается из
+   `priceListProducts` сама, её править не нужно.
 3. **Сечения и длины для таблиц и калькулятора** — `frontend/utils/product-sizes.ts`,
    массив `productSizeTables`. Цена за м³ туда не дублируется: цена за штуку
    считается из `price` позиции автоматически (объём × цена, вверх до рубля).

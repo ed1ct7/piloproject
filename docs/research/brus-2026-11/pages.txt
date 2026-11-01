@@ -1,0 +1,25 @@
+spb-cat|https://lenwood.ru/catalog/brus/|купить брус в спб 1, брус купить 1, от производителя 2
+spb-cat|https://arhles.net/catalog/pilomaterialy-dlya-stroitelstva/doska-brus/brus-estestvennoy-vlazhnosti/|брус купить 3, от производителя 6
+spb-cat|https://terrafox.ru/eshop/brus|купить брус в спб 4
+spb-cat|https://78dosok.ru/brus/|брус купить 6
+spb-cat|https://78dosok.ru/catalog/brus/|купить брус в спб 5
+spb-cat|https://tdlesovik.ru/catalog/pilomaterialy/brus_1/|купить брус в спб 6, цена за штуку 5
+spb-cat|https://sevles-spb.ru/catalog/brus_brusok/|брус купить 7
+spb-cat|https://www.kronawood.ru/cat/brus|от производителя 3
+spb-cat|https://www.alyansles.ru/catalog/brus/|от производителя 5
+spb-cat|https://www.veles-wood.ru/brus|от производителя 7
+spb-home|https://lenles.ru/|купить брус в спб 2, от производителя 1
+spb-size|https://lenwood.ru/catalog/items/brus-obreznoy-100-100-6000-mm-estestvennoy-vlazhnosti-_1/|брус 100х100 3
+spb-size|https://78dosok.ru/product/brus-100x100x6000/|брус 100х100 4
+spb-size|https://lenles.ru/product/brus-150-150-6000/|брус 150х150 5
+spb-size|https://sevles-spb.ru/catalog/brus_sukhoy_2/brus_sukhoy_150kh150kh6_khvoya/|брус 150х150 2
+msk-cat|https://severlesgroup.ru/pilomaterialy/brus/|брус купить 2, цена за штуку 1
+msk-cat|https://lesnoi-dvor.ru/catalog/pilomaterialy/obreznoy-brus/|брус купить 3, цена за штуку 2
+msk-cat|https://pilomarket.com/catalog/brus/|брус купить 4, от производителя 5, цена за штуку 3
+msk-cat|https://pilomaterialy.ru/catalog/pilomaterialy/brus/|брус купить 5, цена за штуку 6
+msk-cat|https://grandlesmarket.ru/pilomaterialy/brus/|брус купить 6, от производителя 6, цена за штуку 7
+msk-cat|https://xn----jtbkjcmz.xn--p1ai/brus|от производителя 7
+msk-cat|https://eco-derevo.ru/catalog/brus/|от производителя 9
+msk-cat|https://rus-lesdom.ru/brus-cena-za-kub-i-shtuku/|цена за штуку 5
+msk-cat|https://lesobirzha.ru/katalog/brus/filter/wood_profil-obreznoy/|брус купить 8
+msk-size|https://erbrus.ru/brus-suhoj-strogannyj/brus-suhoj-strogannyj-200h200h6000-mm-gost|брус купить 1

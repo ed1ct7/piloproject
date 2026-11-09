@@ -34,6 +34,9 @@ async function expectVerticalGap(upper: Locator, lower: Locator, minimum: number
 }
 
 async function expectMinimumTargetSize(target: Locator, minimum: number) {
+  // Секция вне экрана ждёт показа с масштабом 0,996, поэтому размер снимаем после появления.
+  await target.scrollIntoViewIfNeeded()
+  await expect.poll(async () => (await target.boundingBox())?.height ?? 0).toBeGreaterThanOrEqual(minimum)
   const targetBox = await target.boundingBox()
 
   expect(targetBox).not.toBeNull()

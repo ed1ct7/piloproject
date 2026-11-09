@@ -49,6 +49,16 @@ export const productCategories = [
 
 export type ProductCategory = (typeof productCategories)[number]['value']
 
+/**
+ * Текст текущей акции для полоски под шапкой.
+ * @note после окончания акции убрать полоску и обновить цены, см. `docs/price-update.md`
+ */
+export const currentPromo = {
+  period: 'Акция до 31 декабря',
+  offer: 'Скидка 20% на дюймовку: 1 сорт 17 500 ₽/⁠м³, 2 сорт 14 000 ₽/⁠м³.',
+  note: 'После окончания акции цены вырастут.',
+}
+
 export const priceListProducts: PriceListProduct[] = [
   {
     id: 'doska-ev-sort-1',

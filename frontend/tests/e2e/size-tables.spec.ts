@@ -21,6 +21,11 @@ test.describe('размерные таблицы без JavaScript', () => {
     await expect(row).toContainText('0,0450')
     await expect(row.locator('td').nth(2)).toHaveText(/от 810 ₽/)
 
+    // 0,015 м³ по цене акции на дюймовку: 17 500 и 14 000 ₽/м³.
+    const inchRow = sizes.locator('tr#size-25x100x6000')
+    await expect(inchRow.locator('td').nth(2)).toHaveText(/от 263 ₽/)
+    await expect(inchRow.locator('td').nth(3)).toHaveText(/от 210 ₽/)
+
     await expect(sizes).toContainText('Другие сечения и длины — под заказ')
     await expect(page.locator('#brus')).toContainText('Брус естественной влажности I сорта — от 18 000 ₽/м³')
   })

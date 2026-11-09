@@ -132,7 +132,7 @@ export const productSizeTables: ProductSizeTable[] = [
     columns: boardGradeColumns,
     sections: boardSections,
     lengthsMm: [6000],
-    note: customSizesNote,
+    note: `Дюймовка 25 мм по акции: I сорт 17 500 ₽/м³, II сорт 14 000 ₽/м³. ${customSizesNote}`,
   },
   {
     id: 'doska-ev-ognebio',
@@ -166,6 +166,15 @@ export const productSizeTables: ProductSizeTable[] = [
     note: '145 мм — габаритная ширина с шипом, поэтому цена за штуку — нижняя оценка.',
   },
 ]
+
+/** Толщина дюймовки в миллиметрах. */
+const inchBoardThicknessMm = 25
+
+/** Акционные цены за кубометр дюймовки по идентификаторам позиций прайса. */
+const inchBoardPromoPrices: Readonly<Record<string, number>> = {
+  'doska-ev-sort-1': 17500,
+  'doska-ev-sort-2': 14000,
+}
 
 /** Брус в прайсе отдельной позицией не выделен: одна строка текста у таблиц. */
 export const timberNote = 'Брус естественной влажности I сорта — от 18 000 ₽/м³, сечения под заказ.'
@@ -218,6 +227,17 @@ export function getPiecePrice(pieceVolume: number, pricePerCubicMeter: number): 
 
   const price = ceilRoubles(pieceVolume * pricePerCubicMeter)
   return Number.isFinite(price) ? price : null
+}
+
+/**
+ * Возвращает цену кубометра для сечения с учётом акции на дюймовку
+ * @note после окончания акции удалить вместе с `inchBoardPromoPrices`, см. `docs/price-update.md`
+ * @param product     позиция прайса с числовой ценой
+ * @param thicknessMm толщина сечения в миллиметрах
+ * @returns акционную цену для дюймовки I и II сорта, иначе цену позиции
+ */
+export function getSectionCubicMeterPrice(product: Pick<PriceListProduct, 'id'> & { price: number }, thicknessMm: number): number {
+  return thicknessMm === inchBoardThicknessMm ? inchBoardPromoPrices[product.id] ?? product.price : product.price
 }
 
 /**

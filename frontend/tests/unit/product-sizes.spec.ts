@@ -8,6 +8,7 @@ import {
   getPiecePrice,
   getPiecesForVolume,
   getPieceVolume,
+  getSectionCubicMeterPrice,
   getSizeTableProduct,
   getSizeTableRows,
   getSizeTablesForProducts,
@@ -191,6 +192,15 @@ describe('getSizeTablesForProducts', () => {
 describe('getSizeTableProduct', () => {
   it('возвращает позицию с числовой ценой за кубометр', () => {
     expect(getSizeTableProduct({ productId: 'doska-ev-sort-1', label: 'I сорт' })?.price).toBe(18000)
+  })
+
+  it('применяет цену акции только к дюймовке I и II сорта', () => {
+    expect(getSectionCubicMeterPrice({ id: 'doska-ev-sort-1', price: 18000 }, 25)).toBe(17500)
+    expect(getSectionCubicMeterPrice({ id: 'doska-ev-sort-2', price: 13000 }, 25)).toBe(14000)
+    expect(getSectionCubicMeterPrice({ id: 'doska-ev-sort-1', price: 18000 }, 40)).toBe(18000)
+    expect(getSectionCubicMeterPrice({ id: 'doska-ev-sort-2', price: 13000 }, 50)).toBe(13000)
+    expect(getSectionCubicMeterPrice({ id: 'doska-ev-sort-3', price: 4500 }, 25)).toBe(4500)
+    expect(getSectionCubicMeterPrice({ id: 'doska-ev-ognebio-sort-1', price: 20000 }, 25)).toBe(20000)
   })
 
   it('возвращает undefined для цены по запросу, штучной цены и неизвестной позиции', () => {

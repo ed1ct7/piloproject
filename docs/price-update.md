@@ -22,6 +22,11 @@
    Новое сечение или длину добавляйте в `sections` / `lengthsMm` нужной таблицы;
    строка о брусе под заказ — константа `timberNote` там же.
 4. Контакты и реквизиты — `frontend/utils/business.ts`.
+5. **Акция на дюймовку** (толщина 25 мм, I и II сорт) действует до 31.12.2026. Полоска под
+   шапкой — объект `currentPromo` в `frontend/utils/products.ts`, вывод в
+   `frontend/layouts/default.vue`. Цены за м³ для таблиц и калькулятора —
+   `inchBoardPromoPrices` в `frontend/utils/product-sizes.ts`, подпись — `note` таблицы `doska-ev`.
+   После окончания убрать всё это и обновить акцию в Яндекс Бизнесе.
 
 ## Порядок действий
 

@@ -216,6 +216,15 @@ watch(
       </div>
     </header>
 
+    <aside
+      aria-label="Акция"
+      class="flex flex-wrap items-baseline gap-x-5 gap-y-1 bg-(--color-forest) px-[max(24px,calc((100vw_-_1320px)/2))] py-3 text-(--color-paper) max-[560px]:px-5"
+    >
+      <span class="font-[Segoe_UI,Arial,sans-serif] text-[0.75rem] font-[760] uppercase tracking-[0.08em]">{{ currentPromo.period }}</span>
+      <span class="text-[0.95rem] leading-normal">{{ currentPromo.offer }} {{ currentPromo.note }}</span>
+      <NuxtLink to="/doska" class="text-[0.95rem] leading-normal underline underline-offset-4">Цены на доску</NuxtLink>
+    </aside>
+
     <div id="main-content" tabindex="-1">
       <slot />
     </div>

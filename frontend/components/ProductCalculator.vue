@@ -59,7 +59,7 @@ const result = computed(() => {
     thicknessMm: section[0],
     widthMm: section[1],
     lengthMm,
-    pricePerCubicMeter: option.product.price,
+    pricePerCubicMeter: getSectionCubicMeterPrice(option.product, section[0]),
     quantity: quantity.value,
     unit: unit.value,
   })

@@ -58,7 +58,7 @@ const footnote = computed(() => [
             <td>{{ row.lengthMm }}</td>
             <td>{{ formatVolume(row.pieceVolume) }}</td>
             <td v-for="column in columns" :key="column.productId">
-              от {{ formatRoubles(getPiecePrice(row.pieceVolume, column.product.price) ?? 0) }}
+              от {{ formatRoubles(getPiecePrice(row.pieceVolume, getSectionCubicMeterPrice(column.product, row.section[0])) ?? 0) }}
             </td>
           </tr>
         </tbody>

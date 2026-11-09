@@ -47,6 +47,25 @@ cp -a /etc/nginx/sites-available/piloproject "/root/nginx-piloproject.conf.backu
 4. Только после успешного `nginx -t` выполнять `systemctl reload nginx`.
 5. Разбирать причину ошибки в новом конфиге отдельно, без спешки, и повторить установку после исправления.
 
+## Размещение на Caddy (с 09.11.2026)
+
+Прежний VPS уничтожен атакой на хостинг-провайдера 2 ноября 2026 года. Сайт перенесён на общий сервер, где порт 443 занят SNI-роутером HAProxy, а Caddy слушает https на 8443:
+
+- правила сайта — `deploy/caddy-piloproject.caddy`, на сервере `/etc/caddy/piloproject.caddy`, подключены строкой `import` в конце `/etc/caddy/Caddyfile`;
+- домен и `www` добавлены в правило `use_backend site` в `/etc/haproxy/haproxy.cfg`;
+- исходники этих двух файлов сервера лежат в другом репозитории. Правки надо внести и туда, иначе следующая установка оттуда отключит сайт;
+- `deploy-production.sh`, `install-release.sh` и `verify-vps.sh` рассчитаны на nginx и здесь не применяются.
+
+Сборка идёт локально: на сервере нет Node. Перед заливкой выполнить проверки сборки и privacy-guard из `scripts/deploy-production.sh`.
+
+```bash
+npm --prefix frontend ci
+npm --prefix frontend run generate
+tar -czf - -C frontend/.output/public . | ssh <сервер> 'set -e; s=/var/www/piloproject.staging; rm -rf "$s"; mkdir "$s"; tar -xzf - -C "$s" --no-same-owner; cp -rn /var/www/piloproject/_nuxt/. "$s/_nuxt/"; chown -R www-data:www-data "$s"; rm -rf /var/www/piloproject; mv "$s" /var/www/piloproject'
+```
+
+`cp -rn` сохраняет старые файлы `/_nuxt`: причина в `docs/seo-plan-2026-09.md`, §11. Удаление через 30 дней здесь не автоматизировано. После правки конфига: `caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile`, затем `systemctl reload caddy`.
+
 ## Вывод старого backend из эксплуатации
 
 После резервной копии и успешного статического деплоя администратор может вручную остановить старый сервис:

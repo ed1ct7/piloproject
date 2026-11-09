@@ -1,0 +1,88 @@
+# Сайт на Caddy: те же правила, что в deploy/nginx-piloproject.conf.
+#
+# Используется, когда сайт живёт на общем сервере, где порт 443 занят SNI-роутером
+# HAProxy, а Caddy слушает https на 8443 (см. docs/deployment.md, «Размещение на Caddy»).
+# Подключается строкой `import` в конце /etc/caddy/Caddyfile, файл кладётся в
+# /etc/caddy/piloproject.caddy.
+#
+# Access log не включён намеренно: без директивы `log` Caddy журнал запросов не пишет.
+# CSP должен дословно совпадать с `securityHeaders` в frontend/nuxt.config.ts.
+
+(piloproject_security) {
+	header {
+		Content-Security-Policy "default-src 'self'; base-uri 'self'; connect-src 'self'; font-src 'self' data:; form-action 'none'; frame-src 'none'; frame-ancestors 'none'; img-src 'self' data:; media-src 'self'; object-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'"
+		Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()"
+		Referrer-Policy "no-referrer"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Strict-Transport-Security "max-age=2592000"
+		-Server
+		# HTTP/3 на 8443 снаружи закрыт, анонсировать его незачем.
+		-Alt-Svc
+	}
+}
+
+# Явный http-блок: автоматический редирект Caddy при https_port 8443 повёл бы на :8443.
+http://pilorama-razbegaevo.ru, http://www.pilorama-razbegaevo.ru {
+	redir https://pilorama-razbegaevo.ru{uri} permanent
+}
+
+https://www.pilorama-razbegaevo.ru {
+	import piloproject_security
+	redir https://pilorama-razbegaevo.ru{uri} permanent
+}
+
+https://pilorama-razbegaevo.ru {
+	import piloproject_security
+
+	root * /var/www/piloproject
+	request_body {
+		max_size 1MB
+	}
+	encode {
+		gzip
+		minimum_length 1024
+	}
+
+	@double_slash `{path}.contains("//")`
+	@index_html path_regexp index_html ^(/.*?)/?index\.html$
+	@trailing_slash path_regexp trailing_slash ^/(.+)/$
+	# Служебные страницы сборки: с кодом 200 отдаваться не должны.
+	@service_pages path /200.html /404.html /not-found
+	@immutable path /_nuxt/*
+	@month path /_ipx/* /images/* /mp4/* /captions/* *.xsl /favicon.ico /favicon.svg /apple-touch-icon.png
+	@webp path_regexp ^/_ipx/[^/]*f_webp
+	@vtt path /captions/*
+	@xsl path *.xsl
+
+	# route сохраняет порядок: сначала редиректы, как фаза rewrite в nginx.
+	route {
+		route @double_slash {
+			uri path_regexp /+ /
+			redir {uri} permanent
+		}
+		redir @index_html {re.index_html.1}{?query} permanent
+		redir @trailing_slash /{re.trailing_slash.1}{?query} permanent
+		error @service_pages 404
+
+		header @immutable Cache-Control "public, max-age=31536000, immutable"
+		header @month Cache-Control "public, max-age=2592000"
+		# У /_ipx/f_webp… расширение исходного файла, а в теле WebP.
+		header @webp Content-Type "image/webp"
+		header @vtt Content-Type "text/vtt"
+		header @xsl Content-Type "text/xsl"
+
+		# Канонические URL без слэша: /doska отдаётся из /doska/index.html без 301.
+		try_files {path} {path}/index.html {path}.html
+		file_server {
+			disable_canonical_uris
+		}
+	}
+
+	handle_errors 404 {
+		import piloproject_security
+		root * /var/www/piloproject
+		rewrite * /not-found/index.html
+		file_server
+	}
+}

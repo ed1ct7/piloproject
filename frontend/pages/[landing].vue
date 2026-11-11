@@ -181,7 +181,7 @@ useSchemaOrg([
         <NuxtLink
           class="inline-flex min-h-11 w-max items-center border-b-2 border-current px-0 font-[Segoe_UI,Arial,sans-serif] text-[0.9rem] font-[760] text-(--color-forest) no-underline transition-colors duration-150 hover:text-(--color-copper)"
           to="/pilomaterialy"
-        >Все 14 позиций и цены в каталоге</NuxtLink>
+        >Все 16 позиций и цены в каталоге</NuxtLink>
       </p>
     </section>
 

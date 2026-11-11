@@ -4,7 +4,7 @@ import { expect, test } from '@playwright/test'
 test.describe('размерные таблицы без JavaScript', () => {
   test.use({ javaScriptEnabled: false })
 
-  test('посадочная /doska отдаёт таблицу сечений и строку о брусе в HTML', async ({ page }) => {
+  test('посадочная /doska отдаёт таблицу сечений и ссылку на брус в HTML', async ({ page }) => {
     await page.goto('/doska')
 
     const sizes = page.locator('#sizes')
@@ -27,7 +27,36 @@ test.describe('размерные таблицы без JavaScript', () => {
     await expect(inchRow.locator('td').nth(3)).toHaveText(/от 210 ₽/)
 
     await expect(sizes).toContainText('Другие сечения и длины — под заказ')
-    await expect(page.locator('#brus')).toContainText('Брус естественной влажности I сорта — от 18 000 ₽/м³')
+    // Строка о брусе под таблицами заменена отдельной страницей /brus.
+    await expect(page.locator('#brus')).toHaveCount(0)
+    await expect(page.locator('main a[href="/brus"]').first()).toBeAttached()
+  })
+
+  test('посадочная /brus отдаёт сечения и цены за кубометр без цены за штуку', async ({ page }) => {
+    await page.goto('/brus')
+
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Брус естественной влажности: цена за куб')
+    const sizes = page.locator('#sizes')
+    await expect(sizes.getByRole('heading', { level: 2 })).toHaveText('Сечения бруса и цена за кубометр')
+
+    // Длины владелец не назвал: таблицы с ценой за штуку и калькулятора нет,
+    // есть одна таблица «сечение — цена за м³ по сортам».
+    const table = sizes.locator('table')
+    await expect(table).toHaveCount(1)
+    await expect(table.locator('thead')).toContainText('I сорт')
+    await expect(table.locator('thead')).toContainText('II сорт')
+    await expect(table.locator('tbody tr')).toHaveCount(3)
+    for (const section of ['100×100', '100×150', '150×150']) {
+      const row = table.locator('tbody tr', { hasText: section })
+      await expect(row).toContainText('18 000')
+      await expect(row).toContainText('16 000')
+    }
+    await expect(sizes).not.toContainText('200×200')
+    await expect(sizes).not.toContainText('150×200')
+    await expect(sizes).not.toContainText('₽/шт')
+
+    const jsonLd = (await page.locator('script[type="application/ld+json"]').allTextContents()).join('\n')
+    expect(jsonLd).toContain('"FAQPage"')
   })
 
   test('каталог, сухая доска, огнебиозащита и имитация бруса содержат таблицы', async ({ page }) => {
@@ -40,7 +69,8 @@ test.describe('размерные таблицы без JavaScript', () => {
     await expect(catalogSizes.getByRole('link', { name: /Сухая и строганая доска/ })).toHaveAttribute('href', '/suhaya-doska#sizes')
     await expect(catalogSizes.getByRole('link', { name: /огнебиозащит/i })).toHaveAttribute('href', '/ognebiozashchita#sizes')
     await expect(catalogSizes.getByRole('link', { name: /Имитация бруса/ })).toHaveAttribute('href', '/imitatsiya-brusa#sizes')
-    await expect(catalogSizes).toContainText('Брус естественной влажности I сорта')
+    await expect(catalogSizes.getByRole('link', { name: /Брус естественной влажности/ })).toHaveAttribute('href', '/brus#sizes')
+    await expect(catalogSizes).toContainText('I сорт — 18 000 ₽/м³, II сорт — 16 000 ₽/м³')
 
     await page.goto('/suhaya-doska')
     const drySizes = page.locator('section[aria-labelledby="landing-sizes-title"]')

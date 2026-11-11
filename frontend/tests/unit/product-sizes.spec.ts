@@ -16,6 +16,7 @@ import {
   maxCalculatorVolume,
   productSizeTables,
   timberNote,
+  timberSections,
 } from '../../utils/product-sizes'
 
 describe('getPieceVolume', () => {
@@ -144,6 +145,9 @@ describe('productSizeTables', () => {
     expect(byId['imitatsiya-brusa']?.lengthsMm).toEqual([3000, 6000])
     expect(byId['imitatsiya-brusa']?.lowerEstimate).toBe(true)
     expect(timberNote).toContain('18 000')
+    expect(timberNote).toContain('16 000')
+    expect(timberSections).toEqual([[100, 100], [100, 150], [150, 150]])
+    expect(productSizeTables.some((table) => table.columns.some(({ productId }) => productId.startsWith('brus-')))).toBe(false)
   })
 
   it('не содержит сухую доску с огнебиозащитой — цена по запросу', () => {

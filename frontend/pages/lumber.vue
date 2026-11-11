@@ -5,7 +5,7 @@ definePageMeta({
   path: '/pilomaterialy',
 })
 
-type CatalogFilterValue = 'all' | 'natural' | 'fireProtection' | 'dryBoard' | 'planedBoard' | 'brusokReika' | 'imitatsiyaBrusa' | 'vagonka'
+type CatalogFilterValue = 'all' | 'natural' | 'brus' | 'fireProtection' | 'dryBoard' | 'planedBoard' | 'brusokReika' | 'imitatsiyaBrusa' | 'vagonka'
 
 const selectedCategory = ref<CatalogFilterValue>('all')
 const filteredProducts = computed<PriceListProduct[]>(() => priceListProducts.filter((product) =>
@@ -16,6 +16,7 @@ const filteredProductsCount = computed(() => filteredProducts.value.length)
 /** Группы карточек каталога с собственным H2 (контракт п.5): пустые группы после фильтра скрываются. */
 const catalogProductGroups: { id: string, heading: string, categories: PriceListProduct['category'][] }[] = [
   { id: 'ev-group', heading: 'Доска естественной влажности', categories: ['doska-estestvennoi-vlazhnosti', 'doska-ev-ognebio'] },
+  { id: 'brus-group', heading: 'Брус', categories: ['brus'] },
   { id: 'dry-group', heading: 'Сухая и строганая доска', categories: ['doska-suhaya', 'doska-suhaya-ognebio', 'doska-suhaya-stroganaya'] },
   { id: 'brusok-group', heading: 'Брусок и рейка', categories: ['brusok-i-reika'] },
   { id: 'finish-group', heading: 'Отделочные материалы', categories: ['imitatsiya-brusa', 'vagonka'] },
@@ -53,6 +54,7 @@ interface CatalogSizeLink {
 
 const catalogSizeLinkGroups: { label: string, to: string, productIds: string[] }[] = [
   { label: 'Доска обрезная естественной влажности', to: '/doska#sizes', productIds: ['doska-ev-sort-1', 'doska-ev-sort-2', 'doska-ev-sort-3'] },
+  { label: 'Брус естественной влажности', to: '/brus#sizes', productIds: ['brus-ev-sort-1', 'brus-ev-sort-2'] },
   { label: 'Сухая и строганая доска, брусок и рейка', to: '/suhaya-doska#sizes', productIds: ['doska-suhaya-kamernoi-sushki', 'doska-suhaya-stroganaya', 'brusok-45x45', 'reika-20x45'] },
   { label: 'Доска с огнебиозащитой', to: '/ognebiozashchita#sizes', productIds: ['doska-ev-ognebio-sort-1', 'doska-ev-ognebio-sort-2', 'doska-ev-ognebio-sort-3'] },
   { label: 'Имитация бруса', to: '/imitatsiya-brusa#sizes', productIds: ['imitatsiya-brusa-20x145'] },
@@ -77,6 +79,7 @@ let recentlyAddedTimeout: ReturnType<typeof setTimeout> | undefined
 /** Ссылки на посадочные страницы поисковых кластеров каталога. */
 const catalogTopicLinks = [
   { label: 'Доска обрезная', to: '/doska' },
+  { label: 'Брус', to: '/brus' },
   { label: 'Сухая и строганая доска', to: '/suhaya-doska' },
   { label: 'Вагонка', to: '/vagonka' },
   { label: 'Имитация бруса', to: '/imitatsiya-brusa' },
@@ -87,6 +90,7 @@ const catalogTopicLinks = [
 const categoryFilterOptions: { label: string, value: CatalogFilterValue }[] = [
   { label: 'Все', value: 'all' },
   { label: 'Доска ЕВ', value: 'natural' },
+  { label: 'Брус', value: 'brus' },
   { label: 'Огнебио', value: 'fireProtection' },
   { label: 'Сухая', value: 'dryBoard' },
   { label: 'Строганая', value: 'planedBoard' },
@@ -95,11 +99,12 @@ const categoryFilterOptions: { label: string, value: CatalogFilterValue }[] = [
   { label: 'Вагонка', value: 'vagonka' },
 ]
 
-type ProductCategoryGroup = 'ev' | 'evOgnebio' | 'dryBoard' | 'brusokReika' | 'imitatsiyaBrusa' | 'vagonka'
+type ProductCategoryGroup = 'ev' | 'brus' | 'evOgnebio' | 'dryBoard' | 'brusokReika' | 'imitatsiyaBrusa' | 'vagonka'
 
 /** Текстовый ярлык категории на карточке: категорию кодирует подпись, не цвет фона. */
 const productCategoryLabels: Record<ProductCategoryGroup, string> = {
   ev: 'Доска ЕВ',
+  brus: 'Брус ЕВ',
   evOgnebio: 'ЕВ · огнебио',
   dryBoard: 'Сухая доска',
   brusokReika: 'Брусок и рейка',
@@ -110,6 +115,7 @@ const productCategoryLabels: Record<ProductCategoryGroup, string> = {
 /** Ярлык категории ведёт на посадочную страницу кластера (контракт п.5). */
 const productCategoryLandingRoutes: Record<ProductCategoryGroup, string> = {
   ev: '/doska',
+  brus: '/brus',
   evOgnebio: '/ognebiozashchita',
   dryBoard: '/suhaya-doska',
   brusokReika: '/suhaya-doska',
@@ -127,6 +133,7 @@ const productCategoryLandingRoutes: Record<ProductCategoryGroup, string> = {
 const categoryGroupByCategory: Record<PriceListProduct['category'], ProductCategoryGroup> = {
   'doska-estestvennoi-vlazhnosti': 'ev',
   'doska-ev-ognebio': 'evOgnebio',
+  'brus': 'brus',
   'doska-suhaya': 'dryBoard',
   'doska-suhaya-ognebio': 'dryBoard',
   'doska-suhaya-stroganaya': 'dryBoard',
@@ -162,6 +169,10 @@ function isProductInSelectedFilter(product: PriceListProduct, filter: CatalogFil
 
   if (filter === 'natural') {
     return product.category === 'doska-estestvennoi-vlazhnosti'
+  }
+
+  if (filter === 'brus') {
+    return product.category === 'brus'
   }
 
   if (filter === 'fireProtection') {
@@ -284,7 +295,7 @@ onBeforeUnmount(() => {
 useSeoMeta({
   // Тексты 8.2 аудита: страница переведена в прайс-лист под покупательский запрос.
   title: 'Пиломатериалы в СПб и ЛО: цены за куб и за штуку',
-  description: 'Прайс-лист пилорамы в Разбегаево: 14 позиций — доска, сухая и строганая, огнебиозащита, брусок, рейка, имитация бруса, вагонка. Цены за м³ и за штуку, калькулятор объёма.',
+  description: 'Прайс-лист пилорамы в Разбегаево: 16 позиций — доска, сухая и строганая, брус, огнебиозащита, брусок, рейка, имитация бруса, вагонка. Цены за м³ и за штуку, калькулятор.',
   ogTitle: 'Каталог пиломатериалов от производителя — цены за куб и за штуку',
   ogDescription: 'Доска, сухая и строганая, брусок, рейка, имитация бруса и вагонка с производства в Разбегаево. Цены от производителя, доставка по Ленобласти и Санкт-Петербургу.',
   ogImage: `${siteUrl}/images/sawn-board-stack-2025-04-02.jpg`,

@@ -8,6 +8,7 @@ const publicDir = join(projectDir, 'public')
 const requiredSources = [
   'images/bg-wood-forest.webp',
   'images/brushing-1.jpg',
+  'images/brus-shtabel.jpg',
   'images/bruski-na-sklade.jpg',
   'images/brusok-suhoi-stroganyi-45x45.jpg',
   'images/doska-estestvennoi-vlazhnosti-ognebiozashchita.jpg',

@@ -14,6 +14,7 @@ const { totalQuantity, initialized: cartInitialized } = useCart()
 const catalogLinks: { label: string, to: string }[] = [
   { label: 'Весь каталог и цены', to: '/pilomaterialy' },
   { label: 'Доска обрезная', to: '/doska' },
+  { label: 'Брус', to: '/brus' },
   { label: 'Сухая и строганая доска', to: '/suhaya-doska' },
   { label: 'Вагонка', to: '/vagonka' },
   { label: 'Имитация бруса', to: '/imitatsiya-brusa' },
@@ -238,6 +239,7 @@ watch(
         <span class="mb-3 font-[Segoe_UI,Arial,sans-serif] text-sm font-[760] uppercase leading-[1.4] tracking-[0.04em]">Разделы</span>
         <NuxtLink to="/pilomaterialy">Каталог пиломатериалов</NuxtLink>
         <NuxtLink to="/doska">Доска обрезная</NuxtLink>
+        <NuxtLink to="/brus">Брус</NuxtLink>
         <NuxtLink to="/suhaya-doska">Сухая и строганая доска</NuxtLink>
         <NuxtLink to="/vagonka">Вагонка</NuxtLink>
         <NuxtLink to="/imitatsiya-brusa">Имитация бруса</NuxtLink>

@@ -48,9 +48,9 @@ const lumberTypes = [
     text: 'Обработка защищает древесину от возгорания и биологического поражения. Выполняем её на своей площадке при отгрузке партии — например, для стропильных систем и кровли.',
   },
   {
-    title: 'Брус под заказ',
-    to: '/pilomaterialy',
-    text: 'Брус естественной влажности I сорта делаем под заказ. Сечения для вашего проекта уточняет менеджер.',
+    title: 'Брус естественной влажности',
+    to: '/brus',
+    text: 'Обрезной брус I и II сорта сечением 100×100, 100×150 и 150×150 мм. Цена за кубометр одна для всех сечений, длину уточняйте у менеджера.',
   },
 ]
 
@@ -76,6 +76,8 @@ const homePriceGroups: Array<{
     label: 'Доска естественной влажности с огнебиозащитой',
     matches: (product) => product.category === 'doska-ev-ognebio',
   },
+  { matches: (product) => product.id === 'brus-ev-sort-1' },
+  { matches: (product) => product.id === 'brus-ev-sort-2' },
   { matches: (product) => product.category === 'doska-suhaya' },
   {
     label: 'Доска сухая строганая',
@@ -89,8 +91,9 @@ const homePriceGroups: Array<{
 ]
 
 const homePriceRows = homePriceGroups.flatMap((group) => {
-  const cheapest = priceListProducts
+  const matched = priceListProducts
     .filter((product): product is PricedProduct => product.price !== null && group.matches(product))
+  const cheapest = matched
     .reduce<PricedProduct | undefined>(
       (lowest, product) => (!lowest || product.price < lowest.price ? product : lowest),
       undefined,
@@ -99,7 +102,8 @@ const homePriceRows = homePriceGroups.flatMap((group) => {
 
   return [{
     label: group.label ?? cheapest.title,
-    price: `от ${cheapest.price.toLocaleString('ru-RU')} ₽`,
+    // «от» — у минимальной цены группы или у позиции с `pricePrefix`; цена бруса точная.
+    price: `${matched.length > 1 || cheapest.pricePrefix ? 'от ' : ''}${cheapest.price.toLocaleString('ru-RU')} ₽`,
     unit: cheapest.unit,
   }]
 })
@@ -614,9 +618,10 @@ const homeFaq = [
   },
   {
     question: 'Что есть в наличии и сколько это стоит?',
-    answer: 'Доска естественной влажности трёх сортов — от 4 500 ₽/м³, сухая доска камерной сушки — от 20 500 ₽/м³, сухая строганая — от 27 000 ₽/м³, имитация бруса 20×145 мм — от 33 000 ₽/м³, евровагонка — от 125 ₽/шт., вагонка «Штиль» — от 145 ₽/шт. Цены минимальные, с пометкой «от»; наличие сечений и итог по партии подтверждает менеджер.',
+    answer: 'Доска естественной влажности трёх сортов — от 4 500 ₽/м³, брус естественной влажности — 18 000 ₽/м³ за I сорт и 16 000 ₽/м³ за II, сухая доска камерной сушки — от 20 500 ₽/м³, сухая строганая — от 27 000 ₽/м³, имитация бруса 20×145 мм — от 33 000 ₽/м³, евровагонка — от 125 ₽/шт., вагонка «Штиль» — от 145 ₽/шт. Цены минимальные, с пометкой «от»; наличие сечений и итог по партии подтверждает менеджер.',
     links: [
       { label: 'Доска обрезная', to: '/doska' },
+      { label: 'Брус', to: '/brus' },
       { label: 'Сухая и строганая доска', to: '/suhaya-doska' },
       { label: 'Вагонка', to: '/vagonka' },
       { label: 'Имитация бруса', to: '/imitatsiya-brusa' },
@@ -808,6 +813,7 @@ useSchemaOrg([
 
       <nav class="catalog-preview__topics" aria-label="Разделы каталога">
         <NuxtLink class="text-link" to="/doska">Доска обрезная</NuxtLink>
+        <NuxtLink class="text-link" to="/brus">Брус</NuxtLink>
         <NuxtLink class="text-link" to="/suhaya-doska">Сухая и строганая доска</NuxtLink>
         <NuxtLink class="text-link" to="/vagonka">Вагонка</NuxtLink>
         <NuxtLink class="text-link" to="/imitatsiya-brusa">Имитация бруса</NuxtLink>

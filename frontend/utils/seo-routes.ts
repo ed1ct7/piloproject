@@ -4,6 +4,7 @@ export const indexableRoutes = [
   { loc: '/', changefreq: 'weekly' as const, priority: 1 as const },
   { loc: '/pilomaterialy', changefreq: 'weekly' as const, priority: 0.9 as const },
   { loc: '/doska', changefreq: 'weekly' as const, priority: 0.8 as const },
+  { loc: '/brus', changefreq: 'weekly' as const, priority: 0.8 as const },
   { loc: '/suhaya-doska', changefreq: 'weekly' as const, priority: 0.8 as const },
   { loc: '/vagonka', changefreq: 'weekly' as const, priority: 0.8 as const },
   { loc: '/imitatsiya-brusa', changefreq: 'weekly' as const, priority: 0.8 as const },
@@ -21,4 +22,4 @@ export const indexableRoutes = [
  *       используется на клиенте для проверки маршрута, а импорт самого
  *       `seo-landings.ts` (тексты посадочных) в общий JS-бандл не нужен
  */
-export const landingSlugs = ['doska', 'suhaya-doska', 'vagonka', 'imitatsiya-brusa', 'ognebiozashchita'] as const
+export const landingSlugs = ['doska', 'brus', 'suhaya-doska', 'vagonka', 'imitatsiya-brusa', 'ognebiozashchita'] as const

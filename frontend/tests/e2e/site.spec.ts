@@ -225,7 +225,7 @@ test('мобильные действия каталога имеют доста
 test('посадочная ссылается в каталог одной ссылкой вместо повторов «Выбрать в каталоге»', async ({ page }) => {
   await page.goto('/doska')
   await expect(page.getByRole('link', { name: 'Выбрать в каталоге' })).toHaveCount(0)
-  await expect(page.getByRole('link', { name: 'Все 14 позиций и цены в каталоге' })).toHaveCount(1)
+  await expect(page.getByRole('link', { name: 'Все 16 позиций и цены в каталоге' })).toHaveCount(1)
 })
 
 test('текстовые блоки сохраняют вертикальный ритм', async ({ page }) => {
